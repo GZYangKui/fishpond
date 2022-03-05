@@ -1,0 +1,9 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+}
+dependencies {
+    implementation 'io.vertx:vertx-lang-kotlin-coroutines:' + vertx_version
+}
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+}

@@ -1,0 +1,42 @@
+subprojects {
+    ext.vertx_version='4.2.5'
+
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    group 'cn.navclub'
+    version '1.0-SNAPSHOT'
+
+    sourceCompatibility = 15
+    targetCompatibility = 15
+
+    //解决window平台乱码问题
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+
+    repositories {
+        maven {
+            url 'https://mirrors.huaweicloud.com/repository/maven'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/public'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/central'
+        }
+
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation group: 'io.vertx', name: 'vertx-core', version: vertx_version
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
