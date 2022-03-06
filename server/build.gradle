@@ -2,6 +2,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.6.10'
 }
 dependencies {
+    //Add protocol module
+    implementation project(":protocol")
     implementation 'io.vertx:vertx-lang-kotlin-coroutines:' + vertx_version
 }
 sourceSets {
