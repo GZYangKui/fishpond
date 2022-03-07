@@ -4,6 +4,7 @@ plugins {
 dependencies {
     //Add protocol module
     implementation project(":protocol")
+    implementation 'io.vertx:vertx-web:' + vertx_version
     implementation 'io.vertx:vertx-lang-kotlin-coroutines:' + vertx_version
 }
 sourceSets {
