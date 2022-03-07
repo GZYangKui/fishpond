@@ -17,7 +17,7 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
         println("$ebName 成功注册在EventBus总线上!")
     }
 
-    protected suspend fun onMessage(message: T): Any {
+    protected open suspend fun onMessage(message: T): Any {
         return JsonObject()
     }
 }

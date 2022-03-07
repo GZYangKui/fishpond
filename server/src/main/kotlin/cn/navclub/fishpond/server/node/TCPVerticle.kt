@@ -10,7 +10,6 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         val port = config.getInteger(TCP_PORT)
         val netServer = vertx.createNetServer()
         netServer.connectHandler {
-
         }
         netServer.listen(port).await()
 

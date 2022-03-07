@@ -14,4 +14,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         this.consumerEB()
     }
 
+    override suspend fun onMessage(message: JsonObject): Any {
+        return JsonObject()
+    }
 }
