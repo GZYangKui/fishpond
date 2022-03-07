@@ -5,7 +5,9 @@ dependencies {
     //Add protocol module
     implementation project(":protocol")
     implementation 'io.vertx:vertx-web:' + vertx_version
+    implementation 'io.vertx:vertx-mysql-client:' + vertx_version
     implementation 'io.vertx:vertx-lang-kotlin-coroutines:' + vertx_version
+    testImplementation group: 'io.vertx', name: 'vertx-junit5', version: vertx_version
 }
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'

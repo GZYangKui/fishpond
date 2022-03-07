@@ -1,22 +1,49 @@
 package cn.navclub.fishpond.server
 
+import cn.navclub.fishpond.server.config.DB_POOL_NAME
 import cn.navclub.fishpond.server.config.HTTP_PORT
 import cn.navclub.fishpond.server.config.TCP_PORT
+import cn.navclub.fishpond.server.util.DBUtil
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.await
+import io.vertx.mysqlclient.MySQLConnectOptions
+import io.vertx.sqlclient.PoolOptions
+
 import kotlin.system.exitProcess
+
+suspend fun createSharedDatabase(vertx: Vertx, sharedDBName: String) {
+
+    val options = MySQLConnectOptions()
+
+    options.user = "root"
+    options.charset = "utf8"
+    options.password = "root"
+
+    val pOptions = PoolOptions()
+    pOptions.maxSize = 20
+    pOptions.isShared = true
+    pOptions.name = sharedDBName
+
+    DBUtil.createSharedDatabase(vertx, options, pOptions).await()
+}
 
 suspend fun main() {
     try {
 
         val vertx = Vertx.vertx()
 
+        val shareDBName = "fishpond-pool"
+
+
+        createSharedDatabase(vertx, shareDBName)
+
         //项目配置
         val config = JsonObject()
         config.put(TCP_PORT, 9000)
         config.put(HTTP_PORT, 10000)
+        config.put(DB_POOL_NAME, shareDBName)
 
         //部署配置
         val options = DeploymentOptions()
