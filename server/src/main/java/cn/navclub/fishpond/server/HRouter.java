@@ -1,7 +1,10 @@
 package cn.navclub.fishpond.server;
 
+import cn.navclub.fishpond.server.api.APIECode;
+import cn.navclub.fishpond.server.api.CommonResult;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 
 public abstract class HRouter {
     private final Vertx vertx;
@@ -12,6 +15,11 @@ public abstract class HRouter {
         this.router = Router.router(vertx);
         this.create(router);
     }
+
+    protected void paramValidFail(String message, RoutingContext ctx) {
+        ctx.json(CommonResult.fail(APIECode.PARAM_VALID_FAIL, message).toJson());
+    }
+
 
     protected abstract void create(Router router);
 

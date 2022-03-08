@@ -10,6 +10,9 @@ import io.vertx.core.json.JsonObject
  *
  */
 class SessionVerticle : AbstractFDVerticle<JsonObject>() {
+
+    private val ssCached: MutableMap<String, String> = HashMap()
+
     override suspend fun start() {
         this.consumerEB()
     }

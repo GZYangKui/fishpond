@@ -7,6 +7,8 @@ dependencies {
     implementation 'io.vertx:vertx-web:' + vertx_version
     implementation 'io.vertx:vertx-mysql-client:' + vertx_version
     implementation 'io.vertx:vertx-lang-kotlin-coroutines:' + vertx_version
+//    implementation 'io.vertx:vertx-web-validation:' + vertx_version
+
     testImplementation group: 'io.vertx', name: 'vertx-junit5', version: vertx_version
 }
 sourceSets {
