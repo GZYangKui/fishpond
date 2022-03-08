@@ -4,6 +4,9 @@ plugins {
 
 mainClassName='cn.navclub.fishpond.app.Main'
 
+applicationDefaultJvmArgs = ['-Dsun.java2d.opengl=true', '-XX:+UseZGC', '-Xms512M', '-Xmx1024M']
+if (javafx.platform.classifier == 'linux') applicationDefaultJvmArgs.add("-Djdk.gtk.version=2")
+
 javafx {
     version = "17.0.1"
     modules = [ 'javafx.controls','javafx.fxml' ]

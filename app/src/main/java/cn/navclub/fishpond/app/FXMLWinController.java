@@ -20,6 +20,11 @@ public class FXMLWinController<T extends Parent> extends AbstractController<T> {
         this.stage.setScene(new Scene(parent));
     }
 
+    public FXMLWinController(String fxmlURL, String title) {
+        this(fxmlURL);
+        this.getStage().setTitle(title);
+    }
+
     public Stage getStage() {
         return stage;
     }

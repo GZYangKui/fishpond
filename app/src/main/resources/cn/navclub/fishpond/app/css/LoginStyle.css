@@ -1,0 +1,30 @@
+.root {
+    -fx-border-radius: .5em;
+    -fx-background-radius: .5em;
+    -fx-background-color: linear-gradient(to right bottom, #04121f, #114e46, #04121f);
+    -fx-vgap: 1.5em;
+}
+
+.title {
+    -fx-font-size: 4em;
+    -fx-text-fill: #fff;
+    -fx-font-weight: bolder;
+}
+
+.text-field, .button {
+    -fx-pref-width: 35em;
+    -fx-pref-height: 3.5em;
+    -fx-border-radius: .5em;
+    -fx-background-radius: .5em;
+}
+
+.text-field {
+    -fx-font-weight: bolder;
+    -fx-text-fill: #000000;
+    -fx-background-color: #fff;
+}
+
+.button {
+    -fx-text-fill: #fff;
+    -fx-background-color: linear-gradient(to right, #6365DE, #72b3fd, #6CE6FE);
+}
