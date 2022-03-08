@@ -9,7 +9,7 @@ public enum MessageT {
      */
     UNKNOWN(-2 << 1, "未知类型"),
     /**
-     * 普通文字
+     * 普通文本
      */
     TEXT(0, "普通文本"),
     /**
