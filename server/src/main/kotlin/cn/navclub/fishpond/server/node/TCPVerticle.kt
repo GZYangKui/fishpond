@@ -37,11 +37,12 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
     }
 
     private fun hello(): TProMessage {
-        val pro = TProMessage()
-        pro.type = MessageT.TEXT
-        pro.userId = String(SysProperty.SYS_ID)
-        pro.serviceCode = ServiceCode.SYSTEM_MSG
-        pro.data = Buffer.buffer("Welcome use fishpond application!")
-        return pro
+        val msg = TProMessage()
+        msg.type = MessageT.TEXT
+        msg.userId = String(SysProperty.SYS_ID)
+        msg.serviceCode = ServiceCode.SYSTEM_MSG
+        msg.targetId = String(SysProperty.SYS_ID)
+        msg.data = Buffer.buffer("Welcome use fishpond application!")
+        return msg
     }
 }

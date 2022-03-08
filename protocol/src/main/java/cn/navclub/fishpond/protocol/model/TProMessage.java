@@ -24,6 +24,10 @@ public class TProMessage extends Protocol {
      */
     private String userId;
     /**
+     * 目标用户id
+     */
+    private String targetId;
+    /**
      * 业务代码
      */
     private ServiceCode serviceCode;
@@ -37,6 +41,8 @@ public class TProMessage extends Protocol {
         buffer.appendBytes(BitUtil.int2Byte4(serviceCode.getValue()), 2, 2);
         //用户标识
         buffer.appendBytes(userId.getBytes(StandardCharsets.UTF_8), 0, 32);
+        //目标用户
+        buffer.appendBytes(targetId.getBytes(StandardCharsets.UTF_8), 0, 32);
         //数据长度
         buffer.appendBytes(BitUtil.int2Byte4(this.data.length()), 2, 2);
         //数据
@@ -45,23 +51,26 @@ public class TProMessage extends Protocol {
     }
 
     public static TProMessage create(byte[] arr, int offset, int dataLen) {
-        var pro = new TProMessage();
+        var msg = new TProMessage();
         //数据类型
         byte[] bytes = {arr[offset + 4], arr[offset + 3], 0, 0};
-        pro.type = MessageT.getInstance(BitUtil.byte2Int(bytes));
+        msg.type = MessageT.getInstance(BitUtil.byte2Int(bytes));
         //业务代码
         bytes = new byte[]{arr[offset + 6], arr[offset + 5], 0, 0};
-        pro.serviceCode = ServiceCode.serviceCode(BitUtil.byte2Int(bytes));
+        msg.serviceCode = ServiceCode.serviceCode(BitUtil.byte2Int(bytes));
         //用户id
         bytes = new byte[32];
         System.arraycopy(arr, offset + 7, bytes, 0, 32);
-        pro.userId = new String(bytes);
+        msg.userId = new String(bytes);
+        //目标用户id
+        System.arraycopy(arr, offset + 40, bytes, 0, 32);
+        msg.targetId = new String(bytes);
         //数据长度
         bytes = new byte[dataLen];
         System.arraycopy(arr, offset + DefaultDecoder.MES_HEADER_LEN, bytes, 0, dataLen);
         //数据内容
-        pro.data = Buffer.buffer(bytes);
-        return pro;
+        msg.data = Buffer.buffer(bytes);
+        return msg;
     }
 
     @Override
@@ -70,7 +79,8 @@ public class TProMessage extends Protocol {
         sb.append("\n=======================================================\n");
         sb.append("消息类型:").append(this.getType().getText()).append("\n");
         sb.append("业务代码:").append(this.getServiceCode().getText()).append("\n");
-        sb.append("用户标识:").append(this.userId).append("\n");
+        sb.append("用户标识:").append(this.getUserId()).append("\n");
+        sb.append("目标用户:").append(this.getTargetId()).append("\n");
         sb.append("目标数据:").append(this.data.toString(StandardCharsets.UTF_8)).append("\n");
         sb.append("==========================================================\n");
         return sb.toString();
@@ -114,5 +124,13 @@ public class TProMessage extends Protocol {
 
     public ServiceCode getServiceCode() {
         return serviceCode;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(String targetId) {
+        this.targetId = targetId;
     }
 }
