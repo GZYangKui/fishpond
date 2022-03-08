@@ -12,9 +12,14 @@ class HTTPVerticle : AbstractFDVerticle<JsonObject>() {
         val router = Router.router(vertx)
 
         //用户路由
-        router.route("/user").subRouter(UserRouter(vertx).router)
+        router.route("/user/*").subRouter(UserRouter(vertx).router)
 
         val port = config.getInteger(HTTP_PORT)
-        vertx.createHttpServer().requestHandler(router).listen(port).await()
+
+        vertx
+            .createHttpServer()
+            .requestHandler(router)
+            .listen(port)
+            .await()
     }
 }

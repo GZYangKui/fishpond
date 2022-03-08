@@ -1,8 +1,9 @@
 package cn.navclub.fishpond.server.node
 
 import cn.navclub.fishpond.protocol.enums.MessageT
+import cn.navclub.fishpond.protocol.enums.ServiceCode
 import cn.navclub.fishpond.protocol.impl.DefaultDecoder
-import cn.navclub.fishpond.protocol.model.DefaultPro
+import cn.navclub.fishpond.protocol.model.TProMessage
 import cn.navclub.fishpond.server.AbstractFDVerticle
 import cn.navclub.fishpond.server.config.SysProperty
 import cn.navclub.fishpond.server.config.TCP_PORT
@@ -35,10 +36,11 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         netServer.listen(port).await()
     }
 
-    private fun hello(): DefaultPro {
-        val pro = DefaultPro()
+    private fun hello(): TProMessage {
+        val pro = TProMessage()
         pro.type = MessageT.TEXT
         pro.userId = String(SysProperty.SYS_ID)
+        pro.serviceCode = ServiceCode.SYSTEM_MSG
         pro.data = Buffer.buffer("Welcome use fishpond application!")
         return pro
     }

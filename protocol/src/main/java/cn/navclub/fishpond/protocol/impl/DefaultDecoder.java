@@ -1,7 +1,7 @@
 package cn.navclub.fishpond.protocol.impl;
 
 import cn.navclub.fishpond.protocol.Decoder;
-import cn.navclub.fishpond.protocol.model.DefaultPro;
+import cn.navclub.fishpond.protocol.model.TProMessage;
 import cn.navclub.fishpond.protocol.util.BitUtil;
 import io.vertx.core.buffer.Buffer;
 
@@ -13,14 +13,16 @@ import io.vertx.core.buffer.Buffer;
  *          <th>字节</th>
  *          <th>1-3</th>
  *          <th>4-5</th>
- *           <th>6-37</th>
- *          <th>38-39</th>
- *          <th>40......</th>
+ *          <th>6-7</th>
+ *          <th>8-39</th>
+ *          <th>40-41</th>
+ *          <th>41......</th>
  *     </tr>
  *     <tr>
  *         <td>内容</td>
  *         <td>TNB</td>
  *         <td>消息类型</td>
+ *         <td>业务代码</td>
  *         <td>用户标识</td>
  *         <td>消息长度</td>
  *         <td>消息内容</td>
@@ -28,11 +30,11 @@ import io.vertx.core.buffer.Buffer;
  *
  * </table>
  */
-public class DefaultDecoder extends Decoder<DefaultPro> {
+public class DefaultDecoder extends Decoder<TProMessage> {
     /**
      * 消息头长度42字节
      */
-    public static final int MES_HEADER_LEN = 39;
+    public static final int MES_HEADER_LEN = 41;
     /**
      * 消息标志位(NBT)
      */
@@ -90,7 +92,7 @@ public class DefaultDecoder extends Decoder<DefaultPro> {
             if (endPos > len) {
                 return;
             }
-            var pro = DefaultPro.create(bytes, offset, dataLen);
+            var pro = TProMessage.create(bytes, offset, dataLen);
             if (this.handler != null) {
                 this.handler.handle(pro);
             }
@@ -121,13 +123,13 @@ public class DefaultDecoder extends Decoder<DefaultPro> {
      */
     private int getDataSize(byte[] bytes, int offset) {
         var arr = new byte[4];
-        var pos = offset + 37;
+        var pos = offset + 39;
         arr[1] = bytes[pos];
         arr[0] = bytes[pos + 1];
         return BitUtil.byte2Int(arr);
     }
 
-    public static Decoder<DefaultPro> create() {
+    public static Decoder<TProMessage> create() {
         return new DefaultDecoder();
     }
 }
