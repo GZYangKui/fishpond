@@ -18,18 +18,19 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
     override suspend fun start() {
         val port = config.getInteger(TCP_PORT)
         val netServer = vertx.createNetServer()
-        netServer.connectHandler {
-            this.map[it.writeHandlerID()] = it
-            val decoder = DefaultDecoder.create()
+        netServer.connectHandler { socket ->
+            this.map[socket.writeHandlerID()] = socket
+            val decoder = DefaultDecoder
+                .create()
                 .handler { pro ->
                     println(pro.toMessage())
                 }
                 .exHandler { t ->
-                    this.map.remove(it.writeHandlerID())
+                    this.map.remove(socket.writeHandlerID())
                     println("Socket data transform fail:${t.message}")
                 }
-            it.handler(decoder)
-            it.write(hello().toMessage())
+            socket.handler(decoder)
+            socket.write(hello().toMessage())
         }
         netServer.listen(port).await()
     }
