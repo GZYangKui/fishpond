@@ -11,10 +11,19 @@ public enum ServiceCode {
 
     private final int value;
     private final String text;
+    //是否系统行为
+    private final boolean system;
 
     ServiceCode(int value, String text) {
+        this.system = false;
         this.value = value;
         this.text = text;
+    }
+
+    ServiceCode(int value, String text, boolean system) {
+        this.value = value;
+        this.text = text;
+        this.system = system;
     }
 
     public int getValue() {
@@ -23,6 +32,10 @@ public enum ServiceCode {
 
     public String getText() {
         return text;
+    }
+
+    public boolean isSystem() {
+        return system;
     }
 
     public static ServiceCode serviceCode(int val) {
