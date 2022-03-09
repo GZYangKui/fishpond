@@ -1,11 +1,11 @@
 package cn.navclub.fishpond.server.router
 
+import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.server.HRouter
 import cn.navclub.fishpond.server.config.PASSWORD
 import cn.navclub.fishpond.server.config.USERNAME
 import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.service.impl.UserServiceImpl
-import cn.navclub.fishpond.server.util.StrUtil
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
 import kotlinx.coroutines.DelicateCoroutinesApi

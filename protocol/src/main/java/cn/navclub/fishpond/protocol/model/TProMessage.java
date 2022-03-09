@@ -16,6 +16,10 @@ public class TProMessage extends Protocol {
      */
     private MessageT type;
     /**
+     * 消息记录id
+     */
+    private String uuid;
+    /**
      * 数据
      */
     private Buffer data;
@@ -40,9 +44,11 @@ public class TProMessage extends Protocol {
         //业务代码
         buffer.appendBytes(BitUtil.int2Byte4(serviceCode.getValue()), 2, 2);
         //用户标识
-        buffer.appendBytes(userId.getBytes(StandardCharsets.UTF_8), 0, 32);
+        buffer.appendBytes(userId.getBytes(), 0, 32);
         //目标用户
-        buffer.appendBytes(targetId.getBytes(StandardCharsets.UTF_8), 0, 32);
+        buffer.appendBytes(targetId.getBytes(), 0, 32);
+        //消息记录id
+        buffer.appendBytes(uuid.getBytes(), 0, 32);
         //数据长度
         buffer.appendBytes(BitUtil.int2Byte4(this.data.length()), 2, 2);
         //数据
@@ -63,8 +69,11 @@ public class TProMessage extends Protocol {
         System.arraycopy(arr, offset + 7, bytes, 0, 32);
         msg.userId = new String(bytes);
         //目标用户id
-        System.arraycopy(arr, offset + 40, bytes, 0, 32);
+        System.arraycopy(arr, offset + 39, bytes, 0, 32);
         msg.targetId = new String(bytes);
+        //消息记录id
+        System.arraycopy(arr, offset + 71, bytes, 0, 32);
+        msg.uuid = new String(bytes);
         //数据长度
         bytes = new byte[dataLen];
         System.arraycopy(arr, offset + DefaultDecoder.MES_HEADER_LEN, bytes, 0, dataLen);
@@ -78,6 +87,7 @@ public class TProMessage extends Protocol {
         var sb = new StringBuilder();
         sb.append("\n=======================================================\n");
         sb.append("消息类型:").append(this.getType().getText()).append("\n");
+        sb.append("消息标识:").append(this.getUuid()).append("\n");
         sb.append("业务代码:").append(this.getServiceCode().getText()).append("\n");
         sb.append("用户标识:").append(this.getUserId()).append("\n");
         sb.append("目标用户:").append(this.getTargetId()).append("\n");
@@ -132,5 +142,14 @@ public class TProMessage extends Protocol {
 
     public void setTargetId(String targetId) {
         this.targetId = targetId;
+    }
+
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

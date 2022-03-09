@@ -53,11 +53,4 @@ public class CommonResult<T> {
     public void setData(T data) {
         this.data = data;
     }
-
-    /**
-     * 将当前对象序列化为JsonObject
-     */
-    public JsonObject toJson() {
-        return JsonObject.mapFrom(this);
-    }
 }

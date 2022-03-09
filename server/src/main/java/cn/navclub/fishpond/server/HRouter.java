@@ -16,8 +16,14 @@ public abstract class HRouter {
         this.create(router);
     }
 
+    /**
+     *
+     *
+     * 参数校验错误,响应客户端
+     *
+     */
     protected void paramValidFail(String message, RoutingContext ctx) {
-        ctx.json(CommonResult.fail(APIECode.PARAM_VALID_FAIL, message).toJson());
+        ctx.json(CommonResult.fail(APIECode.PARAM_VALID_FAIL, message));
     }
 
 

@@ -2,17 +2,18 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
-mainClassName='cn.navclub.fishpond.app.Main'
+mainClassName = 'cn.navclub.fishpond.app.Main'
 
 applicationDefaultJvmArgs = ['-Dsun.java2d.opengl=true', '-XX:+UseZGC', '-Xms512M', '-Xmx1024M']
 if (javafx.platform.classifier == 'linux') applicationDefaultJvmArgs.add("-Djdk.gtk.version=2")
 
 javafx {
     version = "17.0.1"
-    modules = [ 'javafx.controls','javafx.fxml' ]
+    modules = ['javafx.controls', 'javafx.fxml']
 }
 
 
 dependencies {
+    implementation project(":core")
     implementation project(":protocol")
 }

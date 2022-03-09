@@ -7,7 +7,7 @@ public enum ServiceCode {
     UNKNOWN(-2 >> 1, "未知业务代码"),
     HEART_BEAT(0, "心跳"),
     SEND(2 >>> 1, "发送消息"),
-    SYSTEM_MSG(4 >>> 1, "系统消息");
+    SYSTEM_NOTIFY(4 >>> 1, "系统通知");
 
     private final int value;
     private final String text;

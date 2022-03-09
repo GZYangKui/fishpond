@@ -5,12 +5,13 @@ import cn.navclub.fishpond.protocol.enums.ServiceCode
 import cn.navclub.fishpond.protocol.impl.DefaultDecoder
 import cn.navclub.fishpond.protocol.model.TProMessage
 import cn.navclub.fishpond.server.AbstractFDVerticle
-import cn.navclub.fishpond.server.config.SysProperty
+import cn.navclub.fishpond.core.config.SysProperty
 import cn.navclub.fishpond.server.config.TCP_PORT
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonObject
 import io.vertx.core.net.NetSocket
 import io.vertx.kotlin.coroutines.await
+import java.util.UUID
 
 class TCPVerticle : AbstractFDVerticle<JsonObject>() {
 
@@ -37,12 +38,18 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
     }
 
     private fun hello(): TProMessage {
+        val uuid = UUID.randomUUID().toString().replace("-", "")
+
         val msg = TProMessage()
+        msg.uuid = uuid
         msg.type = MessageT.TEXT
         msg.userId = String(SysProperty.SYS_ID)
-        msg.serviceCode = ServiceCode.SYSTEM_MSG
+        msg.serviceCode = ServiceCode.SYSTEM_NOTIFY
         msg.targetId = String(SysProperty.SYS_ID)
-        msg.data = Buffer.buffer("Welcome use fishpond application!")
+        msg.data = Buffer.buffer(SysProperty.WELCOME)
+
+        println(uuid)
+
         return msg
     }
 }

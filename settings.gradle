@@ -2,4 +2,5 @@ rootProject.name = 'fishpond'
 include 'app'
 include 'server'
 include 'protocol'
+include 'core'
 
