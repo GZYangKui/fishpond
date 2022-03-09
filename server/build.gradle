@@ -1,17 +1,28 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.6.10'
 }
+
+
 dependencies {
     // Add core module
     implementation project(":core")
     //Add protocol module
     implementation project(":protocol")
+    implementation project(":mapper")
+
     implementation 'io.vertx:vertx-web:' + vertx_version
+    implementation "io.vertx:vertx-codegen:" + vertx_version
     implementation 'io.vertx:vertx-mysql-client:' + vertx_version
     implementation 'io.vertx:vertx-lang-kotlin-coroutines:' + vertx_version
+    implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+    implementation group: 'io.vertx', name: 'vertx-sql-client-templates', version: vertx_version
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.2'
 
     testImplementation group: 'io.vertx', name: 'vertx-junit5', version: vertx_version
+
 }
 sourceSets {
-    main.kotlin.srcDirs += 'src/main/kotlin'
+    main {
+        kotlin.srcDirs += 'src/main/kotlin'
+    }
 }

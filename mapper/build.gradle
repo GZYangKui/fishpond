@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+}
+
+
+dependencies {
+    implementation "io.vertx:vertx-codegen:${vertx_version}"
+    implementation "io.vertx:vertx-sql-client-templates:${vertx_version}"
+    annotationProcessor "io.vertx:vertx-codegen:${vertx_version}:processor"
+    annotationProcessor "io.vertx:vertx-sql-client-templates:${vertx_version}"
+}

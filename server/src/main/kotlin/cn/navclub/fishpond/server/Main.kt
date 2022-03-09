@@ -1,8 +1,6 @@
 package cn.navclub.fishpond.server
 
-import cn.navclub.fishpond.server.config.DB_POOL_NAME
-import cn.navclub.fishpond.server.config.HTTP_PORT
-import cn.navclub.fishpond.server.config.TCP_PORT
+import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.server.util.DBUtil
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
@@ -20,6 +18,7 @@ suspend fun createSharedDatabase(vertx: Vertx, sharedDBName: String) {
     options.user = "root"
     options.charset = "utf8"
     options.password = "root"
+    options.database="fishpond"
 
     val pOptions = PoolOptions()
     pOptions.maxSize = 20
@@ -31,7 +30,6 @@ suspend fun createSharedDatabase(vertx: Vertx, sharedDBName: String) {
 
 suspend fun main() {
     try {
-
         val vertx = Vertx.vertx()
 
         val shareDBName = "fishpond-pool"

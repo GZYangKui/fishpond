@@ -1,7 +1,7 @@
 package cn.navclub.fishpond.server.node
 
+import cn.navclub.fishpond.core.config.Constant.HTTP_PORT
 import cn.navclub.fishpond.server.AbstractFDVerticle
-import cn.navclub.fishpond.server.config.HTTP_PORT
 import cn.navclub.fishpond.server.router.UserRouter
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router

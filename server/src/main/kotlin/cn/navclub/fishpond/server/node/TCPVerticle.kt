@@ -1,12 +1,12 @@
 package cn.navclub.fishpond.server.node
 
+import cn.navclub.fishpond.core.config.Constant.TCP_PORT
 import cn.navclub.fishpond.protocol.enums.MessageT
 import cn.navclub.fishpond.protocol.enums.ServiceCode
 import cn.navclub.fishpond.protocol.impl.DefaultDecoder
 import cn.navclub.fishpond.protocol.model.TProMessage
 import cn.navclub.fishpond.server.AbstractFDVerticle
 import cn.navclub.fishpond.core.config.SysProperty
-import cn.navclub.fishpond.server.config.TCP_PORT
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonObject
 import io.vertx.core.net.NetSocket

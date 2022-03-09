@@ -3,4 +3,5 @@ include 'app'
 include 'server'
 include 'protocol'
 include 'core'
+include 'mapper'
 

@@ -2,6 +2,8 @@ package cn.navclub.fishpond.server.api;
 
 import io.vertx.core.json.JsonObject;
 
+import static cn.navclub.fishpond.server.api.APIECode.COMMON_FAIL;
+
 public class CommonResult<T> {
     private Integer code;
     private String message;
@@ -28,6 +30,10 @@ public class CommonResult<T> {
 
     public static <T> CommonResult<T> fail(IErrorCode errorCode, String message) {
         return new CommonResult<>(errorCode.getCode(), message);
+    }
+
+    public static <T> CommonResult<T> fail(String message) {
+        return new CommonResult<>(COMMON_FAIL.getCode(), message);
     }
 
     public Integer getCode() {

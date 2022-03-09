@@ -1,9 +1,9 @@
 package cn.navclub.fishpond.server.router
 
+import cn.navclub.fishpond.core.config.Constant.PASSWORD
+import cn.navclub.fishpond.core.config.Constant.USERNAME
 import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.server.HRouter
-import cn.navclub.fishpond.server.config.PASSWORD
-import cn.navclub.fishpond.server.config.USERNAME
 import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.service.impl.UserServiceImpl
 import io.vertx.core.Vertx

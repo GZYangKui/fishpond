@@ -2,6 +2,7 @@ package cn.navclub.fishpond.server.api;
 
 public enum APIECode implements IErrorCode {
     OK(200, "处理成功"),
+    COMMON_FAIL(300, "处理失败"),
     PARAM_VALID_FAIL(400,"参数校验失败");
 
     private final int code;
