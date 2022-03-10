@@ -6,17 +6,14 @@ import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.server.HRouter
 import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.service.impl.UserServiceImpl
+import cn.navclub.fishpond.server.util.CoroutineUtil
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class UserRouter(vertx: Vertx) : HRouter(vertx) {
 
     private lateinit var service: UserService
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun create(router: Router) {
         this.service = UserServiceImpl(vertx)
         //用户登录
@@ -28,10 +25,7 @@ class UserRouter(vertx: Vertx) : HRouter(vertx) {
                 paramValidFail("用户名/密码不能为空!", it)
                 return@handler
             }
-
-            GlobalScope.launch {
-                it.json(service.login(username, password))
-            }
+            CoroutineUtil.restCoroutine(it) { service.login(username, password) }
         }
     }
 }

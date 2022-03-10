@@ -36,7 +36,7 @@ UserServiceImpl(private val vertx: Vertx) : UserService {
         json.put(USERNAME, user.username)
         json.put(AVATAR, user.avatar ?: "")
 
-        val model = ITModel.create(ITCode.UPDATE_SESSION, json)
+        val model = ITModel.create(ITCode.CREATE_SESSION, json)
         val address = SessionVerticle::class.java.name
         //请求Session管理
         return vertx

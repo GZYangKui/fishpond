@@ -21,10 +21,12 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
 
     override suspend fun start() {
         this.consumerEB()
+        //定时器检查会话是否超时
+        this.vertx.setPeriodic(3 * 1000, this::checkSSExpire)
     }
 
     override suspend fun onMessage(code: ITCode, data: JsonObject): Any {
-        if (code == ITCode.UPDATE_SESSION) {
+        if (code == ITCode.CREATE_SESSION) {
             return this.flushSession(data)
         }
 
@@ -41,6 +43,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         sessionMap[uuid] = username
         //缓存用户信息
         val fsSession = FPSession(
+            this.calSSExpire(0),
             data.getLong(ID),
             data.getString(USERNAME),
             data.getString(NICKNAME),
@@ -50,5 +53,47 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         return JsonObject.mapFrom(fsSession).put(SESSION_ID, uuid)
     }
 
-    data class FPSession(val id: Long, val username: String, val nickname: String, val avatar: String)
+    /**
+     *
+     * 计算会话过期时间
+     *
+     */
+    private fun calSSExpire(timestamp: Long): Long {
+        var start = timestamp
+        if (timestamp == 0L) {
+            start = System.currentTimeMillis()
+        }
+        val valid = config.getLong(EXPIRE) * 1000
+        return start + valid
+    }
+
+    /**
+     *
+     * 检查当前用户列表中是否存在会话超时
+     *
+     */
+    private fun checkSSExpire(timestamp: Long) {
+        val list: MutableList<String> = arrayListOf()
+        for (entry in this.userMap) {
+            val session = entry.value
+            if (session.expire < System.currentTimeMillis()) {
+                list.add(entry.key)
+            }
+        }
+        for (s in list) {
+            //移出会话信息
+            sessionMap.inverse().remove(s)
+            //移出缓存用户信息
+            userMap.remove(s)
+            println("[$s]用户会话超时")
+        }
+    }
+
+    data class FPSession(
+        val expire: Long,
+        val id: Long,
+        val username: String,
+        val nickname: String,
+        val avatar: String
+    )
 }

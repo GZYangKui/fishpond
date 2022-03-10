@@ -4,6 +4,7 @@ public class Constant {
     public static String ID = "id";
     public static String CODE = "code";
     public static String DATA = "data";
+    public static String EXPIRE = "expire";
     public static String AVATAR = "avatar";
     public static String USERNAME = "username";
     public static String NICKNAME = "nickname";

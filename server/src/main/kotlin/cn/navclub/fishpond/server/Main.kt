@@ -18,7 +18,7 @@ suspend fun createSharedDatabase(vertx: Vertx, sharedDBName: String) {
     options.user = "root"
     options.charset = "utf8"
     options.password = "root"
-    options.database="fishpond"
+    options.database = "fishpond"
 
     val pOptions = PoolOptions()
     pOptions.maxSize = 20
@@ -39,6 +39,7 @@ suspend fun main() {
 
         //项目配置
         val config = JsonObject()
+        config.put(EXPIRE, 30 * 60)
         config.put(TCP_PORT, 9000)
         config.put(HTTP_PORT, 10000)
         config.put(DB_POOL_NAME, shareDBName)
