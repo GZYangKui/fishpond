@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @RowMapped
 public class FPUser {
     private Long id;
+    private Integer sex;
     private String avatar;
     private String sign;
     private String nickname;
@@ -24,7 +25,13 @@ public class FPUser {
         return id;
     }
 
+    public Integer getSex() {
+        return sex;
+    }
 
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
 
     public void setId(Long id) {
         this.id = id;

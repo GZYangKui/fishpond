@@ -32,6 +32,7 @@ UserServiceImpl(private val vertx: Vertx) : UserService {
         val json = JsonObject()
 
         json.put(ID, user.id)
+        json.put(SEX, user.sex)
         json.put(NICKNAME, user.nickname)
         json.put(USERNAME, user.username)
         json.put(AVATAR, user.avatar ?: "")

@@ -4,6 +4,7 @@ import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.server.AbstractFDVerticle
 import cn.navclub.fishpond.server.internal.ITCode
+import cn.navclub.fishpond.server.internal.ITResult
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import io.vertx.core.json.JsonObject
@@ -26,11 +27,21 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
     }
 
     override suspend fun onMessage(code: ITCode, data: JsonObject): Any {
-        if (code == ITCode.CREATE_SESSION) {
-            return this.flushSession(data)
+        return when (code) {
+            ITCode.CREATE_SESSION -> this.flushSession(data)
+            ITCode.CHECK_SESSION -> this.checkSession(data)
         }
+    }
 
-        return JsonObject()
+    private fun checkSession(data: JsonObject): JsonObject {
+        val sessionId = data.getString(SESSION_ID)
+        val has = this.sessionMap.containsKey(sessionId)
+        return if (has) {
+            val username = this.sessionMap[sessionId]
+            ITResult.success(this.userMap[username])
+        } else {
+            ITResult.fail("会话无效!")
+        }.toJson()
     }
 
     private fun flushSession(data: JsonObject): JsonObject {
