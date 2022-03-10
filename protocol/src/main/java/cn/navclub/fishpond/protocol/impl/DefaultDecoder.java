@@ -16,16 +16,14 @@ import io.vertx.core.buffer.Buffer;
  *          <th>6-7</th>
  *          <th>8-39</th>
  *          <th>40-71</th>
- *          <th>72-103</th>
- *          <th>104-105</th>
- *          <th>106......</th>
+ *          <th>72-73</th>
+ *          <th>74......</th>
  *     </tr>
  *     <tr>
  *         <td>内容</td>
  *         <td>TNB</td>
  *         <td>消息类型</td>
  *         <td>业务代码</td>
- *         <td>用户标识(发送)</td>
  *         <td>用户标识(接收)</td>
  *         <th>消息ID</th>
  *         <td>消息长度</td>
@@ -38,7 +36,7 @@ public class DefaultDecoder extends Decoder<TProMessage> {
     /**
      * 消息头长度
      */
-    public static final int MES_HEADER_LEN = 105;
+    public static final int MES_HEADER_LEN = 73;
     /**
      * 消息标志位(NBT)
      */

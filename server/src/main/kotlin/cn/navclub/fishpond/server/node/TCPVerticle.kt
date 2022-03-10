@@ -43,7 +43,6 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         val msg = TProMessage()
         msg.uuid = uuid
         msg.type = MessageT.TEXT
-        msg.userId = String(SysProperty.SYS_ID)
         msg.serviceCode = ServiceCode.SYSTEM_NOTIFY
         msg.targetId = String(SysProperty.SYS_ID)
         msg.data = Buffer.buffer(SysProperty.WELCOME)
