@@ -18,10 +18,10 @@ public class BitUtil {
      */
     public static int byte2Int(byte[] src) {
         int value;
-        value = (src[0] & 0xFF)
-                | ((src[1] & 0xFF) << 8)
-                | ((src[2] & 0xFF) << 16)
-                | ((src[3] & 0xFF) << 24);
+        value = (src[3] & 0xFF)
+                | ((src[2] & 0xFF) << 8)
+                | ((src[1] & 0xFF) << 16)
+                | ((src[0] & 0xFF) << 24);
         return value;
     }
 }

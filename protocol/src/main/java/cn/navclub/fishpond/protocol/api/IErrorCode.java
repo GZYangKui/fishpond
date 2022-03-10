@@ -1,4 +1,4 @@
-package cn.navclub.fishpond.server.api;
+package cn.navclub.fishpond.protocol.api;
 
 public interface IErrorCode {
     /**

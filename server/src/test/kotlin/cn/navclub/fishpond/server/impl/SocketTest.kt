@@ -9,6 +9,7 @@ import cn.navclub.fishpond.protocol.enums.ServiceCode
 import cn.navclub.fishpond.protocol.impl.DefaultDecoder
 import cn.navclub.fishpond.protocol.model.TProMessage
 import cn.navclub.fishpond.server.BaseUnitTest
+import cn.navclub.fishpond.protocol.api.APIECode
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxTestContext
@@ -48,8 +49,8 @@ class SocketTest : BaseUnitTest() {
                 .handler {
                     if (it.serviceCode == ServiceCode.OPERATE_FEEDBACK) {
                         val json = it.data.toJsonObject()
-                        val success = json.getBoolean(Constant.SUCCESS)
-                        if (success) {
+                        val code = json.getInteger(Constant.CODE)
+                        if (code == APIECode.OK.code) {
                             ctx.completeNow()
                         } else {
                             ctx.failNow(RuntimeException(json.getString(MESSAGE)))
@@ -61,7 +62,7 @@ class SocketTest : BaseUnitTest() {
             val json = JsonObject()
             json.put(Constant.SESSION_ID, "8F3ED93051A541C0AC23335DE7312E82")
             val tPro = TProMessage()
-            tPro.targetId = String(SysProperty.SYS_ID)
+            tPro.userId = SysProperty.SYS_ID
             tPro.serviceCode = ServiceCode.TCP_REGISTER
             tPro.uuid = StrUtil.uuid()
             tPro.data = json.toBuffer()

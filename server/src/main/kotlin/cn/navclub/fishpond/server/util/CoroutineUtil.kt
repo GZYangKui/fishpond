@@ -1,7 +1,7 @@
 package cn.navclub.fishpond.server.util
 
-import cn.navclub.fishpond.server.api.APIECode
-import cn.navclub.fishpond.server.api.CommonResult
+import cn.navclub.fishpond.protocol.api.APIECode
+import cn.navclub.fishpond.protocol.api.CommonResult
 import io.vertx.ext.web.RoutingContext
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope

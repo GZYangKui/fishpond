@@ -38,4 +38,11 @@ public class FXMLWinController<T extends Parent> extends AbstractController<T> {
         this.getStage().toFront();
         return this;
     }
+
+    public void toFixWindow(FXMLWinController controller) {
+        //打开新窗口
+        controller.showAndFront();
+        //关闭当前窗口
+        this.getStage().close();
+    }
 }

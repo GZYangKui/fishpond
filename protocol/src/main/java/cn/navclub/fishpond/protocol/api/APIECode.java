@@ -1,4 +1,4 @@
-package cn.navclub.fishpond.server.api;
+package cn.navclub.fishpond.protocol.api;
 
 public enum APIECode implements IErrorCode {
     OK(200, "处理成功"),

@@ -14,17 +14,17 @@ import io.vertx.core.buffer.Buffer;
  *          <th>1-3</th>
  *          <th>4-5</th>
  *          <th>6-7</th>
- *          <th>8-39</th>
- *          <th>40-71</th>
- *          <th>72-73</th>
- *          <th>74......</th>
+ *          <th>8-11</th>
+ *          <th>12-43</th>
+ *          <th>44-45</th>
+ *          <th>46......</th>
  *     </tr>
  *     <tr>
  *         <td>内容</td>
  *         <td>TNB</td>
  *         <td>消息类型</td>
  *         <td>业务代码</td>
- *         <td>用户标识(接收)</td>
+ *         <td>用户账号(接收)</td>
  *         <th>消息ID</th>
  *         <td>消息长度</td>
  *         <td>消息内容</td>
@@ -36,7 +36,7 @@ public class DefaultDecoder extends Decoder<TProMessage> {
     /**
      * 消息头长度
      */
-    public static final int MES_HEADER_LEN = 73;
+    public static final int MES_HEADER_LEN = 45;
     /**
      * 消息标志位(NBT)
      */
@@ -126,8 +126,8 @@ public class DefaultDecoder extends Decoder<TProMessage> {
     private int getDataSize(byte[] bytes, int offset) {
         var arr = new byte[4];
         var pos = offset + MES_HEADER_LEN - 2;
-        arr[1] = bytes[pos];
-        arr[0] = bytes[pos + 1];
+        arr[2] = bytes[pos];
+        arr[3] = bytes[pos + 1];
         return BitUtil.byte2Int(arr);
     }
 

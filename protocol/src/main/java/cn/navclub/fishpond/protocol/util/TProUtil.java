@@ -8,13 +8,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.NetSocket;
 
 public class TProUtil {
-    public static Future<Void> feedback(NetSocket socket, TProMessage msg, JsonObject content) {
+    public static Future<Void> feedback(NetSocket socket, TProMessage tPro, JsonObject content) {
         var feedback = new TProMessage();
 
         feedback.setType(MessageT.JSON);
-        feedback.setUuid(msg.getUuid());
+        feedback.setUuid(tPro.getUuid());
         feedback.setData(content.toBuffer());
-        feedback.setTargetId(msg.getTargetId());
+        feedback.setUserId(tPro.getUserId());
         feedback.setServiceCode(ServiceCode.OPERATE_FEEDBACK);
 
         return socket.write(feedback.toMessage());

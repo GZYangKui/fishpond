@@ -1,7 +1,7 @@
 package cn.navclub.fishpond.server;
 
-import cn.navclub.fishpond.server.api.APIECode;
-import cn.navclub.fishpond.server.api.CommonResult;
+import cn.navclub.fishpond.protocol.api.APIECode;
+import cn.navclub.fishpond.protocol.api.CommonResult;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;

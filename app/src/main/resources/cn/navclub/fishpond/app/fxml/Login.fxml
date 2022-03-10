@@ -17,7 +17,7 @@
     <HBox alignment="CENTER">
         <Label text="Fishpond" styleClass="title"/>
     </HBox>
-    <TextField promptText="请输入用户名" GridPane.rowIndex="2"/>
-    <PasswordField promptText="请输入密码" GridPane.rowIndex="3"/>
-    <Button GridPane.rowIndex="4" text="登录"/>
+    <TextField promptText="请输入用户名" GridPane.rowIndex="2" fx:id="username"/>
+    <PasswordField promptText="请输入密码" GridPane.rowIndex="3" fx:id="password"/>
+    <Button GridPane.rowIndex="4" text="登录" onAction="#login"/>
 </GridPane>

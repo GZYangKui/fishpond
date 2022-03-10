@@ -17,8 +17,8 @@ import io.vertx.core.json.JsonObject
  */
 class SessionVerticle : AbstractFDVerticle<JsonObject>() {
 
-    private val userMap: MutableMap<String, FPSession> = HashMap()
-    private val sessionMap: BiMap<String, String> = HashBiMap.create()
+    private val userMap: MutableMap<Int, FPSession> = HashMap()
+    private val sessionMap: BiMap<String, Int> = HashBiMap.create()
 
     override suspend fun start() {
         this.consumerEB()
@@ -46,7 +46,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
 
     private fun flushSession(data: JsonObject): JsonObject {
         val uuid = StrUtil.uuid()
-        val username = data.getString(USERNAME)
+        val username = data.getInteger(USERNAME)
         //移出先前记录
         userMap.remove(username)
         sessionMap.inverse().remove(username)
@@ -84,7 +84,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
      *
      */
     private fun checkSSExpire(timestamp: Long) {
-        val list: MutableList<String> = arrayListOf()
+        val list: MutableList<Int> = arrayListOf()
         for (entry in this.userMap) {
             val session = entry.value
             if (session.expire < System.currentTimeMillis()) {

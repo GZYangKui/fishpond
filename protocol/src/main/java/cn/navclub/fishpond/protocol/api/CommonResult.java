@@ -1,8 +1,4 @@
-package cn.navclub.fishpond.server.api;
-
-import io.vertx.core.json.JsonObject;
-
-import static cn.navclub.fishpond.server.api.APIECode.COMMON_FAIL;
+package cn.navclub.fishpond.protocol.api;
 
 public class CommonResult<T> {
     private Integer code;
@@ -33,7 +29,7 @@ public class CommonResult<T> {
     }
 
     public static <T> CommonResult<T> fail(String message) {
-        return new CommonResult<>(COMMON_FAIL.getCode(), message);
+        return new CommonResult<>(APIECode.COMMON_FAIL.getCode(), message);
     }
 
     public Integer getCode() {

@@ -19,9 +19,9 @@ class UserRouter(vertx: Vertx) : HRouter(vertx) {
         //用户登录
         router.post("/login").handler {
             val json = it.bodyAsJson
-            val username = json.getString(USERNAME)
+            val username = json.getInteger(USERNAME)
             val password = json.getString(PASSWORD)
-            if (StrUtil.isEmpty(username) || StrUtil.isEmpty(password)) {
+            if (username == null || StrUtil.isEmpty(password)) {
                 paramValidFail("用户名/密码不能为空!", it)
                 return@handler
             }

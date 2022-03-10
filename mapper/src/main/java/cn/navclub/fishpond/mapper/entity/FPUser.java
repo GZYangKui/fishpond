@@ -14,7 +14,7 @@ public class FPUser {
     private String avatar;
     private String sign;
     private String nickname;
-    private String username;
+    private Integer username;
     private String password;
     @Column(name = "login_time")
     private LocalDateTime loginTime;
@@ -53,11 +53,15 @@ public class FPUser {
         this.sign = sign;
     }
 
-    public String getUsername() {
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public Integer getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(Integer username) {
         this.username = username;
     }
 
@@ -87,9 +91,5 @@ public class FPUser {
 
     public String getNickname() {
         return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
     }
 }

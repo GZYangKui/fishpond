@@ -4,7 +4,7 @@ public class SysProperty {
     /**
      * System id
      */
-    public static byte[] SYS_ID = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public static int SYS_ID = 0;
     /**
      * 系统欢迎语
      */

@@ -3,7 +3,7 @@ package cn.navclub.fishpond.server.service.impl
 import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.mapper.entity.FPUser
 import cn.navclub.fishpond.mapper.entity.FPUserRowMapper
-import cn.navclub.fishpond.server.api.CommonResult
+import cn.navclub.fishpond.protocol.api.CommonResult
 import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.node.SessionVerticle
@@ -15,7 +15,7 @@ import io.vertx.kotlin.coroutines.await
 
 class
 UserServiceImpl(private val vertx: Vertx) : UserService {
-    override suspend fun login(username: String, password: String): CommonResult<JsonObject> {
+    override suspend fun login(username: Int, password: String): CommonResult<JsonObject> {
         val sql = "SELECT * FROM fp_user WHERE #{username}"
         val optional = DBUtil.findOne(FPUserRowMapper.INSTANCE, sql, mapOf(Pair("username", username))).await()
         if (optional.isEmpty) {

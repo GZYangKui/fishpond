@@ -7,7 +7,9 @@ import cn.navclub.fishpond.protocol.impl.DefaultDecoder
 import cn.navclub.fishpond.protocol.model.TProMessage
 import cn.navclub.fishpond.server.AbstractFDVerticle
 import cn.navclub.fishpond.core.config.SysProperty
+import cn.navclub.fishpond.core.config.SysProperty.SYS_ID
 import cn.navclub.fishpond.protocol.util.TProUtil
+import cn.navclub.fishpond.protocol.api.APIECode
 import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
@@ -58,8 +60,8 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
             .request<JsonObject>(SessionVerticle::class.java.name, model.toJson())
             .await()
             .body()
-        val success = result.getBoolean(SUCCESS, false)
-        if (success) {
+        val code = result.getInteger(CODE)
+        if (code == APIECode.OK.code) {
             val sessionId = json.getString(SESSION_ID)
             if (!idSocketMap.containsKey(sessionId)) {
                 idSocketMap.inverse()[socket] = json.getString(SESSION_ID)
@@ -77,9 +79,9 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         val msg = TProMessage()
 
         msg.uuid = uuid
+        msg.userId = SYS_ID
         msg.type = MessageT.TEXT
         msg.serviceCode = ServiceCode.SYSTEM_NOTIFY
-        msg.targetId = String(SysProperty.SYS_ID)
         msg.data = Buffer.buffer(SysProperty.WELCOME)
 
 
