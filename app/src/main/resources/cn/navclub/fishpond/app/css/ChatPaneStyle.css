@@ -1,3 +1,37 @@
+.scroll-pane {
+    -fx-background-insets: 0;
+}
+
+.fp-avatar {
+    -fx-background-color: gray;
+    -fx-border-width: 1px;
+    -fx-border-color: red;
+}
+
+.fp-user-box {
+    -fx-alignment: CENTER-LEFT;
+    -fx-spacing: 0.3em;
+}
+
+.fp-tpro-box {
+    -fx-spacing: .3em;
+}
+
+.fp-pro-text-flow {
+    -fx-font-size: 1.5em;
+    -fx-background-color: #34A1E0;
+    -fx-font-weight: bolder;
+    -fx-border-radius: .5em;
+    -fx-background-radius: .5em;
+    -fx-padding: .5em;
+    -fx-line-spacing: .5em;
+}
+
+.view-port {
+    -fx-background-color: #fff;
+    -fx-padding: .5em;
+}
+
 .bottom-box {
     -fx-background-color: #fff;
 }

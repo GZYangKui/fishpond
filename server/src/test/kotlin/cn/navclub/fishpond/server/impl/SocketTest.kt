@@ -1,6 +1,7 @@
 package cn.navclub.fishpond.server.impl
 
 import cn.navclub.fishpond.core.config.Constant
+import cn.navclub.fishpond.core.config.Constant.CONTENT
 import cn.navclub.fishpond.core.config.Constant.MESSAGE
 import cn.navclub.fishpond.core.config.SysProperty
 import cn.navclub.fishpond.core.util.StrUtil
@@ -48,7 +49,7 @@ class SocketTest : BaseUnitTest() {
                 .create()
                 .handler {
                     if (it.serviceCode == ServiceCode.OPERATE_FEEDBACK) {
-                        val json = it.data.toJsonObject()
+                        val json = it.data.toJsonObject().getJsonObject(CONTENT)
                         val code = json.getInteger(Constant.CODE)
                         if (code == APIECode.OK.code) {
                             ctx.completeNow()

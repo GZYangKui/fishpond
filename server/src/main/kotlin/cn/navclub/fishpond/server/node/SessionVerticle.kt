@@ -26,15 +26,14 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         this.vertx.setPeriodic(3 * 1000, this::checkSSExpire)
     }
 
-    override suspend fun onMessage(code: ITCode, data: JsonObject): Any {
+    override suspend fun onMessage(code: ITCode, data: Any): Any {
         return when (code) {
-            ITCode.CREATE_SESSION -> this.flushSession(data)
-            ITCode.CHECK_SESSION -> this.checkSession(data)
+            ITCode.CREATE_SESSION -> this.flushSession(data as JsonObject)
+            ITCode.CHECK_SESSION -> this.checkSession(data as String)
         }
     }
 
-    private fun checkSession(data: JsonObject): JsonObject {
-        val sessionId = data.getString(SESSION_ID)
+    private fun checkSession(sessionId: String): JsonObject {
         val has = this.sessionMap.containsKey(sessionId)
         return if (has) {
             val username = this.sessionMap[sessionId]

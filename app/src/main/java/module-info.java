@@ -10,6 +10,7 @@ module cn.navclub.fishpond.app {
     requires com.fasterxml.jackson.databind;
 
     exports cn.navclub.fishpond.app;
+    opens cn.navclub.fishpond.app.controller.component;
     opens cn.navclub.fishpond.app.controller to javafx.fxml;
     exports cn.navclub.fishpond.app.controller to javafx.fxml;
 }

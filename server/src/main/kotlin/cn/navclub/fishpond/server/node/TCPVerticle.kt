@@ -8,19 +8,19 @@ import cn.navclub.fishpond.protocol.model.TProMessage
 import cn.navclub.fishpond.server.AbstractFDVerticle
 import cn.navclub.fishpond.core.config.SysProperty
 import cn.navclub.fishpond.core.config.SysProperty.SYS_ID
+import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.protocol.util.TProUtil
-import cn.navclub.fishpond.protocol.api.APIECode
+import cn.navclub.fishpond.protocol.enums.ContentType
 import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
-import io.vertx.core.buffer.Buffer
+import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.core.net.NetSocket
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class TCPVerticle : AbstractFDVerticle<JsonObject>() {
 
@@ -55,7 +55,8 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         //群发消息
         if (tPro.serviceCode == ServiceCode.GROUP_MESSAGE) {
             this.idSocketMap.inverse().keys.forEach {
-                if (it == socket) {
+                //未注册用户不推送消息
+                if (this.idSocketMap.inverse()[it] == null) {
                     return
                 }
                 socket.write(tPro.toMessage())
@@ -88,37 +89,45 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
 
     private suspend fun tcpRegister(tPro: TProMessage, socket: NetSocket) {
         val json = tPro.data.toJsonObject()
-        val model = ITModel.create(ITCode.CHECK_SESSION, json)
+        val model = ITModel.create(ITCode.CHECK_SESSION, json.getString(SESSION_ID, ""))
 
-        val result = vertx
-            .eventBus()
-            .request<JsonObject>(SessionVerticle::class.java.name, model.toJson())
-            .await()
-            .body()
-        val code = result.getInteger(CODE)
-        if (code == APIECode.OK.code) {
+        val result = this.requestEB(
+            SessionVerticle::class.java.name,
+            model,
+            ITResult<SessionVerticle.FPSession>().javaClass
+        )
+        if (result.success()) {
             val sessionId = json.getString(SESSION_ID)
             if (!idSocketMap.containsKey(sessionId)) {
                 idSocketMap.inverse()[socket] = json.getString(SESSION_ID)
             }
             TProUtil.feedback(socket, tPro, ITResult.success<Any>("注册成功").toJson())
         } else {
+            //断开连接
+            this.idSocketMap.inverse().remove(socket)
             //反馈添加结果
-            TProUtil.feedback(socket, tPro, result)
+            TProUtil.feedback(socket, tPro, result.toJson())
         }
     }
 
     private fun hello(): TProMessage {
-        val uuid = UUID.randomUUID().toString().replace("-", "")
-
         val msg = TProMessage()
 
-        msg.uuid = uuid
         msg.to = SYS_ID
         msg.from = SYS_ID
-        msg.type = MessageT.TEXT
-        msg.serviceCode = ServiceCode.SYSTEM_NOTIFY
-        msg.data = Buffer.buffer(SysProperty.WELCOME)
+        msg.type = MessageT.JSON
+        msg.uuid = StrUtil.uuid()
+        msg.serviceCode = ServiceCode.GROUP_MESSAGE
+
+        val item = JsonObject()
+
+        item.put(TYPE, ContentType.PLAIN_TEXT.value)
+        item.put(MESSAGE, SysProperty.WELCOME)
+
+        msg.data = JsonObject()
+            .put(TIMESTAMP, System.currentTimeMillis())
+            .put(ITEMS, JsonArray().add(item))
+            .toBuffer()
 
 
         return msg

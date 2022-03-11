@@ -1,6 +1,8 @@
 package cn.navclub.fishpond.protocol.util;
 
+import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
+import cn.navclub.fishpond.core.util.StrUtil;
 import cn.navclub.fishpond.protocol.enums.MessageT;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
@@ -14,10 +16,17 @@ public class TProUtil {
 
         feedback.setTo(tPro.getFrom());
         feedback.setType(MessageT.JSON);
-        feedback.setUuid(tPro.getUuid());
-        feedback.setData(content.toBuffer());
+        feedback.setUuid(StrUtil.uuid());
         feedback.setFrom(SysProperty.SYS_ID);
         feedback.setServiceCode(ServiceCode.OPERATE_FEEDBACK);
+
+        var data = new JsonObject();
+
+        data.put(Constant.CONTENT, content);
+        data.put(Constant.UUID, tPro.getUuid());
+        data.put(Constant.SERVICE_CODE, tPro.getServiceCode().getValue());
+
+        feedback.setData(data.toBuffer());
 
         return socket.write(feedback.toMessage());
     }

@@ -12,13 +12,17 @@
             xmlns:fx="http://javafx.com/fxml"
             prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/ChatPaneStyle.css">
     <center>
-        <ScrollPane fitToHeight="true" fitToWidth="true"/>
+        <ScrollPane fitToHeight="true" fitToWidth="true" fx:id="tProWin">
+            <content>
+                <VBox fx:id="viewPort" styleClass="view-port"/>
+            </content>
+        </ScrollPane>
     </center>
     <bottom>
         <VBox styleClass="bottom-box">
-            <TextArea VBox.vgrow="ALWAYS"/>
+            <TextArea VBox.vgrow="ALWAYS" fx:id="textArea"/>
             <HBox alignment="CENTER_RIGHT">
-                <Button text="发送"/>
+                <Button text="发送" onAction="#sendMessage"/>
             </HBox>
         </VBox>
     </bottom>
