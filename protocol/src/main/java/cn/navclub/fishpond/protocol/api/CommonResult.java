@@ -1,5 +1,9 @@
 package cn.navclub.fishpond.protocol.api;
 
+import lombok.Data;
+
+
+@Data
 public class CommonResult<T> {
     private Integer code;
     private String message;
@@ -30,29 +34,5 @@ public class CommonResult<T> {
 
     public static <T> CommonResult<T> fail(String message) {
         return new CommonResult<>(APIECode.COMMON_FAIL.getCode(), message);
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
     }
 }

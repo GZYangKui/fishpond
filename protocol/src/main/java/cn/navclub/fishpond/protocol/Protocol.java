@@ -2,6 +2,8 @@ package cn.navclub.fishpond.protocol;
 
 
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 
 public abstract class Protocol {
@@ -16,4 +18,23 @@ public abstract class Protocol {
      *
      */
     public abstract String getDataStr();
+
+    /**
+     *
+     *  将Data转换为json对象
+     *
+     */
+    public JsonObject toJson(){
+        return new JsonObject();
+    }
+
+    /**
+     *
+     *
+     * 将Data转换为json数组
+     *
+     */
+    public JsonArray toJsonArray(){
+        return new JsonArray();
+    }
 }

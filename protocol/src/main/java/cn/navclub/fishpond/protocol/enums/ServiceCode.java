@@ -1,8 +1,11 @@
 package cn.navclub.fishpond.protocol.enums;
 
+import lombok.Getter;
+
 /**
  * 枚举系统业务代码
  */
+@Getter
 public enum ServiceCode {
     UNKNOWN(-1, "未知业务代码"),
     HEART_BEAT(0, "心跳"),
@@ -29,18 +32,6 @@ public enum ServiceCode {
         this.value = value;
         this.text = text;
         this.ssCheck = false;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public boolean isSsCheck() {
-        return ssCheck;
     }
 
     public static ServiceCode serviceCode(int val) {

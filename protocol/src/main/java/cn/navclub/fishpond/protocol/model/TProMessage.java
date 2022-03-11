@@ -6,10 +6,15 @@ import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.impl.DefaultDecoder;
 import cn.navclub.fishpond.protocol.util.BitUtil;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.nio.charset.StandardCharsets;
 
-
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class TProMessage extends Protocol {
     /**
      * 消息类型
@@ -95,14 +100,6 @@ public class TProMessage extends Protocol {
         return sb.toString();
     }
 
-    public void setType(MessageT type) {
-        this.type = type;
-    }
-
-    public MessageT getType() {
-        return type;
-    }
-
     @Override
     public String getDataStr() {
         if (this.data == null) {
@@ -111,44 +108,14 @@ public class TProMessage extends Protocol {
         return this.data.toString(StandardCharsets.UTF_8);
     }
 
-    public Buffer getData() {
-        return data;
-    }
-
-    public void setData(Buffer data) {
-        this.data = data;
-    }
-
-    public Integer getFrom() {
-        return from;
-    }
-
-    public void setFrom(Integer from) {
-        this.from = from;
-    }
-
-    public Integer getTo() {
-        return to;
-    }
-
-    public void setTo(Integer to) {
-        this.to = to;
-    }
-
-    public void setServiceCode(ServiceCode serviceCode) {
-        this.serviceCode = serviceCode;
-    }
-
-    public ServiceCode getServiceCode() {
-        return serviceCode;
+    @Override
+    public JsonObject toJson() {
+        return this.data.toJsonObject();
     }
 
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    @Override
+    public JsonArray toJsonArray() {
+        return this.data.toJsonArray();
     }
 }

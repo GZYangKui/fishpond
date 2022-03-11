@@ -17,9 +17,13 @@ public enum MessageT {
      */
     JSON(2 >> 1, "JSON数据"),
     /**
+     * json数组
+     */
+    JSON_ARR(4>>>1,"JSON数组"),
+    /**
      * 二进制数据
      */
-    BINARY(4 >> 1, "二进制数据");
+    BINARY(6 >> 1, "二进制数据");
 
     private final Integer val;
     private final String text;

@@ -6,6 +6,7 @@ import io.vertx.sqlclient.templates.annotations.RowMapped;
 
 import java.time.LocalDateTime;
 
+
 @DataObject
 @RowMapped
 public class FPUser {

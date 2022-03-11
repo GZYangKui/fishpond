@@ -5,6 +5,7 @@ public class Constant {
     public static String SEX = "sex";
     public static String CODE = "code";
     public static String DATA = "data";
+    public static String TYPE = "type";
     public static String EXPIRE = "expire";
     public static String AVATAR = "avatar";
     public static String MESSAGE = "message";

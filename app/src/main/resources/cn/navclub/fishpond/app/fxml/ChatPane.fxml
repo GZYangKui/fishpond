@@ -6,11 +6,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/ChatPaneStyle.css">
     <center>
-        <ScrollPane/>
+        <ScrollPane fitToHeight="true" fitToWidth="true"/>
     </center>
     <bottom>
         <VBox styleClass="bottom-box">

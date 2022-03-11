@@ -1,6 +1,7 @@
 module cn.navclub.fishpond.app {
     requires io.vertx.core;
     requires javafx.fxml;
+    requires static lombok;
     requires javafx.controls;
     requires org.controlsfx.controls;
     requires io.vertx.web.client;
