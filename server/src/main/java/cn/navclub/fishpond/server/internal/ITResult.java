@@ -20,10 +20,12 @@ public class ITResult<T> {
         this.message = Optional.ofNullable(message).orElse(sysECode.message());
     }
 
+    public <K> K mapTo(Class<K> clazz) {
+        return ((JsonObject) (data)).mapTo(clazz);
+    }
+
     /**
-     *
      * 判断当前响应结果是否成功
-     *
      */
     public boolean success() {
         return code == APIECode.OK.getCode();
