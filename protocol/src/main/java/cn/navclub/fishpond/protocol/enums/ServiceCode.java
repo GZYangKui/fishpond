@@ -7,25 +7,26 @@ public enum ServiceCode {
     UNKNOWN(-2 >> 1, "未知业务代码"),
     HEART_BEAT(0, "心跳"),
     SEND(2 >>> 1, "发送消息"),
-    TCP_REGISTER(6 >>> 1, "连接注册"),
+    TCP_REGISTER(6 >>> 1, "连接注册", true),
     SYSTEM_NOTIFY(4 >>> 1, "系统通知"),
     OPERATE_FEEDBACK(10, "操作反馈");
 
     private final int value;
     private final String text;
-    //是否系统行为
-    private final boolean system;
+    //是否允许跳过会话检查
+    private final boolean ssCheck;
 
-    ServiceCode(int value, String text) {
-        this.system = false;
-        this.value = value;
+
+    ServiceCode(int value, String text, boolean ssCheck) {
         this.text = text;
+        this.value = value;
+        this.ssCheck = ssCheck;
     }
 
-    ServiceCode(int value, String text, boolean system) {
+    ServiceCode(int value, String text) {
         this.value = value;
         this.text = text;
-        this.system = system;
+        this.ssCheck = false;
     }
 
     public int getValue() {
@@ -36,8 +37,8 @@ public enum ServiceCode {
         return text;
     }
 
-    public boolean isSystem() {
-        return system;
+    public boolean isSsCheck() {
+        return ssCheck;
     }
 
     public static ServiceCode serviceCode(int val) {

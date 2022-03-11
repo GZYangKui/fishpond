@@ -20,6 +20,15 @@ public class ITResult<T> {
         this.message = Optional.ofNullable(message).orElse(sysECode.message());
     }
 
+    /**
+     *
+     * 判断当前响应结果是否成功
+     *
+     */
+    public boolean success() {
+        return code == APIECode.OK.getCode();
+    }
+
     public T getData() {
         return data;
     }
@@ -50,11 +59,6 @@ public class ITResult<T> {
         return JsonObject.mapFrom(this);
     }
 
-    public final Buffer toBuffer() {
-        var json = this.toJson();
-        json.remove("sysECode");
-        return json.toBuffer();
-    }
 
     public static <T> ITResult<T> success(String message) {
         return new ITResult<>(null, APIECode.OK, message);

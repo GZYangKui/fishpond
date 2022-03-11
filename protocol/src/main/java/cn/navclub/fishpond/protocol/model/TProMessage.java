@@ -24,9 +24,13 @@ public class TProMessage extends Protocol {
      */
     private Buffer data;
     /**
-     * 目标用户id
+     * 发送消息用户账号
      */
-    private Integer userId;
+    private Integer from;
+    /**
+     * 接收消息用户账号
+     */
+    private Integer to;
     /**
      * 业务代码
      */
@@ -39,8 +43,10 @@ public class TProMessage extends Protocol {
         buffer.appendBytes(BitUtil.int2Byte4(type.getVal()), 2, 2);
         //业务代码
         buffer.appendBytes(BitUtil.int2Byte4(serviceCode.getValue()), 2, 2);
-        //目标用户
-        buffer.appendBytes(BitUtil.int2Byte4(getUserId()));
+        //发送消息用户账号
+        buffer.appendBytes(BitUtil.int2Byte4(this.getFrom()));
+        //接收消息用户账号
+        buffer.appendBytes(BitUtil.int2Byte4(this.getTo()));
         //消息记录id
         buffer.appendBytes(uuid.getBytes(), 0, 32);
         //数据长度
@@ -58,12 +64,14 @@ public class TProMessage extends Protocol {
         //业务代码
         bytes = new byte[]{0, 0, arr[offset + 5], arr[offset + 6]};
         msg.serviceCode = ServiceCode.serviceCode(BitUtil.byte2Int(bytes));
-        //目标用户id
+        //发送消息用户账号
         System.arraycopy(arr, offset + 7, bytes, 0, 4);
-        msg.userId = BitUtil.byte2Int(bytes);
+        msg.from = BitUtil.byte2Int(bytes);
+        System.arraycopy(arr, offset + 11, bytes, 0, 4);
+        msg.to = BitUtil.byte2Int(bytes);
         bytes = new byte[32];
         //消息记录id
-        System.arraycopy(arr, offset + 11, bytes, 0, 32);
+        System.arraycopy(arr, offset + 15, bytes, 0, 32);
         msg.uuid = new String(bytes);
         //数据长度
         bytes = new byte[dataLen];
@@ -80,7 +88,8 @@ public class TProMessage extends Protocol {
         sb.append("消息类型:").append(this.getType().getText()).append("\n");
         sb.append("消息标识:").append(this.getUuid()).append("\n");
         sb.append("业务代码:").append(this.getServiceCode().getText()).append("\n");
-        sb.append("目标用户:").append(this.getUserId()).append("\n");
+        sb.append("FROM:").append(this.getFrom()).append("\n");
+        sb.append("TO:").append(this.getTo()).append("\n");
         sb.append("目标数据:").append(this.data.toString(StandardCharsets.UTF_8)).append("\n");
         sb.append("==========================================================\n");
         return sb.toString();
@@ -110,12 +119,20 @@ public class TProMessage extends Protocol {
         this.data = data;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getFrom() {
+        return from;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setFrom(Integer from) {
+        this.from = from;
+    }
+
+    public Integer getTo() {
+        return to;
+    }
+
+    public void setTo(Integer to) {
+        this.to = to;
     }
 
     public void setServiceCode(ServiceCode serviceCode) {

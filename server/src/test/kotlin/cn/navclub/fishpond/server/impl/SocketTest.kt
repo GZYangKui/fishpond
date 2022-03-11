@@ -60,9 +60,10 @@ class SocketTest : BaseUnitTest() {
                 .exHandler(ctx::failNow)
             client.handler(decoder)
             val json = JsonObject()
-            json.put(Constant.SESSION_ID, "8F3ED93051A541C0AC23335DE7312E82")
+            json.put(Constant.SESSION_ID, "50E0D9BA8B8544BF81977DA847245EC5")
             val tPro = TProMessage()
-            tPro.userId = SysProperty.SYS_ID
+            tPro.from = SysProperty.SYS_ID
+            tPro.to = SysProperty.SYS_ID
             tPro.serviceCode = ServiceCode.TCP_REGISTER
             tPro.uuid = StrUtil.uuid()
             tPro.data = json.toBuffer()

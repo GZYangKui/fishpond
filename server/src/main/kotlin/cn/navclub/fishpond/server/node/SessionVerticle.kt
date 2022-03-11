@@ -56,7 +56,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         val fsSession = FPSession(
             this.calSSExpire(0),
             data.getLong(ID),
-            data.getString(USERNAME),
+            data.getInteger(USERNAME),
             data.getString(NICKNAME),
             data.getString(AVATAR)
         )
@@ -103,7 +103,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
     data class FPSession(
         val expire: Long,
         val id: Long,
-        val username: String,
+        val username: Int,
         val nickname: String,
         val avatar: String
     )

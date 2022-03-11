@@ -45,10 +45,37 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
     }
 
     private suspend fun handleTPro(tPro: TProMessage, socket: NetSocket) {
+        if (!tPro.serviceCode.isSsCheck && !this.checkSession(socket, tPro)) {
+            return
+        }
         //TCP连接注册
         if (tPro.serviceCode == ServiceCode.TCP_REGISTER) {
             this.tcpRegister(tPro, socket)
         }
+
+    }
+
+    private suspend fun checkSession(socket: NetSocket, tPro: TProMessage): Boolean {
+        var success = false
+        val sessionId = this.idSocketMap.inverse()[socket]
+        if (sessionId != null) {
+            val model = ITModel(sessionId, ITCode.CHECK_SESSION)
+            //检查TCP是否注册
+            val itResult = requestEB(
+                SessionVerticle::class.java.name,
+                model,
+                ITResult<SessionVerticle.FPSession>().javaClass
+            )
+            success = itResult.success()
+            if (success) {
+                tPro.from = itResult.data.username
+            }
+        }
+        //会话检查失败=>关闭连接
+        if (!success) {
+            this.idSocketMap.inverse().remove(socket)
+        }
+        return success
     }
 
     private suspend fun tcpRegister(tPro: TProMessage, socket: NetSocket) {
@@ -79,7 +106,8 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         val msg = TProMessage()
 
         msg.uuid = uuid
-        msg.userId = SYS_ID
+        msg.to = SYS_ID
+        msg.from = SYS_ID
         msg.type = MessageT.TEXT
         msg.serviceCode = ServiceCode.SYSTEM_NOTIFY
         msg.data = Buffer.buffer(SysProperty.WELCOME)
