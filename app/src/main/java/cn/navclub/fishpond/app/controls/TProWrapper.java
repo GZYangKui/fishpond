@@ -1,6 +1,7 @@
 package cn.navclub.fishpond.app.controls;
 
 import cn.navclub.fishpond.app.AssetsHelper;
+import cn.navclub.fishpond.core.config.SysProperty;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
 import javafx.geometry.Pos;
@@ -21,11 +22,11 @@ public class TProWrapper extends VBox {
 
     private final TProTextFlow textFlow;
     private final TProMessage message;
-    private  Circle avatar;
+    private Circle avatar;
 
     public TProWrapper(TProMessage message) {
-        this.avatar();
         this.message = message;
+        this.avatar();
         this.textFlow = new TProTextFlow(message.toJson());
         this.initWrapper();
         this.getStyleClass().add(MESSAGE_BOX_CLASS);
@@ -35,7 +36,11 @@ public class TProWrapper extends VBox {
         this.avatar = new Circle(20, 20, 20);
         this.avatar.setStroke(Color.SEAGREEN);
         this.avatar.getStyleClass().add(AVATAR_CLASS);
-        this.avatar.setFill(new ImagePattern(AssetsHelper.localIcon("sys_notify.png")));
+        if (this.message.getFrom() == SysProperty.SYS_ID) {
+            this.avatar.setFill(new ImagePattern(AssetsHelper.localIcon("sys_notify.png")));
+        } else {
+            this.avatar.setFill(new ImagePattern(AssetsHelper.localIcon("sys_user.png")));
+        }
         this.avatar.setEffect(new DropShadow(+25d, 0d, +2d, Color.DARKSEAGREEN));
     }
 

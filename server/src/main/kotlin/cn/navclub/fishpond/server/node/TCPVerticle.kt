@@ -14,6 +14,7 @@ import cn.navclub.fishpond.protocol.enums.ContentType
 import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
+import cn.navclub.fishpond.server.model.FPSession
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import io.vertx.core.json.JsonArray
@@ -39,6 +40,8 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
                     println("Socket data transform fail:${t.message}")
                 }
             socket.handler(decoder)
+            socket.exceptionHandler { this.idSocketMap.inverse().remove(socket) }
+            socket.closeHandler { this.idSocketMap.inverse().remove(socket) }
             socket.write(hello().toMessage())
         }
         netServer.listen(port).await()
@@ -59,7 +62,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
                 if (this.idSocketMap.inverse()[it] == null) {
                     return
                 }
-                socket.write(tPro.toMessage())
+                it.write(tPro.toMessage())
             }
         }
     }
@@ -73,7 +76,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
             val itResult = requestEB(
                 SessionVerticle::class.java.name,
                 model,
-                ITResult<SessionVerticle.FPSession>().javaClass
+                FPSession::class.java
             )
             success = itResult.success()
             if (success) {
@@ -94,7 +97,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         val result = this.requestEB(
             SessionVerticle::class.java.name,
             model,
-            ITResult<SessionVerticle.FPSession>().javaClass
+            FPSession::class.java
         )
         if (result.success()) {
             val sessionId = json.getString(SESSION_ID)

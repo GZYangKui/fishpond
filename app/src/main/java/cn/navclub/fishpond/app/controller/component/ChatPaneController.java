@@ -66,7 +66,7 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
         data.put(Constant.TIMESTAMP, System.currentTimeMillis());
         data.put(Constant.ITEMS, new JsonArray()
                 .add(new JsonObject()
-                        .put(Constant.TYPE, ContentType.PLAIN_TEXT)
+                        .put(Constant.TYPE, ContentType.PLAIN_TEXT.getValue())
                         .put(MESSAGE, this.textArea.getText()))
         );
         tPro.setData(data.toBuffer());

@@ -30,6 +30,7 @@
 .view-port {
     -fx-background-color: #fff;
     -fx-padding: .5em;
+    -fx-spacing: .7em;
 }
 
 .bottom-box {

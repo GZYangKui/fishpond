@@ -20,6 +20,12 @@ public class ITResult<T> {
         this.message = Optional.ofNullable(message).orElse(sysECode.message());
     }
 
+    public ITResult(T data, Integer code, String message) {
+        this.data = data;
+        this.code = code;
+        this.message = message;
+    }
+
     /**
      * 判断当前响应结果是否成功
      */

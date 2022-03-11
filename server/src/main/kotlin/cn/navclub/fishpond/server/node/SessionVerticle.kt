@@ -5,6 +5,7 @@ import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.server.AbstractFDVerticle
 import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITResult
+import cn.navclub.fishpond.server.model.FPSession
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import io.vertx.core.json.JsonObject
@@ -53,8 +54,8 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         sessionMap[uuid] = username
         //缓存用户信息
         val fsSession = FPSession(
-            this.calSSExpire(0),
             data.getLong(ID),
+            this.calSSExpire(0),
             data.getInteger(USERNAME),
             data.getString(NICKNAME),
             data.getString(AVATAR)
@@ -98,12 +99,4 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
             println("[$s]用户会话超时")
         }
     }
-
-    data class FPSession(
-        val expire: Long,
-        val id: Long,
-        val username: Int,
-        val nickname: String,
-        val avatar: String
-    )
 }

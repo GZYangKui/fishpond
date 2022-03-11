@@ -2,7 +2,8 @@ package cn.navclub.fishpond.server
 
 
 import cn.navclub.fishpond.core.config.Constant
-import cn.navclub.fishpond.core.config.Constant.DATA
+import cn.navclub.fishpond.core.config.Constant.*
+import cn.navclub.fishpond.protocol.api.APIECode
 import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
@@ -34,16 +35,23 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
         println("$ebName 成功注册在EventBus总线上!")
     }
 
-    protected suspend fun <T, R> requestEB(address: String, model: ITModel<T>, clazz: Class<ITResult<R>>): ITResult<R> {
+    protected suspend fun <T, R> requestEB(address: String, model: ITModel<T>, clazz: Class<R>): ITResult<R> {
         try {
             val data = model.toJson()
             val json = vertx.eventBus().request<JsonObject>(address, data).await().body()
-            return Json.decodeValue(json.toBuffer(),clazz)
+            val t = json.getValue(DATA)
+            val tt: R = if (t is JsonObject) {
+                t.mapTo(clazz)
+            } else {
+                t as R
+            }
+            return ITResult<R>(tt, json.getInteger(CODE), json.getString(MESSAGE))
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return ITResult.fail("EventBus执行错误!")
     }
+
 
     protected open suspend fun onMessage(code: ITCode, data: Any): Any {
         return JsonObject()
