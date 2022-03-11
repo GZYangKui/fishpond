@@ -12,4 +12,9 @@ public abstract class AbstractController<T extends Parent> {
     public void setParent(T parent) {
         this.parent = parent;
     }
+
+
+    protected void dispose() {
+
+    }
 }

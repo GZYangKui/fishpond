@@ -3,6 +3,7 @@ package cn.navclub.fishpond.app;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * FXML Window controller
@@ -18,6 +19,8 @@ public class FXMLWinController<T extends Parent> extends AbstractController<T> {
         this.setParent(parent);
         this.stage = new Stage();
         this.stage.setScene(new Scene(parent));
+        //注册窗口关闭事件
+        this.stage.setOnCloseRequest(this::onRequestClosed);
     }
 
     public FXMLWinController(String fxmlURL, String title) {
@@ -37,6 +40,10 @@ public class FXMLWinController<T extends Parent> extends AbstractController<T> {
         this.getStage().show();
         this.getStage().toFront();
         return this;
+    }
+
+    protected void onRequestClosed(WindowEvent event) {
+        this.dispose();
     }
 
     public void toFixWindow(FXMLWinController controller) {

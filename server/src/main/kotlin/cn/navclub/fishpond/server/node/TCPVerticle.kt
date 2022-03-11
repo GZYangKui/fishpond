@@ -52,7 +52,15 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         if (tPro.serviceCode == ServiceCode.TCP_REGISTER) {
             this.tcpRegister(tPro, socket)
         }
-
+        //群发消息
+        if (tPro.serviceCode == ServiceCode.GROUP_MESSAGE) {
+            this.idSocketMap.inverse().keys.forEach {
+                if (it == socket) {
+                    return
+                }
+                socket.write(tPro.toMessage())
+            }
+        }
     }
 
     private suspend fun checkSession(socket: NetSocket, tPro: TProMessage): Boolean {

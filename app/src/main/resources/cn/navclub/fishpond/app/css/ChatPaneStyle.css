@@ -1,0 +1,22 @@
+.bottom-box {
+    -fx-background-color: #fff;
+}
+
+.bottom-box HBox {
+    -fx-padding: .3em .8em;
+}
+
+.bottom-box HBox .button {
+    -fx-pref-width: 8em;
+    -fx-text-fill: #fff;
+    -fx-background-color: #289AFC;
+}
+
+.bottom-box .text-area {
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, white, transparent, white;
+}
+
+.bottom-box .text-area .content {
+    -fx-background-color: transparent, white, transparent, white;
+}

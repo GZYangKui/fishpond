@@ -40,7 +40,7 @@ public class LoginController extends FXMLWinController<GridPane> {
         var future = HTTPUtil.<JsonObject>doPost(API.REQ_LOGIN, null, data);
         future.onSuccess(json -> {
             HTTPUtil.setSessionId(json.getString(SESSION_ID));
-            this.toFixWindow(ChatRoomController.getController());
+            this.toFixWindow(FPController.getController());
         });
     }
 }
