@@ -65,6 +65,10 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
                 it.write(tPro.toMessage())
             }
         }
+        //响应客户端发送心跳包
+        if (tPro.serviceCode == ServiceCode.HEART_BEAT) {
+            TProUtil.feedback(socket, tPro, null)
+        }
     }
 
     private suspend fun checkSession(socket: NetSocket, tPro: TProMessage): Boolean {

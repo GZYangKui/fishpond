@@ -21,8 +21,9 @@ public class TProUtil {
         feedback.setServiceCode(ServiceCode.OPERATE_FEEDBACK);
 
         var data = new JsonObject();
-
-        data.put(Constant.CONTENT, content);
+        if (content != null) {
+            data.put(Constant.CONTENT, content);
+        }
         data.put(Constant.UUID, tPro.getUuid());
         data.put(Constant.SERVICE_CODE, tPro.getServiceCode().getValue());
 

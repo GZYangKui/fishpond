@@ -17,6 +17,8 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 @Data
@@ -25,15 +27,22 @@ public class SocketHolder {
     private String host;
     private NetSocket socket;
     private final List<SocketHook> hooks;
-
+    //心跳定时器id
+    private final AtomicLong plusTId;
+    //记录当前心跳次数
+    private final AtomicInteger plusNum;
 
     private SocketHolder(String host, int port) {
         this.host = host;
         this.port = port;
         this.hooks = new ArrayList<>();
+        this.plusTId = new AtomicLong(-1);
+        this.plusNum = new AtomicInteger(0);
     }
 
     public Future<Void> connect() {
+        this.plusNum.set(0);
+        this.plusTId.set(-1);
         var socket = Main.vertx.createNetClient();
         var future = socket.connect(port, host);
         var promise = Promise.<Void>promise();
@@ -53,6 +62,8 @@ public class SocketHolder {
         var decoder = DefaultDecoder
                 .create()
                 .handler(tPro -> {
+                    //心跳次数置零
+                    this.plusNum.set(0);
                     for (SocketHook hook : this.hooks) {
                         try {
                             hook.onMessage(tPro);
@@ -61,11 +72,14 @@ public class SocketHolder {
                         }
                     }
                 })
-                .exHandler(Throwable::printStackTrace);
+                .exHandler(this::exAfter);
         socket.handler(decoder);
+        socket.exceptionHandler(this::exAfter);
+        socket.closeHandler(this::closeAfter);
         //注册TCP
         this.tcpRegister();
     }
+
 
     private void tcpRegister() {
         var tPro = new TProMessage();
@@ -81,6 +95,42 @@ public class SocketHolder {
         tPro.setData(json.toBuffer());
 
         this.write(tPro);
+    }
+
+    /**
+     * 心跳
+     */
+    public void plus() {
+        if (this.plusTId.get() != -1) {
+            return;
+        }
+        var tPro = new TProMessage();
+        tPro.setType(MessageT.TEXT);
+        tPro.setTo(SysProperty.SYS_ID);
+        tPro.setFrom(SysProperty.SYS_ID);
+        tPro.setServiceCode(ServiceCode.HEART_BEAT);
+        //定时发送心跳包
+        this.plusTId.set(Main.vertx.setPeriodic(5 * 1000, t -> this.plus0(t, tPro)));
+    }
+
+    private void plus0(long t, TProMessage tPro) {
+        //如果五次心跳均无响应则可认为连接已断开
+        if (this.plusNum.get() > 5) {
+            this.socket.close();
+            Main.vertx.cancelTimer(this.plusTId.get());
+            return;
+        }
+        this.write(tPro);
+        //自增心跳次数
+        this.plusNum.getAndAdd(1);
+    }
+
+    private void closeAfter(Void v) {
+        System.out.println("TCP连接关闭");
+    }
+
+    private void exAfter(Throwable t) {
+        System.out.println("TCP连接发生异常:" + t.getMessage());
     }
 
     public Future<Void> write(TProMessage message) {

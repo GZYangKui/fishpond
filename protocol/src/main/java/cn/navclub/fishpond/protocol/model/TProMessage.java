@@ -1,5 +1,6 @@
 package cn.navclub.fishpond.protocol.model;
 
+import cn.navclub.fishpond.core.util.StrUtil;
 import cn.navclub.fishpond.protocol.Protocol;
 import cn.navclub.fishpond.protocol.enums.MessageT;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
@@ -12,6 +13,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -43,6 +45,10 @@ public class TProMessage extends Protocol {
 
     @Override
     public Buffer toMessage() {
+        //如果用户未设置消息ID,使用系统UUID
+        if (StrUtil.isEmpty(this.getUuid())) {
+            this.setUuid(StrUtil.uuid());
+        }
         var buffer = Buffer.buffer(DefaultDecoder.FLAGS);
         //消息类型
         buffer.appendBytes(BitUtil.int2Byte4(type.getVal()), 2, 2);
@@ -54,10 +60,14 @@ public class TProMessage extends Protocol {
         buffer.appendBytes(BitUtil.int2Byte4(this.getTo()));
         //消息记录id
         buffer.appendBytes(uuid.getBytes(), 0, 32);
+        //计算当前数据长度
+        var length = this.getData() == null ? 0 : this.getData().length();
         //数据长度
-        buffer.appendBytes(BitUtil.int2Byte4(this.data.length()), 2, 2);
-        //数据
-        buffer.appendBuffer(this.data);
+        buffer.appendBytes(BitUtil.int2Byte4(length), 2, 2);
+        //添加数据内容
+        if (length > 0) {
+            buffer.appendBuffer(this.getData());
+        }
         return buffer;
     }
 
