@@ -13,18 +13,21 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.NetSocket;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+@Data
 public class SocketHolder {
-    private final int port;
-    private final String host;
+    private int port;
+    private String host;
     private NetSocket socket;
     private final List<SocketHook> hooks;
 
-    public SocketHolder(String host, int port) {
+
+    private SocketHolder(String host, int port) {
         this.host = host;
         this.port = port;
         this.hooks = new ArrayList<>();
@@ -93,5 +96,14 @@ public class SocketHolder {
 
     public void removeHook(SocketHook hook) {
         this.hooks.remove(hook);
+    }
+
+    private static SocketHolder socketHolder;
+
+    public synchronized static SocketHolder getInstance() {
+        if (socketHolder == null) {
+            socketHolder = new SocketHolder("0.0.0.0", 0);
+        }
+        return socketHolder;
     }
 }

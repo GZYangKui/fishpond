@@ -11,6 +11,16 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/ChatPaneStyle.css">
+    <top>
+        <HBox styleClass="tpro-tool-box">
+            <HBox alignment="BASELINE_LEFT" HBox.hgrow="ALWAYS">
+                <Label text="吹水群" styleClass="title"/>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT">
+
+            </HBox>
+        </HBox>
+    </top>
     <center>
         <ScrollPane fitToHeight="true" fitToWidth="true" fx:id="tProWin">
             <content>

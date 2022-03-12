@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/XWinStyle.css">
+    <children>
+        <Button>
+            <graphic>
+                <ImageView>
+                    <Image url="@../icon/xwin/min.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button>
+            <graphic>
+                <ImageView>
+                    <Image url="@../icon/xwin/2max.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button styleClass="close">
+            <graphic>
+                <ImageView>
+                    <Image url="@../icon/xwin/close.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </children>
+</HBox>

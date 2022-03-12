@@ -28,13 +28,13 @@
 }
 
 .view-port {
-    -fx-background-color: #fff;
+    -fx-background-color: #f3f3f3;
     -fx-padding: .5em;
     -fx-spacing: .7em;
 }
 
 .bottom-box {
-    -fx-background-color: #fff;
+    -fx-background-color: #f3f3f3;
 }
 
 .bottom-box HBox {
@@ -43,15 +43,33 @@
 
 .bottom-box HBox .button {
     -fx-pref-width: 8em;
-    -fx-text-fill: #fff;
-    -fx-background-color: #289AFC;
+    -fx-text-fill: #00C268;
+    -fx-background-color: #E0E0E0;
+    -fx-font-size: 1.2em;
 }
 
 .bottom-box .text-area {
     -fx-background-insets: 0;
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: .05em 0 0 0;
+    -fx-font-size: 1.5em;
+    -fx-pref-height: 6em;
+    -fx-background-color: transparent, #f3f3f3, transparent, #f3f3f3;
 }
 
 .bottom-box .text-area .content {
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-color: transparent, #f3f3f3, transparent, #f3f3f3;
+}
+
+.tpro-tool-box {
+    -fx-background-color: #f3f3f3;
+    -fx-alignment: CENTER;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 0 0 .05em 0;
+    -fx-padding: .5em;
+}
+
+.tpro-tool-box .title {
+    -fx-font-weight: bolder;
+    -fx-font-size: 1.8em;
 }

@@ -1,0 +1,18 @@
+HBox {
+    -fx-background-color: #f3f3f3;
+    -fx-alignment: CENTER-RIGHT;
+    -fx-padding: .2em .5em;
+}
+
+.button {
+    -fx-background-color: transparent;
+    -fx-padding: .3em;
+}
+
+.button:hover {
+    -fx-background-color: #E6E6E6;
+}
+
+.close:hover {
+    -fx-background-color: #ff7178 !important;
+}

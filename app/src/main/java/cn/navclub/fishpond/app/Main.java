@@ -1,6 +1,5 @@
 package cn.navclub.fishpond.app;
 
-import cn.navclub.fishpond.app.controller.FPController;
 import cn.navclub.fishpond.app.controller.LoginController;
 import io.vertx.core.Vertx;
 import javafx.application.Application;
@@ -12,8 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        new LoginController().showAndFront();
-        FPController.getController().showAndFront();
+        new LoginController().showAndFront();
     }
 
     @Override

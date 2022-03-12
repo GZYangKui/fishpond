@@ -14,18 +14,33 @@ public class FXMLWinController<T extends Parent> extends AbstractController<T> {
     private final Stage stage;
 
     public FXMLWinController(String fxmlURL) {
-        var parent = AssetsHelper.<T>loadFXMLView(fxmlURL, this);
-        this.setParent(parent);
-        this.setParent(parent);
-        this.stage = new Stage();
-        this.stage.setScene(new Scene(parent));
-        //注册窗口关闭事件
-        this.stage.setOnCloseRequest(this::onRequestClosed);
+        this(fxmlURL, null, null);
     }
 
     public FXMLWinController(String fxmlURL, String title) {
-        this(fxmlURL);
-        this.getStage().setTitle(title);
+        this(fxmlURL, null, title);
+    }
+
+    public FXMLWinController(T parent) {
+        this(null, parent, null);
+    }
+
+    public FXMLWinController(T parent, String title) {
+        this(null, parent, title);
+    }
+
+    public FXMLWinController(String fxmlURL, T parent, String title) {
+        if (parent == null) {
+            parent = AssetsHelper.<T>loadFXMLView(fxmlURL, this);
+        }
+        this.setParent(parent);
+        this.stage = new Stage();
+        this.stage.setScene(new Scene(this.getParent()));
+        //注册窗口关闭事件
+        this.stage.setOnCloseRequest(this::onRequestClosed);
+        if (title != null) {
+            this.stage.setTitle(title);
+        }
     }
 
     public Stage getStage() {

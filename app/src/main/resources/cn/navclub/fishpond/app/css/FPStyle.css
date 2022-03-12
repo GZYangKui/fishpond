@@ -1,3 +1,33 @@
-.nav-tool-bar{
+.nav-tab-pane {
+    -fx-border-radius: .5em;
+    -fx-background-radius: .5em;
+}
+.nav-tab-pane .tab-header-area{
+    -fx-padding: .5em 0;
+}
 
+.nav-tab-pane .tab-header-background {
+    -fx-padding: 0;
+    -fx-background-color: #2e2e2e;
+    -fx-border-radius: .3em .3em 0 0;
+    -fx-background-radius: .3em 0.3em 0 0;
+}
+
+.nav-tab-pane .tab {
+    -fx-padding: 0;
+    -fx-pref-height: 5em;
+    -fx-background-color: #2e2e2e;
+    -fx-background-insets: 0;
+    -fx-border-width: .2em 0 0 0;
+    -fx-border-color: #2e2e2e;
+}
+
+.nav-tab-pane .tab HBox {
+    -fx-alignment: CENTER;
+    -fx-padding: 1em 0;
+}
+
+.nav-tab-pane .tab:selected {
+    -fx-border-width: .2em 0 0 0;
+    -fx-background-color: #00c268;
 }

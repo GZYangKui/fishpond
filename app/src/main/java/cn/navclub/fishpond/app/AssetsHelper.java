@@ -32,4 +32,12 @@ public class AssetsHelper {
             throw new RuntimeException(e);
         }
     }
+
+    public static String loadStyleSheets(String sheets) {
+        var url = AssetsHelper.class.getResource("css/" + sheets);
+        if (url == null) {
+            throw new RuntimeException("Style sheets [" + sheets + "] Not Found!");
+        }
+        return url.toExternalForm();
+    }
 }

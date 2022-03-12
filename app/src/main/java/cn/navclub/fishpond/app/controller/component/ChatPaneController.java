@@ -4,6 +4,7 @@ import cn.navclub.fishpond.app.AbstractController;
 import cn.navclub.fishpond.app.AssetsHelper;
 import cn.navclub.fishpond.app.controller.FPController;
 import cn.navclub.fishpond.app.controls.TProWrapper;
+import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.app.socket.SocketHook;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
@@ -16,9 +17,11 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import static cn.navclub.fishpond.core.config.Constant.MESSAGE;
@@ -37,6 +40,7 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
 
     public ChatPaneController(Integer account) {
         this.account = account;
+        SocketHolder.getInstance().addHook(this);
         this.setParent(AssetsHelper.loadFXMLView("ChatPane.fxml", this));
     }
 
@@ -45,7 +49,10 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
         if (message.getServiceCode() == ServiceCode.GROUP_MESSAGE) {
             Platform.runLater(() -> {
                 var wrapper = new TProWrapper(message);
-                this.viewPort.getChildren().add(wrapper);
+                var hBox = new HBox();
+                hBox.setAlignment(Pos.CENTER_LEFT);
+                hBox.getChildren().add(wrapper);
+                this.viewPort.getChildren().add(hBox);
             });
         }
     }
@@ -71,9 +78,8 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
         );
         tPro.setData(data.toBuffer());
         //写入消息
-        FPController
-                .getController()
-                .getSocketHolder()
+        SocketHolder
+                .getInstance()
                 .write(tPro)
                 .onSuccess(ar -> {
                     Platform.runLater(() -> this.textArea.clear());

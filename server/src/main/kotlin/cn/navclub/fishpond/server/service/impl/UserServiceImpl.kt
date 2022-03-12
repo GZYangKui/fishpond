@@ -16,8 +16,8 @@ import io.vertx.kotlin.coroutines.await
 class
 UserServiceImpl(private val vertx: Vertx) : UserService {
     override suspend fun login(username: Int, password: String): CommonResult<JsonObject> {
-        val sql = "SELECT * FROM fp_user WHERE #{username}"
-        val optional = DBUtil.findOne(FPUserRowMapper.INSTANCE, sql, mapOf(Pair("username", username))).await()
+        val sql = "SELECT * FROM fp_user WHERE username=#{username}"
+        val optional = DBUtil.findOne(FPUserRowMapper.INSTANCE, sql, mapOf(Pair(USERNAME, username))).await()
         if (optional.isEmpty) {
             return CommonResult.fail("用户信息不存在!")
         }

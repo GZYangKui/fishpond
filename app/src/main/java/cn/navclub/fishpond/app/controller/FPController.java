@@ -1,31 +1,44 @@
 package cn.navclub.fishpond.app.controller;
 
+import cn.navclub.fishpond.app.AssetsHelper;
 import cn.navclub.fishpond.app.FXMLWinController;
-import cn.navclub.fishpond.app.controller.component.ChatPaneController;
 import cn.navclub.fishpond.app.controls.FPTabPane;
 import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.app.socket.SocketHook;
+import cn.navclub.fishpond.app.util.DialogUtil;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.protocol.api.APIECode;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
 import javafx.application.Platform;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.stage.StageStyle;
 
 import static cn.navclub.fishpond.core.config.Constant.CODE;
 import static cn.navclub.fishpond.core.config.Constant.CONTENT;
 
 public class FPController extends FXMLWinController<FPTabPane> implements SocketHook {
-    private final SocketHolder socketHolder;
 
     private FPController() {
-        super("Fishpond.fxml", "鱼塘");
-//        var chatPane = ChatPaneController.create(0);
-        this.socketHolder = new SocketHolder("127.0.0.1", 9000);
-        this.socketHolder.addHook(this);
-//        this.socketHolder.addHook(chatPane);
-//        this.getParent().setCenter(chatPane.getParent());
-        this.socketHolder.connect();
+        super(new FPTabPane(), "鱼塘");
+
+        this.requestTCPConnect();
+
+        this.getStage().setWidth(910);
+        this.getStage().setHeight(650);
+        this.getStage().initStyle(StageStyle.TRANSPARENT);
+        this.getStage().getScene().setFill(Color.TRANSPARENT);
+        this.getParent().getStylesheets().add(AssetsHelper.loadStyleSheets("FPStyle.css"));
+    }
+
+    private void requestTCPConnect() {
+        var holder = SocketHolder.getInstance();
+        holder.setPort(9000);
+        holder.setHost("127.0.0.1");
+        holder.connect().onFailure(t -> Platform.runLater(() -> {
+            DialogUtil.showEXDialog(t, "TCP连接错误");
+            Platform.exit();
+        }));
     }
 
     @Override
@@ -52,9 +65,6 @@ public class FPController extends FXMLWinController<FPTabPane> implements Socket
         }
     }
 
-    public SocketHolder getSocketHolder() {
-        return socketHolder;
-    }
 
     private static FPController controller;
 

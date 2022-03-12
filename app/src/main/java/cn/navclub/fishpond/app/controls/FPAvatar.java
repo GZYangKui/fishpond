@@ -1,49 +1,59 @@
 package cn.navclub.fishpond.app.controls;
 
-import cn.navclub.fishpond.app.util.FileUtil;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.scene.effect.DropShadow;
+
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
-public class FPAvatar extends Circle {
+
+public class FPAvatar {
     private static final String AVATAR_CLASS = "fp-avatar";
 
-    private StringProperty url;
-    private ImagePattern imagePattern;
+    private final Shape shape;
 
 
-    public FPAvatar() {
-        this.setRadius(20);
-        this.setCenterY(20);
-        this.setCenterX(20);
-        this.setStroke(Color.SEAGREEN);
-        this.getStyleClass().add(AVATAR_CLASS);
-        this.setEffect(new DropShadow(+25d, 0d, +2d, Color.DARKSEAGREEN));
-        this.urlProperty().addListener(((observable, oldValue, newValue) -> {
-            var pos = FileUtil.getResourcePos(newValue);
-            if (pos == FileUtil.ResourcePos.LOCAL) {
-                this.imagePattern = new ImagePattern(new Image(newValue));
-                this.setFill(this.imagePattern);
-            }
-        }));
+    public FPAvatar(double radius, double x, double y) {
+        var circle = new Circle();
+
+        circle.setCenterY(x);
+        circle.setCenterX(y);
+        circle.setRadius(radius);
+
+        this.shape = circle;
+
+        this.initAvatar();
     }
 
-    public final String getUrl() {
-        return this.urlProperty().get();
-    }
+    public FPAvatar(double w, double h, double aw, double ah, boolean effect) {
+        var rect = new Rectangle();
 
-    public final void setUrl(String url) {
-        this.urlProperty().set(url);
-    }
+        rect.setWidth(w);
+        rect.setHeight(h);
+        rect.setArcWidth(aw);
+        rect.setArcHeight(ah);
 
-    public StringProperty urlProperty() {
-        if (url == null) {
-            url = new SimpleStringProperty();
+        this.shape = rect;
+        if (effect) {
+            this.initAvatar();
         }
-        return url;
+    }
+
+    private void initAvatar() {
+        this.shape.setStroke(Color.SEAGREEN);
+        this.shape.getStyleClass().add(AVATAR_CLASS);
+        this.shape.setEffect(new DropShadow(+25d, 0d, +2d, Color.DARKSEAGREEN));
+    }
+
+    public FPAvatar setAvatar(Image image) {
+        this.shape.setFill(new ImagePattern(image));
+        return this;
+    }
+
+    public Shape getShape() {
+        return shape;
     }
 }
