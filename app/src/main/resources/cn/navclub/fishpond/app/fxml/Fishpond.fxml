@@ -6,10 +6,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            prefHeight="800.0" prefWidth="1000">
-    <left>
-        <ListView/>
-    </left>
-</BorderPane>
+<?import cn.navclub.fishpond.app.controls.FPAvatar?>
+<?import cn.navclub.fishpond.app.controls.FPTabPane?>
+<FPTabPane xmlns="http://javafx.com/javafx"
+           prefHeight="800.0"
+           prefWidth="1000"
+           styleClass="nav-tool-bar"
+           stylesheets="@../css/FPStyle.css">
+
+</FPTabPane>

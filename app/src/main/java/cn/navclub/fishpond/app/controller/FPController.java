@@ -2,6 +2,7 @@ package cn.navclub.fishpond.app.controller;
 
 import cn.navclub.fishpond.app.FXMLWinController;
 import cn.navclub.fishpond.app.controller.component.ChatPaneController;
+import cn.navclub.fishpond.app.controls.FPTabPane;
 import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.app.socket.SocketHook;
 import cn.navclub.fishpond.core.config.Constant;
@@ -14,16 +15,16 @@ import javafx.scene.layout.BorderPane;
 import static cn.navclub.fishpond.core.config.Constant.CODE;
 import static cn.navclub.fishpond.core.config.Constant.CONTENT;
 
-public class FPController extends FXMLWinController<BorderPane> implements SocketHook {
+public class FPController extends FXMLWinController<FPTabPane> implements SocketHook {
     private final SocketHolder socketHolder;
 
     private FPController() {
         super("Fishpond.fxml", "鱼塘");
-        var chatPane = ChatPaneController.create(0);
+//        var chatPane = ChatPaneController.create(0);
         this.socketHolder = new SocketHolder("127.0.0.1", 9000);
         this.socketHolder.addHook(this);
-        this.socketHolder.addHook(chatPane);
-        this.getParent().setCenter(chatPane.getParent());
+//        this.socketHolder.addHook(chatPane);
+//        this.getParent().setCenter(chatPane.getParent());
         this.socketHolder.connect();
     }
 
@@ -42,8 +43,8 @@ public class FPController extends FXMLWinController<BorderPane> implements Socke
             //开启心跳
             if (content.getInteger(CODE) == APIECode.OK.getCode()) {
 
-            }else {
-                Platform.runLater(()->{
+            } else {
+                Platform.runLater(() -> {
                     this.getStage().hide();
                     new LoginController().showAndFront();
                 });
