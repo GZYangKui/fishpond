@@ -64,9 +64,9 @@ public class ITResult<T> {
     }
 
 
-    public static <T> ITResult<T> success(String message) {
-        return new ITResult<>(null, APIECode.OK, message);
-    }
+//    public static  ITResult<Object> success(String message) {
+//        return new ITResult<>(null, APIECode.OK, message);
+//    }
 
     public static <T> ITResult<T> success(T data) {
         return new ITResult<>(data, APIECode.OK, null);

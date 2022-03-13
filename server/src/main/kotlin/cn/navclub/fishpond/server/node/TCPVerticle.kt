@@ -28,6 +28,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
     private val idSocketMap: BiMap<String, NetSocket> = HashBiMap.create()
 
     override suspend fun start() {
+        this.consumerEB()
         val port = config.getInteger(TCP_PORT)
         val netServer = vertx.createNetServer()
         netServer.connectHandler { socket ->
@@ -42,7 +43,8 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
             socket.handler(decoder)
             socket.exceptionHandler { this.idSocketMap.inverse().remove(socket) }
             socket.closeHandler { this.idSocketMap.inverse().remove(socket) }
-            socket.write(hello().toMessage())
+
+            socket.write(TProUtil.hello().toMessage())
         }
         netServer.listen(port).await()
     }
@@ -117,26 +119,15 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         }
     }
 
-    private fun hello(): TProMessage {
-        val msg = TProMessage()
-
-        msg.to = SYS_ID
-        msg.from = SYS_ID
-        msg.type = MessageT.JSON
-        msg.uuid = StrUtil.uuid()
-        msg.serviceCode = ServiceCode.GROUP_MESSAGE
-
-        val item = JsonObject()
-
-        item.put(TYPE, ContentType.PLAIN_TEXT.value)
-        item.put(MESSAGE, SysProperty.WELCOME)
-
-        msg.data = JsonObject()
-            .put(TIMESTAMP, System.currentTimeMillis())
-            .put(ITEMS, JsonArray().add(item))
-            .toBuffer()
-
-
-        return msg
+    override suspend fun onMessage(code: ITCode, data: Any): Any? {
+        return when (code) {
+            //批量移出会话列表
+            ITCode.REMOVE_TCP_SESSION -> {
+                val list = data as JsonArray
+                list.forEach(this.idSocketMap::remove)
+                ITResult.success("").toJson()
+            }
+            else -> ITResult.success("")
+        }
     }
 }

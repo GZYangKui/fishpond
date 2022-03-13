@@ -24,8 +24,9 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
                 val data = json.getValue(DATA)
                 val code = ITCode.valueOf(json.getString(Constant.CODE))
                 try {
+                    val reply = that.onMessage(code, data) ?: return@launch
                     //响应客户端
-                    it.reply(that.onMessage(code, data))
+                    it.reply(reply)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     it.reply(ITResult.fail<Any>("服务器错误").toJson())
@@ -53,7 +54,7 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
     }
 
 
-    protected open suspend fun onMessage(code: ITCode, data: Any): Any {
+    protected open suspend fun onMessage(code: ITCode, data: Any): Any? {
         return JsonObject()
     }
 }

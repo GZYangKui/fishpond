@@ -3,12 +3,16 @@ package cn.navclub.fishpond.protocol.util;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
 import cn.navclub.fishpond.core.util.StrUtil;
+import cn.navclub.fishpond.protocol.enums.ContentType;
 import cn.navclub.fishpond.protocol.enums.MessageT;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.NetSocket;
+
+import java.security.PublicKey;
 
 public class TProUtil {
     public static Future<Void> feedback(NetSocket socket, TProMessage tPro, JsonObject content) {
@@ -30,5 +34,29 @@ public class TProUtil {
         feedback.setData(data.toBuffer());
 
         return socket.write(feedback.toMessage());
+    }
+
+    public static TProMessage hello() {
+        var tPro = new TProMessage();
+
+
+        tPro.setType(MessageT.JSON);
+        tPro.setUuid(StrUtil.uuid());
+        tPro.setTo(SysProperty.SYS_ID);
+        tPro.setFrom(SysProperty.SYS_ID);
+        tPro.setServiceCode(ServiceCode.GROUP_MESSAGE);
+
+        var item = new JsonObject();
+
+        item.put(Constant.MESSAGE, SysProperty.WELCOME);
+        item.put(Constant.TYPE, ContentType.PLAIN_TEXT.getValue());
+
+        var json = new JsonObject()
+                .put(Constant.TIMESTAMP, System.currentTimeMillis())
+                .put(Constant.ITEMS, new JsonArray().add(item));
+
+        tPro.setData(json.toBuffer());
+
+        return tPro;
     }
 }

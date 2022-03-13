@@ -4,11 +4,13 @@ import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.server.AbstractFDVerticle
 import cn.navclub.fishpond.server.internal.ITCode
+import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
 import cn.navclub.fishpond.server.model.FPSession
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import io.vertx.core.json.JsonObject
+import kotlinx.coroutines.launch
 
 /**
  *
@@ -24,13 +26,18 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
     override suspend fun start() {
         this.consumerEB()
         //定时器检查会话是否超时
-        this.vertx.setPeriodic(3 * 1000, this::checkSSExpire)
+        this.vertx.setPeriodic(3 * 1000) {
+            launch {
+                checkSSExpire(it)
+            }
+        }
     }
 
-    override suspend fun onMessage(code: ITCode, data: Any): Any {
+    override suspend fun onMessage(code: ITCode, data: Any): Any? {
         return when (code) {
             ITCode.CREATE_SESSION -> this.flushSession(data as JsonObject)
             ITCode.CHECK_SESSION -> this.checkSession(data as String)
+            else -> ITResult.success("").toJson()
         }
     }
 
@@ -83,7 +90,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
      * 检查当前用户列表中是否存在会话超时
      *
      */
-    private fun checkSSExpire(timestamp: Long) {
+    private suspend fun checkSSExpire(t: Long) {
         val list: MutableList<Int> = arrayListOf()
         for (entry in this.userMap) {
             val session = entry.value
@@ -98,5 +105,8 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
             userMap.remove(s)
             println("[$s]用户会话超时")
         }
+        val model = ITModel(list, ITCode.REMOVE_TCP_SESSION)
+        //移出对应TCP连接
+        this.requestEB(TCPVerticle::class.java.name, model, Unit.javaClass)
     }
 }

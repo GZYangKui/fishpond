@@ -11,10 +11,21 @@ import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.util.DBUtil
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
+import io.vertx.ext.mail.MailClient
+import io.vertx.ext.mail.MailConfig
 import io.vertx.kotlin.coroutines.await
 
 class
 UserServiceImpl(private val vertx: Vertx) : UserService {
+    private val mailClient: MailClient
+
+    init {
+        val config = MailConfig()
+
+
+        this.mailClient = MailClient.create(vertx, config)
+    }
+
     override suspend fun login(username: Int, password: String): CommonResult<JsonObject> {
         val sql = "SELECT * FROM fp_user WHERE username=#{username}"
         val optional = DBUtil.findOne(FPUserRowMapper.INSTANCE, sql, mapOf(Pair(USERNAME, username))).await()

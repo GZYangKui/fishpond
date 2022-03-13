@@ -14,6 +14,7 @@ public class FPUser {
     private Integer sex;
     private String avatar;
     private String sign;
+    private String email;
     private String nickname;
     private Integer username;
     private String password;
@@ -92,5 +93,13 @@ public class FPUser {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
