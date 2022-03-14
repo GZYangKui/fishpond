@@ -81,8 +81,8 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         if (timestamp == 0L) {
             start = System.currentTimeMillis()
         }
-        val valid = config.getJsonObject(HTTP).getLong(EXPIRE) * 1000
-        return start + valid
+        val json = config.getJsonObject(HTTP).getJsonObject(SESSION)
+        return (start + json.getLong(EXPIRE) * 1000)
     }
 
     /**

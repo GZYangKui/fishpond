@@ -4,8 +4,10 @@ import cn.navclub.fishpond.app.AbstractController;
 import cn.navclub.fishpond.app.AssetsHelper;
 import cn.navclub.fishpond.app.controller.FPController;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 
 public class XWinControl extends AbstractController<HBox> implements EventHandler<MouseEvent> {
@@ -22,9 +24,18 @@ public class XWinControl extends AbstractController<HBox> implements EventHandle
         return new XWinControl();
     }
 
+    @FXML
+    public void min() {
+        ((Stage) this.window()).setIconified(true);
+    }
+
+    @FXML
+    public void close() {
+        ((Stage) this.window()).close();
+    }
+
     @Override
     public void handle(MouseEvent event) {
-        event.consume();
 
         if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
 

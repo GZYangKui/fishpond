@@ -14,6 +14,7 @@ public class Constant {
     public static String ITEMS = "items";
     public static String POOL = "pool";
     public static String SHARE = "share";
+    public static String SESSION = "session";
     public static String MAX_SIZE = "maxSize";
     public static String CHARSET = "charset";
     public static String PROFILE = "profile";

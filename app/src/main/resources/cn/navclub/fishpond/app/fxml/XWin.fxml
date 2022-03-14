@@ -10,27 +10,34 @@
 <?import javafx.scene.image.Image?>
 <HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/XWinStyle.css">
-    <children>
-        <Button>
-            <graphic>
-                <ImageView>
-                    <Image url="@../icon/xwin/min.png"/>
-                </ImageView>
-            </graphic>
-        </Button>
-        <Button>
-            <graphic>
-                <ImageView>
-                    <Image url="@../icon/xwin/2max.png"/>
-                </ImageView>
-            </graphic>
-        </Button>
-        <Button styleClass="close">
-            <graphic>
-                <ImageView>
-                    <Image url="@../icon/xwin/close.png"/>
-                </ImageView>
-            </graphic>
-        </Button>
-    </children>
+    <Button onAction="#min">
+        <tooltip>
+            <Tooltip text="最小化"/>
+        </tooltip>
+        <graphic>
+            <ImageView>
+                <Image url="@../icon/xwin/min.png"/>
+            </ImageView>
+        </graphic>
+    </Button>
+    <Button>
+        <tooltip>
+            <Tooltip text="最大化"/>
+        </tooltip>
+        <graphic>
+            <ImageView>
+                <Image url="@../icon/xwin/2max.png"/>
+            </ImageView>
+        </graphic>
+    </Button>
+    <Button styleClass="close" onAction="#close">
+        <tooltip>
+            <Tooltip text="关闭"/>
+        </tooltip>
+        <graphic>
+            <ImageView>
+                <Image url="@../icon/xwin/close.png"/>
+            </ImageView>
+        </graphic>
+    </Button>
 </HBox>

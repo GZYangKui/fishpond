@@ -35,8 +35,8 @@ public class LoginController extends FXMLWinController<GridPane> {
             return;
         }
         var data = new JsonObject();
+        data.put(PASSWORD, StrUtil.md5Str(p));
         data.put(USERNAME, Integer.valueOf(u));
-        data.put(PASSWORD, p);
         var future = HTTPUtil.<JsonObject>doPost(API.REQ_LOGIN, null, data);
         future.onSuccess(json -> {
             HTTPUtil.setSessionId(json.getString(SESSION_ID));
