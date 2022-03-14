@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 /**
  *
  *
- * 管理全局回话信息(TCP+HTTP)
+ * 管理全局会话信息
  *
  */
 class SessionVerticle : AbstractFDVerticle<JsonObject>() {
@@ -81,7 +81,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         if (timestamp == 0L) {
             start = System.currentTimeMillis()
         }
-        val valid = config.getLong(EXPIRE) * 1000
+        val valid = config.getJsonObject(HTTP).getLong(EXPIRE) * 1000
         return start + valid
     }
 

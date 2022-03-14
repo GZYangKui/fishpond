@@ -29,7 +29,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
 
     override suspend fun start() {
         this.consumerEB()
-        val port = config.getInteger(TCP_PORT)
+        val json = config.getJsonObject(TCP)
         val netServer = vertx.createNetServer()
         netServer.connectHandler { socket ->
             this.idSocketMap[null] = socket
@@ -46,7 +46,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
 
             socket.write(TProUtil.hello().toMessage())
         }
-        netServer.listen(port).await()
+        netServer.listen(json.getInteger(PORT)).await()
     }
 
     private suspend fun handleTPro(tPro: TProMessage, socket: NetSocket) {

@@ -1,0 +1,28 @@
+{
+  "tcp": {
+    "port": 9000
+  },
+  "http": {
+    "port": 10000,
+    "session": {
+      "expire": 180
+    }
+  },
+  "email": {
+    "hostname": "xxxxxxxxxxxx",
+    "port": 587,
+    "username": "xxxxxxx",
+    "password": "xxxxxxxxxx"
+  },
+  "dataSource": {
+    "charset": "utf8",
+    "username": "root",
+    "password": "root",
+    "database": "fishpond",
+    "pool": {
+      "maxSize": 20,
+      "share": true,
+      "name": "fishpond-pool"
+    }
+  }
+}

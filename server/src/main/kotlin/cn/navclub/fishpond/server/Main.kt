@@ -11,41 +11,55 @@ import io.vertx.sqlclient.PoolOptions
 
 import kotlin.system.exitProcess
 
-suspend fun createSharedDatabase(vertx: Vertx, sharedDBName: String) {
+suspend fun createSharedDatabase(vertx: Vertx, dataSource: JsonObject) {
 
     val options = MySQLConnectOptions()
 
-    options.user = "root"
-    options.charset = "utf8"
-    options.password = "root"
-    options.database = "fishpond"
+    options.user = dataSource.getString(USERNAME)
+    options.charset = dataSource.getString(CHARSET)
+    options.password = dataSource.getString(PASSWORD)
+    options.database = dataSource.getString(DATABASE)
+
+
+    val pool = dataSource.getJsonObject(POOL)
 
     val pOptions = PoolOptions()
-    pOptions.maxSize = 20
-    pOptions.isShared = true
-    pOptions.name = sharedDBName
+
+    pOptions.name = pool.getString(NAME)
+    pOptions.isShared = pool.getBoolean(SHARE)
+    pOptions.maxSize = pool.getInteger(MAX_SIZE)
 
     DBUtil.createSharedDatabase(vertx, options, pOptions).await()
 }
 
-suspend fun main() {
+private fun getProfile(args: Array<String>): String {
+    var profile = ""
+    for (arg in args) {
+        if (arg.startsWith(PROFILE)) {
+            val index = arg.indexOf("=")
+            if (index != -1 && index != arg.length - 1) {
+                profile = "-" + arg.substring(index + 1)
+                break
+            }
+        }
+    }
+    return String.format("application%s.json", profile)
+}
+
+suspend fun main(args: Array<String>) {
     try {
+
+        val cf = getProfile(args)
         val vertx = Vertx.vertx()
+        val fs = vertx.fileSystem()
+        val config = fs.readFile("config/$cf").await().toJsonObject()
 
-        val shareDBName = "fishpond-pool"
 
-
-        createSharedDatabase(vertx, shareDBName)
-
-        //项目配置
-        val config = JsonObject()
-        config.put(EXPIRE, 30 * 60)
-        config.put(TCP_PORT, 9000)
-        config.put(HTTP_PORT, 10000)
-        config.put(DB_POOL_NAME, shareDBName)
+        createSharedDatabase(vertx, config.getJsonObject(DATA_SOURCE))
 
         //部署配置
         val options = DeploymentOptions()
+
         options.config = config
 
         //部署Vertx节点

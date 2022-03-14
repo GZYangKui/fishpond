@@ -1,6 +1,6 @@
 package cn.navclub.fishpond.server.node
 
-import cn.navclub.fishpond.core.config.Constant.HTTP_PORT
+import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.server.AbstractFDVerticle
 import cn.navclub.fishpond.server.router.UserRouter
 import io.vertx.core.json.JsonObject
@@ -16,12 +16,12 @@ class HTTPVerticle : AbstractFDVerticle<JsonObject>() {
         //用户路由
         router.route("/user/*").subRouter(UserRouter(vertx).router)
 
-        val port = config.getInteger(HTTP_PORT)
+        val json = config.getJsonObject(HTTP)
 
         vertx
             .createHttpServer()
             .requestHandler(router)
-            .listen(port)
+            .listen(json.getInteger(PORT))
             .await()
     }
 }
