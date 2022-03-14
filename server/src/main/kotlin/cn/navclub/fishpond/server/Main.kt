@@ -60,9 +60,8 @@ suspend fun main(args: Array<String>) {
         createSharedDatabase(vertx, config.getJsonObject(DATA_SOURCE))
 
         //部署配置
-        val options = DeploymentOptions()
+        val options = DeploymentOptions().setConfig(config)
 
-        options.config = config
 
         //部署Vertx节点
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.TCPVerticle", options).await()
