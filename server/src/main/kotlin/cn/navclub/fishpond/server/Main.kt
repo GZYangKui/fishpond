@@ -32,6 +32,9 @@ suspend fun createSharedDatabase(vertx: Vertx, dataSource: JsonObject) {
     DBUtil.createSharedDatabase(vertx, options, pOptions).await()
 }
 
+/**
+ * 根据程序启动时传入参数动态读取配置文件
+ */
 private fun getProfile(args: Array<String>): String {
     var profile = ""
     for (arg in args) {
@@ -49,11 +52,10 @@ private fun getProfile(args: Array<String>): String {
 suspend fun main(args: Array<String>) {
     try {
 
-        val cf = getProfile(args)
         val vertx = Vertx.vertx()
-        val fs = vertx.fileSystem()
-        val config = fs.readFile("config/$cf").await().toJsonObject()
-
+        val profile = getProfile(args)
+        val fileSystem = vertx.fileSystem()
+        val config = fileSystem.readFile("config/$profile").await().toJsonObject()
 
         createSharedDatabase(vertx, config.getJsonObject(DATA_SOURCE))
 
