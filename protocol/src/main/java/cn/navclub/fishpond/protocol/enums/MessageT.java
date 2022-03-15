@@ -1,8 +1,11 @@
 package cn.navclub.fishpond.protocol.enums;
 
+import lombok.Getter;
+
 /**
  * 枚举当前支持数据类型
  */
+@Getter
 public enum MessageT {
     /**
      * 未知数据类型
@@ -31,14 +34,6 @@ public enum MessageT {
     MessageT(Integer val, String text) {
         this.val = val;
         this.text = text;
-    }
-
-    public Integer getVal() {
-        return val;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public static MessageT getInstance(int val) {
