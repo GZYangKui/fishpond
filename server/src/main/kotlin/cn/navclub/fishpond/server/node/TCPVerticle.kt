@@ -15,6 +15,7 @@ import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
 import cn.navclub.fishpond.server.model.FPSession
+import cn.navclub.fishpond.server.util.CoroutineUtil.Companion.requestEB
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import io.vertx.core.json.JsonArray
@@ -88,6 +89,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
             val model = ITModel(sessionId, ITCode.CHECK_SESSION)
             //检查TCP是否注册
             val itResult = requestEB(
+                vertx,
                 SessionVerticle::class.java.name,
                 model,
                 FPSession::class.java
@@ -99,7 +101,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         }
         //会话检查失败=>关闭连接
         if (!success) {
-            this.idSocketMap.inverse().remove(socket)
+            socket.close()
         }
         return success
     }
@@ -108,7 +110,8 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         val json = tPro.data.toJsonObject()
         val model = ITModel.create(ITCode.CHECK_SESSION, json.getString(SESSION_ID, ""))
 
-        val result = this.requestEB(
+        val result = requestEB(
+            vertx,
             SessionVerticle::class.java.name,
             model,
             FPSession::class.java

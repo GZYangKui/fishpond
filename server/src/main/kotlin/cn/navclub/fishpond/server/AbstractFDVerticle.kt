@@ -35,24 +35,6 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
         }
     }
 
-    protected suspend fun <T, R> requestEB(address: String, model: ITModel<T>, clazz: Class<R>): ITResult<R> {
-        try {
-            val data = model.toJson()
-            val json = vertx.eventBus().request<JsonObject>(address, data).await().body()
-            val t = json.getValue(DATA)
-            val tt: R = if (t is JsonObject) {
-                t.mapTo(clazz)
-            } else {
-                t as R
-            }
-            return ITResult<R>(tt, json.getInteger(CODE), json.getString(MESSAGE))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return ITResult.fail("EventBus执行错误!")
-    }
-
-
     protected open suspend fun onMessage(code: ITCode, data: Any): Any? {
         return JsonObject()
     }

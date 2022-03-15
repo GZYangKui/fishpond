@@ -8,7 +8,10 @@
     "port": 10000,
     "session": {
       "expire": 180
-    }
+    },
+    "skipAuth": [
+      "/user/login"
+    ]
   },
   "email": {
     "hostname": "xxxxxxxxxxxx",

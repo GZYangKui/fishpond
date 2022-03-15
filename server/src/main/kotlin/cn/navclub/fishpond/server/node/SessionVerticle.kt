@@ -7,6 +7,7 @@ import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
 import cn.navclub.fishpond.server.model.FPSession
+import cn.navclub.fishpond.server.util.CoroutineUtil.Companion.requestEB
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import io.vertx.core.json.JsonObject
@@ -107,6 +108,6 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
         }
         val model = ITModel(list, ITCode.REMOVE_TCP_SESSION)
         //移出对应TCP连接
-        this.requestEB(TCPVerticle::class.java.name, model, Unit.javaClass)
+        requestEB(vertx, TCPVerticle::class.java.name, model, Unit.javaClass)
     }
 }
