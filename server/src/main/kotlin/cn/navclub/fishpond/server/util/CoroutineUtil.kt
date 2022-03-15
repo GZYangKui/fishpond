@@ -34,9 +34,13 @@ open class CoroutineUtil {
         }
 
         @OptIn(DelicateCoroutinesApi::class)
-        fun launch(handle: suspend () -> Unit) {
+        fun launch(handle: suspend () -> Unit, error: (suspend (t: Throwable) -> Unit)? = null) {
             GlobalScope.launch {
-                handle.invoke()
+                try {
+                    handle.invoke()
+                } catch (e: Exception) {
+                    error?.invoke(e)
+                }
             }
         }
 

@@ -19,11 +19,13 @@ class FPSHandler private constructor(private val vertx: Vertx, private val confi
     Handler<RoutingContext> {
 
     override fun handle(event: RoutingContext) {
-        CoroutineUtil.launch { checkSession(event) }
+        CoroutineUtil.launch({ checkSession(event) }) {
+            event.json(CommonResult.fail<Any>(APIECode.SERVER_ERROR))
+            it.printStackTrace()
+        }
     }
 
     private suspend fun checkSession(event: RoutingContext) {
-        var error = false
         val skips = config.getJsonArray("skipAuth")
         var pass = skips.contains(event.request().path())
         val sessionId = event.request().getHeader(SESSION_ID)
@@ -31,30 +33,22 @@ class FPSHandler private constructor(private val vertx: Vertx, private val confi
         //如果不是跳过认证资源及会话字段不为空则通过EventBus校验会话真实性
         if (!pass && !StrUtil.isEmpty(sessionId)) {
             val model = ITModel(sessionId, ITCode.CHECK_SESSION)
-            try {
-                val result = CoroutineUtil.requestEB(
-                    vertx,
-                    SessionVerticle::class.java.name,
-                    model,
-                    FPSession::class.java
-                )
-                //认证成功
-                pass = result.success()
-                if (pass) {
-                    event.setUser(FPUser(result.data))
-                }
-            } catch (e: Exception) {
-                error = true
-                e.printStackTrace()
+
+            val result = CoroutineUtil.requestEB(
+                vertx,
+                SessionVerticle::class.java.name,
+                model,
+                FPSession::class.java
+            )
+            //认证成功
+            pass = result.success()
+            if (pass) {
+                event.setUser(FPUser(result.data))
             }
         }
 
-        if (error || !pass) {
-            if (error) {
-                event.json(CommonResult.fail<Any>(APIECode.SERVER_ERROR))
-            } else {
-                event.json(CommonResult.fail<Any>(APIECode.FORBIDDEN))
-            }
+        if (!pass) {
+            event.json(CommonResult.fail<Any>(APIECode.FORBIDDEN))
         } else {
             event.next()
         }
