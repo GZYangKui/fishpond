@@ -36,6 +36,13 @@ public class TProUtil {
         return socket.write(feedback.toMessage());
     }
 
+    public static ServiceCode getFBCode(TProMessage tPro) {
+        if (tPro.getServiceCode() != ServiceCode.OPERATE_FEEDBACK) {
+            return ServiceCode.UNKNOWN;
+        }
+        return ServiceCode.serviceCode(tPro.toJson().getInteger(Constant.SERVICE_CODE));
+    }
+
     public static TProMessage hello() {
         var tPro = new TProMessage();
 

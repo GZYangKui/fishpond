@@ -11,6 +11,7 @@ import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.protocol.api.APIECode;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
+import cn.navclub.fishpond.protocol.util.TProUtil;
 import javafx.application.Platform;
 import javafx.geometry.Side;
 import javafx.scene.control.Tab;
@@ -80,27 +81,9 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
 
     @Override
     public void onMessage(TProMessage message) {
-        if (message.getServiceCode() == ServiceCode.OPERATE_FEEDBACK) {
-            this.operateFeedBack(message);
-        }
+
     }
 
-    public void operateFeedBack(TProMessage message) {
-        var json = message.toJson();
-        var serviceCode = ServiceCode.serviceCode(json.getInteger(Constant.SERVICE_CODE));
-        if (serviceCode == ServiceCode.TCP_REGISTER) {
-            var content = json.getJsonObject(CONTENT);
-            //开启心跳
-            if (content.getInteger(CODE) == APIECode.OK.getCode()) {
-                SocketHolder.getInstance().plus();
-            } else {
-                Platform.runLater(() -> {
-                    this.getStage().hide();
-                    new LoginController().showAndFront();
-                });
-            }
-        }
-    }
 
     @Getter
     private enum TabItem {

@@ -65,7 +65,7 @@ suspend fun main(args: Array<String>) {
 
         //部署Vertx节点
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.TCPVerticle", options).await()
-        vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.HTTPVerticle", options).await()
+        vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.WebVerticle", options).await()
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.SessionVerticle", options).await()
 
     } catch (e: java.lang.Exception) {

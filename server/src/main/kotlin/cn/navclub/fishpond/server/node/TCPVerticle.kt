@@ -127,6 +127,8 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
             this.idSocketMap.inverse().remove(socket)
             //反馈添加结果
             TProUtil.feedback(socket, tPro, result.toJson())
+            //Close socket connect
+            socket.close()
         }
     }
 
