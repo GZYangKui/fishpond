@@ -19,6 +19,7 @@ import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
+import io.vertx.core.net.NetServerOptions
 import io.vertx.core.net.NetSocket
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
@@ -30,18 +31,25 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
     override suspend fun start() {
         this.consumerEB()
         val json = config.getJsonObject(TCP)
-        val netServer = vertx.createNetServer()
+        val netServer = vertx.createNetServer(
+            NetServerOptions()
+                .setIdleTimeout(json.getInteger(IDLE))
+                .setTcpKeepAlive(true)
+        )
         netServer.connectHandler { socket ->
             this.idSocketMap[null] = socket
             val decoder = DefaultDecoder
                 .create()
+                .maxSize(json.getInteger(MAX_SIZE))
                 .handler { launch { handleTPro(it, socket) } }
                 .exHandler { t ->
                     this.idSocketMap.inverse().remove(socket)
                     println("Socket data transform fail:${t.message}")
                 }
             socket.handler(decoder)
-            socket.exceptionHandler { this.idSocketMap.inverse().remove(socket) }
+            //发生异常->关闭连接
+            socket.exceptionHandler { socket.close() }
+            //连接关闭->移出连接
             socket.closeHandler { this.idSocketMap.inverse().remove(socket) }
 
             socket.write(TProUtil.hello().toMessage())

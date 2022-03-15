@@ -63,6 +63,13 @@ public class DefaultDecoder extends Decoder<TProMessage> {
         buffer.appendBuffer(event);
         this.parsing = true;
         try {
+            //检测是否操过最大允许解码数据长度
+            if (this.maxSize > 0 && buffer.length() > this.maxSize) {
+                //清空缓存
+                this.buffer = Buffer.buffer();
+                //抛出异常
+                throw new RuntimeException("Current data size more than max allow size!");
+            }
             this.handleParse();
         } catch (Exception e) {
             if (this.exHandler != null) {

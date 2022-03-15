@@ -1,6 +1,8 @@
 {
   "tcp": {
-    "port": 9000
+    "port": 9000,
+    "idle": 10,
+    "maxSize": 1048576
   },
   "http": {
     "port": 10000,

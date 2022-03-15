@@ -33,7 +33,6 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
                 }
             }
         }
-        println("$ebName 成功注册在EventBus总线上!")
     }
 
     protected suspend fun <T, R> requestEB(address: String, model: ITModel<T>, clazz: Class<R>): ITResult<R> {

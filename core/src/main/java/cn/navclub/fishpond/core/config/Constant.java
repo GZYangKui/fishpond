@@ -4,6 +4,7 @@ public class Constant {
     public static String ID = "id";
     public static String SEX = "sex";
     public static String TCP = "tcp";
+    public static String IDLE = "idle";
     public static String HTTP = "http";
     public static String CODE = "code";
     public static String UUID = "uuid";
