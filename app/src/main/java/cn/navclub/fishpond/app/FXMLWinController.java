@@ -38,6 +38,7 @@ public class FXMLWinController<T extends Parent> extends AbstractController<T> {
         this.stage.setScene(new Scene(this.getParent()));
         //注册窗口关闭事件
         this.stage.setOnCloseRequest(this::onRequestClosed);
+        this.stage.getIcons().add(AssetsHelper.localIcon("logo.png"));
         if (title != null) {
             this.stage.setTitle(title);
         }
