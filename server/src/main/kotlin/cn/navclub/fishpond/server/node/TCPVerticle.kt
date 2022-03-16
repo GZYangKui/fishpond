@@ -39,14 +39,13 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         )
         netServer.connectHandler { socket ->
             this.idSocketMap[null] = socket
+
             val decoder = DefaultDecoder
                 .create()
+                .exHandler { socket.close() }
                 .maxSize(json.getInteger(MAX_SIZE))
                 .handler { launch { handleTPro(it, socket) } }
-                .exHandler { t ->
-                    this.idSocketMap.inverse().remove(socket)
-                    println("Socket data transform fail:${t.message}")
-                }
+
             socket.handler(decoder)
             //发生异常->关闭连接
             socket.exceptionHandler { socket.close() }
@@ -123,8 +122,6 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
             }
             TProUtil.feedback(socket, tPro, ITResult.success<Any>("注册成功").toJson())
         } else {
-            //断开连接
-            this.idSocketMap.inverse().remove(socket)
             //反馈添加结果
             TProUtil.feedback(socket, tPro, result.toJson())
             //Close socket connect
@@ -135,12 +132,8 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
     override suspend fun onMessage(code: ITCode, data: Any): Any? {
         return when (code) {
             //批量移出会话列表
-            ITCode.REMOVE_TCP_SESSION -> {
-                val list = data as JsonArray
-                list.forEach(this.idSocketMap::remove)
-                ITResult.success("").toJson()
-            }
-            else -> ITResult.success("")
+            ITCode.REMOVE_TCP_SESSION -> (data as JsonArray).forEach { this.idSocketMap.remove(it as String)?.close() }
+            else -> null
         }
     }
 }

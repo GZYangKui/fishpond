@@ -24,7 +24,11 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
                 val data = json.getValue(DATA)
                 val code = ITCode.valueOf(json.getString(Constant.CODE))
                 try {
-                    val reply = that.onMessage(code, data) ?: return@launch
+                    val reply = that.onMessage(code, data)
+                    //响应数据为null或者Unit则不做处理
+                    if (reply == null || reply is Unit) {
+                        return@launch
+                    }
                     //响应客户端
                     it.reply(reply)
                 } catch (e: Exception) {
