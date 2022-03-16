@@ -12,6 +12,8 @@ import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import lombok.Getter;
+import lombok.Setter;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.ExceptionDialog;
 
@@ -24,7 +26,14 @@ public class HTTPUtil {
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 10000;
 
+    @Getter
+    @Setter
+    private volatile static int username;
+
+    @Getter
+    @Setter
     private volatile static String sessionId;
+
 
     public static <T> Future<T> doGet(API api, Map<String, String> queries) {
         return create(true, api, queries, null);
@@ -93,13 +102,5 @@ public class HTTPUtil {
         exPane.setHeaderText(t.getMessage());
         exPane.setContentText(api.getText() + "[" + api.getUrl() + "]");
         exPane.showAndWait();
-    }
-
-    public static void setSessionId(String sessionId) {
-        HTTPUtil.sessionId = sessionId;
-    }
-
-    public static String getSessionId() {
-        return sessionId;
     }
 }

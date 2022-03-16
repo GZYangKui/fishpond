@@ -24,4 +24,13 @@ public enum APIECode implements IErrorCode {
     public String message() {
         return message;
     }
+
+    public static APIECode getInstance(int value){
+        for (APIECode apieCode : values()) {
+            if (apieCode.code==value){
+                return apieCode;
+            }
+        }
+        throw new RuntimeException("Unknown APICODE!");
+    }
 }

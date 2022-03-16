@@ -33,7 +33,9 @@ subprojects {
         implementation group: 'io.vertx', name: 'vertx-core', version: vertx_version
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-        // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha6'
+        implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.3.0-alpha14'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.3.0-alpha14'
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2'
     }
 

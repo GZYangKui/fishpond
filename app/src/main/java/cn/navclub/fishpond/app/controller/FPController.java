@@ -12,6 +12,7 @@ import cn.navclub.fishpond.protocol.api.APIECode;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
 import cn.navclub.fishpond.protocol.util.TProUtil;
+import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.geometry.Side;
 import javafx.scene.control.Tab;
@@ -21,9 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 import lombok.Getter;
-
-import static cn.navclub.fishpond.core.config.Constant.CODE;
-import static cn.navclub.fishpond.core.config.Constant.CONTENT;
 
 public class FPController extends FXMLWinController<TabPane> implements SocketHook {
     private static final String DEFAULT_STYLE_CLASS = "nav-tab-pane";
@@ -36,8 +34,6 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
         this.tProPaneController = new TProPaneController();
 
         this.initUI();
-
-        this.requestTCPConnect();
 
         this.getStage().setWidth(910);
         this.getStage().setHeight(650);
@@ -69,7 +65,7 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
         this.getParent().getSelectionModel().select(1);
     }
 
-    private void requestTCPConnect() {
+    public void requestTCPConnect() {
         var holder = SocketHolder.getInstance();
         holder.setPort(9000);
         holder.setHost("127.0.0.1");
@@ -79,11 +75,17 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
         }));
     }
 
+
     @Override
-    public void onMessage(TProMessage message) {
-
+    public void feedback(ServiceCode serviceCode, APIECode code, JsonObject content, TProMessage message) {
+        //TCP注册不成功
+        if (serviceCode == ServiceCode.TCP_REGISTER && code != APIECode.OK) {
+            Platform.runLater(() -> {
+                this.getStage().hide();
+                new LoginController().showAndFront();
+            });
+        }
     }
-
 
     @Getter
     private enum TabItem {

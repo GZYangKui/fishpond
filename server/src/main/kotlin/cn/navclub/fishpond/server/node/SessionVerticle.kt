@@ -93,6 +93,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
      */
     private suspend fun checkSSExpire(t: Long) {
         val list: MutableList<Int> = arrayListOf()
+        val list1: MutableList<String> = arrayListOf()
         for (entry in this.userMap) {
             val session = entry.value
             if (session.expire < System.currentTimeMillis()) {
@@ -100,14 +101,23 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
             }
         }
         for (s in list) {
-            //移出会话信息
-            sessionMap.inverse().remove(s)
             //移出缓存用户信息
             userMap.remove(s)
+            //移出会话信息
+            val sessionId = sessionMap.inverse().remove(s)
+            if (sessionId != null) {
+                list1.add(sessionId)
+            }
             println("[$s]用户会话超时")
         }
-        val model = ITModel(list, ITCode.REMOVE_TCP_SESSION)
         //移出对应TCP连接
-        requestEB(vertx, TCPVerticle::class.java.name, model, Unit.javaClass)
+        if (list1.isNotEmpty()) {
+            requestEB(
+                vertx,
+                TCPVerticle::class.java.name,
+                ITModel(list1, ITCode.REMOVE_TCP_SESSION),
+                String::class.java
+            )
+        }
     }
 }

@@ -16,6 +16,7 @@ import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.NetSocket;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 @Data
+@Slf4j
 public class SocketHolder {
     private int port;
     private String host;
@@ -57,23 +59,19 @@ public class SocketHolder {
         if (!(tcnStatus.get() == TCNStatus.TO_BE_CONNECTED || tcnStatus.get() == TCNStatus.CLOSED)) {
             return Future.failedFuture("Current tcp located connecting or connected!");
         }
-        this.plusNum.set(0);
-        this.plusTId.set(-1);
         //Setting connecting status
-        this.tcnStatusChange(TCNStatus.CONNECTING);
+        this.tcnChange(TCNStatus.CONNECTING);
         var socket = Main.vertx.createNetClient();
         var future = socket.connect(port, host);
         var promise = Promise.<Void>promise();
         future.onComplete(ar -> {
             if (ar.succeeded()) {
-                this.initSocket(ar.result());
                 promise.complete();
-                //Clear re-connect timer
-                Main.vertx.cancelTimer(this.RCId.get());
+                this.initSocket(ar.result());
             } else {
                 promise.fail(ar.cause());
-                //Set to be connect status
-                this.tcnStatusChange(TCNStatus.TO_BE_CONNECTED);
+                //Set to be connection status
+                this.tcnChange(TCNStatus.TO_BE_CONNECTED);
             }
         });
         return promise.future();
@@ -84,25 +82,37 @@ public class SocketHolder {
         var decoder = DefaultDecoder
                 .create()
                 .handler(tPro -> {
+                    log.info("收到TCP消息:\n{}", tPro.toString());
                     //心跳次数置零
                     this.plusNum.set(0);
-                    //Judge tcp register is success
-                    if (tPro.getServiceCode() == ServiceCode.OPERATE_FEEDBACK
-                            && TProUtil.getFBCode(tPro) == ServiceCode.TCP_REGISTER) {
+                    if (TProUtil.getFBCode(tPro) == ServiceCode.TCP_REGISTER) {
                         var json = tPro.toJson().getJsonObject(Constant.CONTENT);
                         var code = json.getInteger(Constant.CODE);
                         var register = (code == APIECode.OK.getCode());
-                        //Tcp register success start plus timer and set connected status
+                        //TCP register success start plus timer and set connected status
                         if (register) {
                             this.plus();
-                            //Set connected status
-                            this.tcnStatusChange(TCNStatus.CONNECTED);
+                            this.tcnChange(TCNStatus.CONNECTED);
+                            //尝试清除重连定时器
+                            Main.vertx.cancelTimer(this.RCId.getAndSet(-1));
                         }
                         this.register.set(register);
                     }
                     for (SocketHook hook : this.hooks) {
                         try {
-                            hook.onMessage(tPro);
+                            if (tPro.getServiceCode() == ServiceCode.OPERATE_FEEDBACK) {
+                                var fc = TProUtil.getFBCode(tPro);
+                                //心跳反馈不做处理
+                                if (fc == ServiceCode.HEART_BEAT) {
+                                    return;
+                                }
+                                var data = tPro.toJson();
+                                var content = data.getJsonObject(Constant.CONTENT);
+                                var code = APIECode.getInstance(content.getInteger(Constant.CODE));
+                                hook.feedback(fc, code, content, tPro);
+                            } else {
+                                hook.onMessage(tPro);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -113,11 +123,11 @@ public class SocketHolder {
         socket.exceptionHandler(this::exAfter);
         socket.closeHandler(this::closeAfter);
         //注册TCP
-        this.tcpRegister();
+        this.TRegister();
     }
 
 
-    private void tcpRegister() {
+    private void TRegister() {
         var tPro = new TProMessage();
 
         tPro.setType(MessageT.JSON);
@@ -162,27 +172,22 @@ public class SocketHolder {
     }
 
     private void closeAfter(Void v) {
-        System.out.println("TCP连接关闭");
-        //clear plus timer
-        if (this.plusTId.get() != -1) {
-            Main.vertx.cancelTimer(this.plusTId.get());
-            this.plusTId.set(-1);
-        }
-        if (this.RCId.get() != -1) {
-            Main.vertx.cancelTimer(this.RCId.get());
-            this.RCId.set(-1);
-        }
-        this.tcnStatusChange(TCNStatus.CLOSED);
-        this.checkReconCondition();
+        log.info("<<<<<TCP连接关闭>>>>>>>");
+        this.tcnChange(TCNStatus.CLOSED);
+        //清除重连定时器
+        Main.vertx.cancelTimer(this.RCId.getAndSet(-1));
+        //清除心跳定时器
+        Main.vertx.cancelTimer(this.plusTId.getAndSet(-1));
+        this.checkRCondition();
     }
 
     private void exAfter(Throwable t) {
-        System.out.println("TCP连接发生异常:" + t.getMessage());
+        log.error("TCP连接发生异常!", t);
         //Manual close socket connect
         this.socket.close();
     }
 
-    private void tcnStatusChange(TCNStatus status) {
+    private void tcnChange(TCNStatus status) {
         var oldStatus = this.tcnStatus.getAndSet(status);
         for (SocketHook hook : this.hooks) {
             try {
@@ -196,20 +201,21 @@ public class SocketHolder {
     /**
      * Check whether use re-connection
      */
-    private void checkReconCondition() {
-        //Already success register can re-connect
+    private void checkRCondition() {
+        //已经通过TCP注册才进行重连
         if (!this.register.get() && this.RCId.get() != -1) {
+            log.info("<<<<当前TCP会话尚未注册,取消本次重连>>>>>");
             return;
         }
         var count = new AtomicInteger(1);
         //Try re-connect to tcp server
         this.RCId.set(Main.vertx.setPeriodic(3 * 1000, t -> {
             if (!this.register.get()) {
-                System.out.println("Due to tcp connect not register so cancel re-connect operate.");
+                log.info("Due to tcp connect not register so cancel re-connect operate.");
                 Main.vertx.cancelTimer(this.RCId.get());
                 return;
             }
-            System.out.println("Try re-connect " + (count.getAndIncrement()) + " times.");
+            log.info("Try re-connect " + (count.getAndIncrement()) + " times.");
             this.connect();
         }));
     }

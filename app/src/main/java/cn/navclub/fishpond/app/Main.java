@@ -4,7 +4,9 @@ import cn.navclub.fishpond.app.controller.LoginController;
 import io.vertx.core.Vertx;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Main extends Application {
 
     public static final Vertx vertx = Vertx.vertx();

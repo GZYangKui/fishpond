@@ -22,12 +22,12 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
             launch {
                 val json = it.body()
                 val data = json.getValue(DATA)
-                val code = ITCode.valueOf(json.getString(Constant.CODE))
+                val code = ITCode.valueOf(json.getString(CODE))
                 try {
-                    val reply = that.onMessage(code, data)
+                    var reply = that.onMessage(code, data)
                     //响应数据为null或者Unit则不做处理
                     if (reply == null || reply is Unit) {
-                        return@launch
+                        reply = ITResult.success("").toJson()
                     }
                     //响应客户端
                     it.reply(reply)

@@ -39,8 +39,14 @@ public class LoginController extends FXMLWinController<GridPane> {
         data.put(USERNAME, Integer.valueOf(u));
         var future = HTTPUtil.<JsonObject>doPost(API.REQ_LOGIN, null, data);
         future.onSuccess(json -> {
+            //设置当前用户名
+            HTTPUtil.setUsername(Integer.parseInt(u));
+            //设置当前会话id
             HTTPUtil.setSessionId(json.getString(SESSION_ID));
+            //跳转到主页面
             this.toFixWindow(FPController.getController());
+            //请求连接
+            FPController.getController().requestTCPConnect();
         });
     }
 }

@@ -133,7 +133,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         return when (code) {
             //批量移出会话列表
             ITCode.REMOVE_TCP_SESSION -> (data as JsonArray).forEach { this.idSocketMap.remove(it as String)?.close() }
-            else -> null
+            else -> ITResult.success("")
         }
     }
 }
