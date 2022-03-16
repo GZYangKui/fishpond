@@ -1,19 +1,17 @@
 package cn.navclub.fishpond.server
 
 
-import cn.navclub.fishpond.core.config.Constant
 import cn.navclub.fishpond.core.config.Constant.*
-import cn.navclub.fishpond.protocol.api.APIECode
 import cn.navclub.fishpond.server.internal.ITCode
-import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
-import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.launch
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
+    protected val logger:Logger = LoggerFactory.getLogger(this::class.java)
 
     protected fun consumerEB() {
         val that = this
@@ -25,7 +23,7 @@ abstract class AbstractFDVerticle<T> : CoroutineVerticle() {
                 val code = ITCode.valueOf(json.getString(CODE))
                 try {
                     var reply = that.onMessage(code, data)
-                    //响应数据为null或者Unit则不做处理
+                    //响应数据为null或者Unit响应成功
                     if (reply == null || reply is Unit) {
                         reply = ITResult.success("").toJson()
                     }

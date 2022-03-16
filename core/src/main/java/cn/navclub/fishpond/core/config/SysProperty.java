@@ -8,5 +8,5 @@ public class SysProperty {
     /**
      * 系统欢迎语
      */
-    public static String WELCOME = "网络并非法外之地,请勿发表非法言论,一经发现违规行为,封号处理并保留相关证据,提交相关监管部门!";
+    public static String WELCOME = "请文明发言!";
 }

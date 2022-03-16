@@ -50,9 +50,15 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
             Platform.runLater(() -> {
                 var wrapper = new TProWrapper(message);
                 var hBox = new HBox();
-                hBox.setAlignment(Pos.CENTER_LEFT);
+                if (wrapper.isCurrent()) {
+                    hBox.setAlignment(Pos.CENTER_RIGHT);
+                } else {
+                    hBox.setAlignment(Pos.CENTER_LEFT);
+                }
                 hBox.getChildren().add(wrapper);
                 this.viewPort.getChildren().add(hBox);
+                //新消息到达,滚动到最底部
+                this.tProWin.setVvalue(1.0);
             });
         }
     }

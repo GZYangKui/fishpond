@@ -45,8 +45,14 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
     private fun checkSession(sessionId: String): JsonObject {
         val has = this.sessionMap.containsKey(sessionId)
         return if (has) {
-            val username = this.sessionMap[sessionId]
-            ITResult.success(this.userMap[username])
+            val user = this.userMap[this.sessionMap[sessionId]]
+            //延长会话时长
+            if (user != null) {
+                user.expire = calSSExpire(user.expire)
+                ITResult.success(user)
+            } else {
+                ITResult.fail("会话无效!")
+            }
         } else {
             ITResult.fail("会话无效!")
         }.toJson()
@@ -108,7 +114,7 @@ class SessionVerticle : AbstractFDVerticle<JsonObject>() {
             if (sessionId != null) {
                 list1.add(sessionId)
             }
-            println("[$s]用户会话超时")
+            logger.info("{}用户会话超时", s)
         }
         //移出对应TCP连接
         if (list1.isNotEmpty()) {

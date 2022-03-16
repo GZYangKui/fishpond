@@ -7,7 +7,7 @@
   "http": {
     "port": 10000,
     "session": {
-      "expire": 30
+      "expire": 180
     },
     "skipAuth": [
       "/user/login"

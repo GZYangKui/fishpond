@@ -1,6 +1,7 @@
 package cn.navclub.fishpond.app.controls;
 
 import cn.navclub.fishpond.app.AssetsHelper;
+import cn.navclub.fishpond.app.http.HTTPUtil;
 import cn.navclub.fishpond.core.config.SysProperty;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
@@ -23,13 +24,17 @@ public class TProWrapper extends VBox {
     private final TProTextFlow textFlow;
     private final TProMessage message;
     private Circle avatar;
+    //判断是否当前登录用户信息
+    private final boolean current;
 
     public TProWrapper(TProMessage message) {
         this.message = message;
         this.avatar();
-        this.textFlow = new TProTextFlow(message.toJson());
-        this.initWrapper();
         this.getStyleClass().add(MESSAGE_BOX_CLASS);
+        this.textFlow = new TProTextFlow(message.toJson());
+        this.current = message.getFrom().equals(HTTPUtil.getUsername());
+        this.initWrapper();
+
     }
 
     private void avatar() {
@@ -56,9 +61,13 @@ public class TProWrapper extends VBox {
                 nickname = from.toString();
             }
             var label = new Label(nickname);
-            hBox.getChildren().add(label);
+            hBox.getChildren().add(current ? 0 : 1, label);
         }
         this.getChildren().add(hBox);
         this.getChildren().add(textFlow);
+    }
+
+    public boolean isCurrent() {
+        return current;
     }
 }
