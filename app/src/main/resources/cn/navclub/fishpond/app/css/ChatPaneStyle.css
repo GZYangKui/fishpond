@@ -20,17 +20,21 @@
 .fp-pro-text-flow-box {
     -fx-font-size: 1.2em;
     -fx-background-color: #0080DF;
-    /*-fx-font-weight: bolder;*/
     -fx-border-radius: .5em;
     -fx-background-radius: .5em;
-    -fx-padding: .5em;
+    -fx-padding: .5em .5em 0 .5em;
     -fx-line-spacing: .5em;
 }
-.fp-pro-text-flow-box Text{
+
+.fp-pro-text-flow-box Text {
     -fx-stroke: #fff;
 }
 
-.fp-pro-text-time {
+.fp-pro-time-box {
+    -fx-padding: .5em 0 0 0;
+}
+
+.fp-pro-time-box .label {
     -fx-font-size: .8em !important;
     -fx-text-fill: #fff !important;
 }

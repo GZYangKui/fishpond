@@ -38,11 +38,11 @@ public class TProWrapper extends HBox {
     }
 
     private FPAvatar avatar() {
-        var avatar = new FPAvatar(45, 45, 10, 10, true);
+        final FPAvatar avatar;
         if (this.message.getFrom() == SysProperty.SYS_ID) {
-            avatar.setAvatar(AssetsHelper.localIcon("sys_notify.png"));
+            avatar = FPAvatar.system();
         } else {
-            avatar.setAvatar(AssetsHelper.localIcon("sys_user.png"));
+            avatar = FPAvatar.user();
         }
         return avatar;
     }

@@ -15,4 +15,5 @@ HBox {
 
 .close:hover {
     -fx-background-color: #ff7178 !important;
+    -fx-graphic:url('../icon/xwin/close_hover.png');
 }

@@ -16,6 +16,8 @@ import cn.navclub.fishpond.protocol.model.TProMessage;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -37,11 +39,23 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
     @FXML
     private ScrollPane tProWin;
 
+    private final ChangeListener<Number> VPHListener;
+
 
     public ChatPaneController(Integer account) {
         this.account = account;
         SocketHolder.getInstance().addHook(this);
         this.setParent(AssetsHelper.loadFXMLView("ChatPane.fxml", this));
+        this.viewPort.heightProperty().addListener((this.VPHListener = this.getVPHListener()));
+    }
+
+    private ChangeListener<Number> getVPHListener() {
+        return (observable, oldValue, newValue) -> this.tProWin.setVvalue(1d);
+    }
+
+    @Override
+    protected void dispose() {
+        this.viewPort.heightProperty().removeListener(this.VPHListener);
     }
 
     @Override
@@ -57,8 +71,6 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
                 }
                 hBox.getChildren().add(wrapper);
                 this.viewPort.getChildren().add(hBox);
-                //新消息到达,滚动到最底部
-                this.tProWin.setVvalue(1.0);
             });
         }
     }
@@ -70,9 +82,9 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
             return;
         }
         var tPro = new TProMessage();
+        tPro.setTo(this.account);
         tPro.setUuid(StrUtil.uuid());
         tPro.setType(MessageT.JSON);
-        tPro.setTo(SysProperty.SYS_ID);
         tPro.setFrom(SysProperty.SYS_ID);
         tPro.setServiceCode(ServiceCode.GROUP_MESSAGE);
         var data = new JsonObject();
@@ -87,9 +99,7 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
         SocketHolder
                 .getInstance()
                 .write(tPro)
-                .onSuccess(ar -> {
-                    Platform.runLater(() -> this.textArea.clear());
-                });
+                .onSuccess(ar -> Platform.runLater(() -> this.textArea.clear()));
     }
 
     public static ChatPaneController create(Integer account) {

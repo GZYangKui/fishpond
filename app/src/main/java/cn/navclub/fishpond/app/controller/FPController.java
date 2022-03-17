@@ -6,20 +6,23 @@ import cn.navclub.fishpond.app.controller.component.TProPaneController;
 import cn.navclub.fishpond.app.controls.FPAvatar;
 import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.app.socket.SocketHook;
+import cn.navclub.fishpond.app.socket.TCNStatus;
 import cn.navclub.fishpond.app.util.DialogUtil;
 import cn.navclub.fishpond.protocol.api.APIECode;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 import lombok.Getter;
+import org.controlsfx.control.Notifications;
 
 public class FPController extends FXMLWinController<TabPane> implements SocketHook {
     private static final String DEFAULT_STYLE_CLASS = "nav-tab-pane";
@@ -41,6 +44,15 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
         this.getParent().getStylesheets().add(AssetsHelper.loadStyleSheets("FPStyle.css"));
 
         SocketHolder.getInstance().addHook(this);
+
+        this.getParent().getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> {
+
+            var oi = TabItem.values()[oldValue.intValue()];
+            var ni = TabItem.values()[newValue.intValue()];
+
+            oi.getImageView().setImage(oi.icon);
+            ni.getImageView().setImage(ni.active);
+        }));
     }
 
     private void initUI() {
@@ -49,18 +61,20 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
         this.getParent().setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         for (TabItem value : TabItem.values()) {
             var tab = new Tab();
-            var hBox = new HBox();
-            var avatar = new FPAvatar(45, 45, 10, 10, false);
-            tab.setGraphic(hBox);
+            var func = new Label();
             tab.setTooltip(new Tooltip(value.text));
-            hBox.getChildren().add(avatar.getShape());
-            avatar.setAvatar(AssetsHelper.localIcon(value.icon));
+            var icon = new ImageView(value.selected ? value.active : value.icon);
+
+            tab.setGraphic(func);
+            func.setGraphic(icon);
+            value.setImageView(icon);
+
             if (value == TabItem.MESSAGE) {
                 tab.setContent(this.tProPaneController.getParent());
             }
             this.getParent().getTabs().add(tab);
         }
-        this.getParent().getSelectionModel().select(1);
+        this.getParent().getSelectionModel().select(0);
     }
 
     public void requestTCPConnect() {
@@ -73,6 +87,16 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
         }));
     }
 
+    @Override
+    public void onTCNStatusChange(TCNStatus oldValue, TCNStatus newValue) {
+        Platform.runLater(() -> {
+            var text = String.format("TCP连接状态发生改变(%s->%s)", oldValue.getText(), newValue.getText());
+            Notifications.create()
+                    .position(Pos.TOP_RIGHT)
+                    .text(text)
+                    .showInformation();
+        });
+    }
 
     @Override
     public void feedback(ServiceCode serviceCode, APIECode code, JsonObject content, TProMessage message) {
@@ -85,17 +109,36 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
         }
     }
 
+    //00C268 A4a4a4
     @Getter
     private enum TabItem {
-        PERSONAL("sys_user.png", "个人信息"),
-        MESSAGE("message.png", "消息列表"),
-        FRIEND("friend.png", "朋友列表");
-        private final String icon;
+        MESSAGE(
+                AssetsHelper.localIcon("message.png"),
+                AssetsHelper.localIcon("message_selected.png"),
+                "消息列表",
+                true
+        ),
+        FRIEND(
+                AssetsHelper.localIcon("friend.png"),
+                AssetsHelper.localIcon("friend_selected.png"),
+                "朋友列表",
+                false
+        );
+        private final Image icon;
+        private final Image active;
         private final String text;
+        private final boolean selected;
+        private ImageView imageView;
 
-        TabItem(String icon, String text) {
+        TabItem(Image icon, Image active, String text, boolean selected) {
             this.icon = icon;
+            this.active = active;
             this.text = text;
+            this.selected = selected;
+        }
+
+        public void setImageView(ImageView imageView) {
+            this.imageView = imageView;
         }
     }
 

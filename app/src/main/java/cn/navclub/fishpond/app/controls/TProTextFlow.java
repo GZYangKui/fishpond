@@ -19,7 +19,7 @@ import static cn.navclub.fishpond.core.config.Constant.MESSAGE;
 
 public class TProTextFlow extends VBox {
 
-    private static final String DEFAULT_TIME_CLASS = "fp-pro-text-time";
+    private static final String DEFAULT_TIME_BOX_CLASS = "fp-pro-time-box";
     private static final String DEFAULT_STYLE_CLASS = "fp-pro-text-flow-box";
 
     public TProTextFlow(JsonObject message, boolean current) {
@@ -51,17 +51,14 @@ public class TProTextFlow extends VBox {
 
         var hBox = new HBox();
         var timestamp = message.getLong(Constant.TIMESTAMP);
-        var label = new Label(DateUtil.formatDateTime(timestamp, "HH:mm:ss"));
+        var label = new Label(DateUtil.formatDateTime(timestamp, "HH:mm"));
         hBox.setAlignment(Pos.CENTER_RIGHT);
         hBox.getChildren().add(label);
-        if (current) {
-            hBox.setAlignment(Pos.CENTER_LEFT);
-        } else {
-            hBox.setAlignment(Pos.CENTER_RIGHT);
-        }
+        hBox.setAlignment(Pos.CENTER_RIGHT);
+
+        hBox.getStyleClass().add(DEFAULT_TIME_BOX_CLASS);
 
         this.getChildren().addAll(textFlow, hBox);
-        label.getStyleClass().add(DEFAULT_TIME_CLASS);
         this.getStyleClass().add(DEFAULT_STYLE_CLASS);
     }
 }
