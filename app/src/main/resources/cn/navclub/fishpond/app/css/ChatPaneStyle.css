@@ -17,14 +17,22 @@
     -fx-spacing: .3em;
 }
 
-.fp-pro-text-flow {
-    -fx-font-size: 1.5em;
-    -fx-background-color: #34A1E0;
-    -fx-font-weight: bolder;
+.fp-pro-text-flow-box {
+    -fx-font-size: 1.2em;
+    -fx-background-color: #0080DF;
+    /*-fx-font-weight: bolder;*/
     -fx-border-radius: .5em;
     -fx-background-radius: .5em;
     -fx-padding: .5em;
     -fx-line-spacing: .5em;
+}
+.fp-pro-text-flow-box Text{
+    -fx-stroke: #fff;
+}
+
+.fp-pro-text-time {
+    -fx-font-size: .8em !important;
+    -fx-text-fill: #fff !important;
 }
 
 .view-port {
@@ -34,6 +42,8 @@
 }
 
 .bottom-box {
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: .05em 0 0 0;
     -fx-background-color: #f3f3f3;
 }
 
@@ -50,10 +60,10 @@
 
 .bottom-box .text-area {
     -fx-background-insets: 0;
-    -fx-border-color: #E0E0E0;
-    -fx-border-width: .05em 0 0 0;
     -fx-font-size: 1.5em;
     -fx-pref-height: 6em;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: .05em 0 0 0;
     -fx-background-color: transparent, #f3f3f3, transparent, #f3f3f3;
 }
 
@@ -69,7 +79,23 @@
     -fx-padding: .5em;
 }
 
+.tpro-tool-bar {
+    -fx-spacing: .5em;
+}
+
 .tpro-tool-box .title {
     -fx-font-weight: bolder;
     -fx-font-size: 1.8em;
+}
+
+.tpro-tool-bar .button {
+    -fx-padding: 0;
+    -fx-pref-width: 30px;
+    -fx-border-radius: .5em;
+    -fx-background-radius: .5em;
+    -fx-background-color: transparent;
+}
+
+.tpro-tool-bar .button:hover {
+    -fx-background-color: #fff;
 }

@@ -1,21 +1,30 @@
 package cn.navclub.fishpond.app.controls;
 
 import cn.navclub.fishpond.core.config.Constant;
+import cn.navclub.fishpond.core.util.DateUtil;
 import cn.navclub.fishpond.protocol.enums.ContentType;
 import io.vertx.core.json.JsonObject;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+
 
 import static cn.navclub.fishpond.core.config.Constant.ITEMS;
 import static cn.navclub.fishpond.core.config.Constant.MESSAGE;
 
-public class TProTextFlow extends TextFlow {
-    private static final String DEFAULT_CLASS = "fp-pro-text-flow";
+public class TProTextFlow extends VBox {
 
-    private final JsonObject message;
+    private static final String DEFAULT_TIME_CLASS = "fp-pro-text-time";
+    private static final String DEFAULT_STYLE_CLASS = "fp-pro-text-flow-box";
 
-    public TProTextFlow(JsonObject message) {
-        this.message = message;
+    public TProTextFlow(JsonObject message, boolean current) {
+        var textFlow = new TextFlow();
+
         var arr = message.getJsonArray(ITEMS);
         for (Object o : arr) {
             var json = (JsonObject) o;
@@ -25,9 +34,34 @@ public class TProTextFlow extends TextFlow {
             }
             if (type == ContentType.PLAIN_TEXT) {
                 var text = new Text(json.getString(MESSAGE));
-                this.getChildren().add(text);
+                textFlow.getChildren().add(text);
+            }
+            if (type == ContentType.IMG) {
+                var img = new ImageView(new Image(
+                        json.getString("message"),
+                        250,
+                        250,
+                        false,
+                        true,
+                        true)
+                );
+                textFlow.getChildren().add(img);
             }
         }
-        this.getStyleClass().add(DEFAULT_CLASS);
+
+        var hBox = new HBox();
+        var timestamp = message.getLong(Constant.TIMESTAMP);
+        var label = new Label(DateUtil.formatDateTime(timestamp, "HH:mm:ss"));
+        hBox.setAlignment(Pos.CENTER_RIGHT);
+        hBox.getChildren().add(label);
+        if (current) {
+            hBox.setAlignment(Pos.CENTER_LEFT);
+        } else {
+            hBox.setAlignment(Pos.CENTER_RIGHT);
+        }
+
+        this.getChildren().addAll(textFlow, hBox);
+        label.getStyleClass().add(DEFAULT_TIME_CLASS);
+        this.getStyleClass().add(DEFAULT_STYLE_CLASS);
     }
 }

@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.scene.text.TextFlow?>
-<?import javafx.scene.text.Text?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/ChatPaneStyle.css">
     <top>
         <HBox styleClass="tpro-tool-box">
             <HBox alignment="BASELINE_LEFT" HBox.hgrow="ALWAYS">
-                <Label text="吹水群" styleClass="title"/>
+                <Label text="鱼塘" styleClass="title"/>
             </HBox>
             <HBox alignment="CENTER_RIGHT">
 
@@ -30,6 +28,28 @@
     </center>
     <bottom>
         <VBox styleClass="bottom-box">
+            <HBox styleClass="tpro-tool-bar">
+                <Button>
+                    <tooltip>
+                        <Tooltip text="表情"/>
+                    </tooltip>
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../icon/tool_bar/emoji.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button>
+                    <tooltip>
+                        <Tooltip text="文件"/>
+                    </tooltip>
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../icon/tool_bar/file.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </HBox>
             <TextArea VBox.vgrow="ALWAYS" fx:id="textArea"/>
             <HBox alignment="CENTER_RIGHT">
                 <Button text="发送" onAction="#sendMessage"/>
