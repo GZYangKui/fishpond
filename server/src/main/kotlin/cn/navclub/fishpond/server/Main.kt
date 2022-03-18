@@ -2,6 +2,7 @@ package cn.navclub.fishpond.server
 
 import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.server.util.DBUtil
+import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
@@ -10,27 +11,6 @@ import io.vertx.mysqlclient.MySQLConnectOptions
 import io.vertx.sqlclient.PoolOptions
 
 import kotlin.system.exitProcess
-
-suspend fun createSharedDatabase(vertx: Vertx, dataSource: JsonObject) {
-
-    val options = MySQLConnectOptions()
-
-    options.user = dataSource.getString(USERNAME)
-    options.charset = dataSource.getString(CHARSET)
-    options.password = dataSource.getString(PASSWORD)
-    options.database = dataSource.getString(DATABASE)
-
-
-    val pool = dataSource.getJsonObject(POOL)
-
-    val pOptions = PoolOptions()
-
-    pOptions.name = pool.getString(NAME)
-    pOptions.isShared = pool.getBoolean(SHARE)
-    pOptions.maxSize = pool.getInteger(MAX_SIZE)
-
-    DBUtil.createSharedDatabase(vertx, options, pOptions).await()
-}
 
 /**
  * 根据程序启动时传入参数动态读取配置文件
@@ -57,7 +37,10 @@ suspend fun main(args: Array<String>) {
         val fileSystem = vertx.fileSystem()
         val config = fileSystem.readFile("config/$profile").await().toJsonObject()
 
-        createSharedDatabase(vertx, config.getJsonObject(DATA_SOURCE))
+        //初始化redis
+        RedisUtil.createRedisClient(vertx, config.getJsonObject(REDIS))
+        //初始化数据源
+        DBUtil.createSharedDatabase(vertx, config.getJsonObject(DATA_SOURCE))
 
         //部署配置
         val options = DeploymentOptions().setConfig(config)

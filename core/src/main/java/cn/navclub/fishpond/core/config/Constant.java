@@ -4,6 +4,7 @@ public class Constant {
     public static String ID = "id";
     public static String SEX = "sex";
     public static String TCP = "tcp";
+    public static String HOST = "host";
     public static String IDLE = "idle";
     public static String HTTP = "http";
     public static String CODE = "code";
@@ -14,7 +15,9 @@ public class Constant {
     public static String PORT = "port";
     public static String ITEMS = "items";
     public static String POOL = "pool";
+    public static String REDIS = "redis";
     public static String SHARE = "share";
+    public static String SKIP = "skip";
     public static String SESSION = "session";
     public static String MAX_SIZE = "maxSize";
     public static String CHARSET = "charset";

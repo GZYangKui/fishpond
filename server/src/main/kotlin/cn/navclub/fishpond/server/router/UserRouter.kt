@@ -7,8 +7,10 @@ import cn.navclub.fishpond.server.HRouter
 import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.service.impl.UserServiceImpl
 import cn.navclub.fishpond.server.util.CoroutineUtil
+import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
+import io.vertx.redis.client.RedisAPI
 
 class UserRouter(vertx: Vertx) : HRouter(vertx) {
 

@@ -2,6 +2,7 @@ package cn.navclub.fishpond.server.node
 
 import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.server.AbstractFDVerticle
+import cn.navclub.fishpond.server.router.GraRouter
 import cn.navclub.fishpond.server.router.UserRouter
 import cn.navclub.fishpond.server.security.FPSHandler
 import io.vertx.core.json.JsonObject
@@ -21,7 +22,8 @@ class WebVerticle : AbstractFDVerticle<JsonObject>() {
         router.route().handler(FPSHandler.create(vertx, json))
         //用户路由
         router.route("/user/*").subRouter(UserRouter(vertx).router)
-
+        //图形相关借口
+        router.route("/gra/*").subRouter(GraRouter(vertx).router)
 
         vertx
             .createHttpServer()

@@ -1,8 +1,10 @@
 package cn.navclub.fishpond.server.util;
 
+import cn.navclub.fishpond.core.config.Constant;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
@@ -18,17 +20,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static cn.navclub.fishpond.core.config.Constant.DATABASE;
+
 
 public class DBUtil {
     private static MySQLPool client;
     private static volatile boolean initDatabase;
 
-    public synchronized static Future<Void> createSharedDatabase(Vertx vertx, MySQLConnectOptions options, PoolOptions poolOptions) {
+    public synchronized static Future<Void> createSharedDatabase(Vertx vertx, JsonObject dataSource) {
         if (initDatabase) {
             throw new RuntimeException("Database already init please don't repeat init.");
         }
         DBUtil.initDatabase = true;
-        client = MySQLPool.pool(vertx, options, poolOptions);
+        var options = new MySQLConnectOptions();
+
+        options.setDatabase(dataSource.getString(DATABASE));
+        options.setUser(dataSource.getString(Constant.USERNAME));
+        options.setCharset(dataSource.getString(Constant.CHARSET));
+        options.setPassword(dataSource.getString(Constant.PASSWORD));
+
+
+        var pool = dataSource.getJsonObject(Constant.POOL);
+
+        var pOptions = new PoolOptions();
+
+        pOptions.setName(pool.getString(Constant.NAME));
+        pOptions.setShared(pool.getBoolean(Constant.SHARE));
+        pOptions.setMaxSize(pool.getInteger(Constant.MAX_SIZE));
+
+        client = MySQLPool.pool(vertx, options, pOptions);
+
         var future = client.query("SELECT  1").execute();
         var promise = Promise.<Void>promise();
         future.onComplete(ar -> {

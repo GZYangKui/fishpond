@@ -1,6 +1,7 @@
 package cn.navclub.fishpond.server.security
 
 import cn.navclub.fishpond.core.config.Constant.SESSION_ID
+import cn.navclub.fishpond.core.config.Constant.SKIP
 import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.protocol.api.APIECode
 import cn.navclub.fishpond.protocol.api.CommonResult
@@ -8,6 +9,7 @@ import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.model.FPSession
 import cn.navclub.fishpond.server.node.SessionVerticle
+import cn.navclub.fishpond.server.pattern.PathMatter
 import cn.navclub.fishpond.server.util.CoroutineUtil
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
@@ -18,6 +20,9 @@ import io.vertx.ext.web.RoutingContext
 class FPSHandler private constructor(private val vertx: Vertx, private val config: JsonObject) :
     Handler<RoutingContext> {
 
+    private val pathMatter: PathMatter = PathMatter()
+    private val list: List<String> = config.getJsonArray(SKIP).map((Any::toString))
+
     override fun handle(event: RoutingContext) {
         CoroutineUtil.launch({ checkSession(event) }) {
             event.json(CommonResult.fail<Any>(APIECode.SERVER_ERROR))
@@ -26,8 +31,14 @@ class FPSHandler private constructor(private val vertx: Vertx, private val confi
     }
 
     private suspend fun checkSession(event: RoutingContext) {
-        val skips = config.getJsonArray("skipAuth")
-        var pass = skips.contains(event.request().path())
+        var pass = false
+        val path = event.request().path()
+        for (pattern in list) {
+            pass = pathMatter.matcher(path, pattern, true)
+            if (pass) {
+                break
+            }
+        }
         val sessionId = event.request().getHeader(SESSION_ID)
 
         //如果不是跳过认证资源及会话字段不为空则通过EventBus校验会话真实性

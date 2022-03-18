@@ -12,7 +12,8 @@ dependencies {
 
     implementation 'io.vertx:vertx-web:' + vertx_version
     implementation "io.vertx:vertx-codegen:" + vertx_version
-    implementation 'io.vertx:vertx-mail-client:'+vertx_version
+    implementation 'io.vertx:vertx-mail-client:' + vertx_version
+    implementation 'io.vertx:vertx-redis-client:' + vertx_version
     implementation 'io.vertx:vertx-mysql-client:' + vertx_version
     implementation 'io.vertx:vertx-lang-kotlin-coroutines:' + vertx_version
 
