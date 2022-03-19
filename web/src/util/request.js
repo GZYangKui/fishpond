@@ -29,18 +29,16 @@ service.interceptors.response.use(
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                // store.dispatch('FedLogOut').then(() => {
-                //     location.reload()// 为了重新实例化vue-router对象 避免bug
-                // })
+
             });
             return;
         }
         if (code !== 200) {
-            // Message({
-            //     message: res.message,
-            //     type: 'error',
-            //     duration: 3 * 1000
-            // })
+            Message({
+                message: res.message,
+                type: 'error',
+                duration: 3 * 1000
+            })
             return Promise.reject(res)
         }
         return res;
