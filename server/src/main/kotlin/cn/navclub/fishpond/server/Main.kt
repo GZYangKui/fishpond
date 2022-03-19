@@ -2,6 +2,7 @@ package cn.navclub.fishpond.server
 
 import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.server.util.DBUtil
+import cn.navclub.fishpond.server.util.KaptUtil
 import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx

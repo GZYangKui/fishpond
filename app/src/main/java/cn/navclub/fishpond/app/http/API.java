@@ -1,9 +1,8 @@
 package cn.navclub.fishpond.app.http;
 
 
-
 public enum API {
-    REQ_LOGIN("/user/login", "请求登录");
+    REQ_LOGIN("/api/user/login", "请求登录");
 
     private final String url;
     private final String text;

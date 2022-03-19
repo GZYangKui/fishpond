@@ -21,9 +21,9 @@ class WebVerticle : AbstractFDVerticle<JsonObject>() {
         //会话检查
         router.route().handler(FPSHandler.create(vertx, json))
         //用户路由
-        router.route("/user/*").subRouter(UserRouter(vertx).router)
+        router.route("/api/user/*").subRouter(UserRouter(vertx).router)
         //图形相关借口
-        router.route("/gra/*").subRouter(GraRouter(vertx).router)
+        router.route("/api/kapt/*").subRouter(GraRouter(vertx).router)
 
         vertx
             .createHttpServer()

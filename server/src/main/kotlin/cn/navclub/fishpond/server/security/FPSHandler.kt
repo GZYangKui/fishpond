@@ -33,12 +33,14 @@ class FPSHandler private constructor(private val vertx: Vertx, private val confi
     private suspend fun checkSession(event: RoutingContext) {
         var pass = false
         val path = event.request().path()
+
         for (pattern in list) {
             pass = pathMatter.matcher(path, pattern, true)
             if (pass) {
                 break
             }
         }
+
         val sessionId = event.request().getHeader(SESSION_ID)
 
         //如果不是跳过认证资源及会话字段不为空则通过EventBus校验会话真实性

@@ -10,8 +10,9 @@
       "expire": 180
     },
     "skip": [
-      "/user/login",
-      "/user/register"
+      "/api/user/login",
+      "/api/user/register",
+      "/api/kapt/code"
     ]
   },
   "email": {
@@ -36,5 +37,12 @@
       "share": true,
       "name": "fishpond-pool"
     }
+  },
+  "kaptcha": {
+    "kaptcha.border": "yes",
+    "kaptcha.border.color": "black",
+    "kaptcha.border.thickness": 1,
+    "kaptcha.border.width": 200,
+    "kaptcha.border.height": 50
   }
 }

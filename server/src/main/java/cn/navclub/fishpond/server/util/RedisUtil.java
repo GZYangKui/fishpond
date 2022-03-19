@@ -7,6 +7,7 @@ import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.redis.client.Redis;
+import io.vertx.redis.client.RedisAPI;
 import io.vertx.redis.client.RedisClientType;
 import io.vertx.redis.client.RedisOptions;
 
@@ -48,6 +49,10 @@ public class RedisUtil {
         });
 
         return promise.future();
+    }
+
+    public static RedisAPI redisAPI() {
+        return RedisAPI.api(getRedis());
     }
 
     public static Redis getRedis() {

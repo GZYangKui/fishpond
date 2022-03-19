@@ -2,6 +2,7 @@ module cn.navclub.fishpond.server {
     requires io.vertx.core;
     requires kotlin.stdlib;
     requires io.vertx.web;
+    requires java.desktop;
     requires io.vertx.client.sql;
     requires io.vertx.client.mail;
     requires io.vertx.client.redis;
