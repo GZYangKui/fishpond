@@ -12,7 +12,8 @@
     "skip": [
       "/api/user/login",
       "/api/user/register",
-      "/api/kapt/code"
+      "/api/kapt/code",
+      "/api/kapt/VCode"
     ]
   },
   "email": {

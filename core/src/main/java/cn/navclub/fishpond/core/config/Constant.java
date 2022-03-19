@@ -19,6 +19,7 @@ public class Constant {
     public static String REDIS = "redis";
     public static String SHARE = "share";
     public static String SKIP = "skip";
+    public static String EMAIL="email";
     public static String SESSION = "session";
     public static String MAX_SIZE = "maxSize";
     public static String CHARSET = "charset";

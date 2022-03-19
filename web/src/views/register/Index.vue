@@ -25,10 +25,10 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-input/>
+          <el-input v-model="VCode.code"/>
         </el-form-item>
         <el-form-item>
-          <el-button>发送</el-button>
+          <el-button @click="handleVCode">发送</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -37,26 +37,45 @@
 
 <script>
 import {code} from "../../api/Kapt";
+import {VCode} from "../../api/User";
 
 const defaultRegisterInfo = {
   email: null,
   code: null
 };
+const defaultVCode = {
+  uuid: null,
+  code: null,
+  email: null
+}
 export default {
   name: "Index",
   data() {
     return {
       base64Str: null,
       dialogVisible: false,
+      VCode: Object.assign({}, defaultVCode),
       registerInfo: Object.assign({}, defaultRegisterInfo)
     }
   },
   methods: {
     handleGetCode() {
+      let email = this.registerInfo.email
+      if (!email || !email.trim()) {
+        this.$message.warning("请输入邮箱地址后在获取验证码!");
+        return
+      }
+      this.VCode.email = email
       this.dialogVisible = true;
       code().then(resp => {
         let data = resp.data;
+        this.VCode.uuid = data.uuid;
         this.base64Str = `data:image/png;base64,${data.img}`
+      })
+    },
+    handleVCode() {
+      VCode(this.VCode).then(resp => {
+
       })
     }
   }

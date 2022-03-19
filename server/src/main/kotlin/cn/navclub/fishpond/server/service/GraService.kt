@@ -11,8 +11,14 @@ interface GraService {
      */
     suspend fun code(): CommonResult<JsonObject>
 
+    /**
+     * 解码加密数据
+     */
+    fun decode(str: String): String
+
 
     companion object {
+
         fun create(vertx: Vertx): GraService {
             return GraServiceImpl(vertx)
         }

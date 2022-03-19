@@ -53,6 +53,7 @@ suspend fun main(args: Array<String>) {
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.SessionVerticle", options).await()
 
     } catch (e: java.lang.Exception) {
+        e.printStackTrace()
         println("verticle deploy fail:${e.message}")
         exitProcess(1)
     }

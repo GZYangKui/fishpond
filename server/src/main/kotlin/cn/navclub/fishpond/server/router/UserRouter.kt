@@ -1,16 +1,14 @@
 package cn.navclub.fishpond.server.router
 
-import cn.navclub.fishpond.core.config.Constant.PASSWORD
-import cn.navclub.fishpond.core.config.Constant.USERNAME
+import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.server.HRouter
 import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.service.impl.UserServiceImpl
 import cn.navclub.fishpond.server.util.CoroutineUtil
-import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.Vertx
+import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
-import io.vertx.redis.client.RedisAPI
 
 class UserRouter(vertx: Vertx) : HRouter(vertx) {
 
@@ -28,6 +26,19 @@ class UserRouter(vertx: Vertx) : HRouter(vertx) {
                 return@handler
             }
             CoroutineUtil.restCoroutine(it) { service.login(username, password) }
+        }
+
+        //发送邮箱验证码
+        router.post("/VCode").handler {
+            val json = it.bodyAsJson
+            val uuid = json.getString(UUID)
+            val code = json.getString(CODE)
+            val email = json.getString(EMAIL)
+            if (StrUtil.isEmpty(uuid) || StrUtil.isEmpty(code) || StrUtil.isEmpty(email)) {
+                paramValidFail("UUID/CODE/EMAIL不能为空!", it)
+                return@handler
+            }
+            CoroutineUtil.restCoroutine(it) { service.VCode(uuid, code, email) }
         }
     }
 }
