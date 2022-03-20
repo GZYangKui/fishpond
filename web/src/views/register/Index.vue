@@ -1,10 +1,10 @@
 <template>
   <el-row justify="center" align="middle" style="height: 100%">
-    <el-form label-width="100px">
-      <el-form-item label="邮箱地址:">
+    <el-form label-width="100px" :model="registerInfo" :rules="rules" ref="regFrom">
+      <el-form-item label="邮箱地址:" prop="email">
         <el-input type="email" v-model="registerInfo.email"/>
       </el-form-item>
-      <el-form-item label="验证码:">
+      <el-form-item label="验证码:" prop="code">
         <el-input v-model="registerInfo.code">
           <template #append>
             <el-button @click="handleGetCode" :disabled="btnSts">{{ btnText }}</el-button>
@@ -13,7 +13,7 @@
       </el-form-item>
       <el-form-item>
         <el-row justify="end" style="width: 100%">
-          <el-button>立即注册</el-button>
+          <el-button @click="submit">立即注册</el-button>
         </el-row>
       </el-form-item>
     </el-form>
@@ -37,7 +37,8 @@
 
 <script>
 import {code} from "../../api/Kapt";
-import {VCode} from "../../api/User";
+import {VCode, register} from "../../api/User";
+import {checkEmailFormat} from "../../util/validator";
 
 const defaultRegisterInfo = {
   email: null,
@@ -51,18 +52,38 @@ const defaultVCode = {
 export default {
   name: "Index",
   data() {
+    const checkEmail = (rule, value, callback) => {
+      if (checkEmailFormat(value)) {
+        callback()
+      } else {
+        callback(new Error("请输入正确邮箱地址!"))
+      }
+    }
     return {
       btnSts: false,
-      btnText: "发送",
+      btnText: "获取",
       base64Str: null,
       dialogVisible: false,
       VCode: Object.assign({}, defaultVCode),
-      registerInfo: Object.assign({}, defaultRegisterInfo)
+      registerInfo: Object.assign({}, defaultRegisterInfo),
+      rules: {
+        "email": [
+          {
+            required: true, trigger: 'blur', validator: checkEmail
+          }
+        ],
+        "code": [
+          {
+            required: true, trigger: 'blur', message: "验证码不能为空!"
+          }
+        ]
+      }
     }
   },
   methods: {
     handleGetCode() {
-      if (this.btnSts) {
+      if (!checkEmailFormat(this.registerInfo.email)) {
+        this.$message.warning("请填写正确邮箱地址!")
         return;
       }
       let email = this.registerInfo.email
@@ -96,11 +117,23 @@ export default {
         if (time <= 0) {
           clearInterval(id);
           this.btnSts = false;
-          this.btnText = "发送";
+          this.btnText = "获取";
         } else {
           this.btnText = time.toString();
         }
       }, 1000)
+    },
+    submit() {
+      this.$refs.regFrom.validate((valid) => {
+        if (!valid) {
+          return;
+        }
+        //用户注册
+        register(this.registerInfo).then(resp => {
+          this.$message.success("注册成功!");
+          this.registerInfo = Object.assign({}, defaultRegisterInfo);
+        })
+      })
     }
   }
 }
