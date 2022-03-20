@@ -20,9 +20,9 @@ class GraServiceImpl(private val vertx: Vertx) : GraService {
         val b = rs - a
 
         val base64Str = KaptUtil.create("$a+$b=?", 10).await()
-
-        val uuid = ASEUtil.encrypt(rs.toString(), key)
-
+        //设置过期时间为3分钟
+        val expire = System.currentTimeMillis() + 3 * 60 * 1000
+        val uuid = ASEUtil.encrypt("$rs/$expire", key)
 
         val json = JsonObject()
 

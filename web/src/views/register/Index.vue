@@ -7,13 +7,13 @@
       <el-form-item label="验证码:">
         <el-input v-model="registerInfo.code">
           <template #append>
-            <el-button @click="handleGetCode">获取</el-button>
+            <el-button @click="handleGetCode" :disabled="btnSts">{{ btnText }}</el-button>
           </template>
         </el-input>
       </el-form-item>
       <el-form-item>
         <el-row justify="end" style="width: 100%">
-          <el-button>确定注册</el-button>
+          <el-button>立即注册</el-button>
         </el-row>
       </el-form-item>
     </el-form>
@@ -52,6 +52,8 @@ export default {
   name: "Index",
   data() {
     return {
+      btnSts: false,
+      btnText: "发送",
       base64Str: null,
       dialogVisible: false,
       VCode: Object.assign({}, defaultVCode),
@@ -60,6 +62,9 @@ export default {
   },
   methods: {
     handleGetCode() {
+      if (this.btnSts) {
+        return;
+      }
       let email = this.registerInfo.email
       if (!email || !email.trim()) {
         this.$message.warning("请输入邮箱地址后在获取验证码!");
@@ -75,8 +80,27 @@ export default {
     },
     handleVCode() {
       VCode(this.VCode).then(resp => {
-
+        this.dialogVisible = false;
+        this.$message.success("发送成功!");
+        //开启定时器
+        this.handleSTimer();
       })
+    },
+    handleSTimer() {
+      //禁用按钮
+      this.btnSts = true;
+
+      let time = 180;
+      let id = setInterval(() => {
+        time--;
+        if (time <= 0) {
+          clearInterval(id);
+          this.btnSts = false;
+          this.btnText = "发送";
+        } else {
+          this.btnText = time.toString();
+        }
+      }, 1000)
     }
   }
 }

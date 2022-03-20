@@ -13,6 +13,8 @@ import cn.navclub.fishpond.server.util.DBUtil
 import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
+import io.vertx.core.net.JdkSSLEngineOptions
+import io.vertx.core.net.OpenSSLEngineOptions
 import io.vertx.ext.mail.MailClient
 import io.vertx.ext.mail.MailConfig
 import io.vertx.ext.mail.MailMessage
@@ -22,14 +24,12 @@ import java.util.Random
 class
 UserServiceImpl(private val vertx: Vertx) : UserService {
     private val mailClient: MailClient
-
+    private val emc: JsonObject = vertx.orCreateContext.config().getJsonObject(EMAIL)
 
     init {
-
-        val emc = vertx.orCreateContext.config().getJsonObject(EMAIL)
-
         val config = MailConfig()
 
+        config.isSsl = true
         config.isKeepAlive = true
         config.port = emc.getInteger(PORT)
         config.hostname = emc.getString(HOST)
@@ -53,15 +53,21 @@ UserServiceImpl(private val vertx: Vertx) : UserService {
     }
 
     override suspend fun VCode(uuid: String, code: String, email: String): CommonResult<String> {
-
+        val str = GraService.create(vertx).decode(uuid)
+        val index = str.indexOf("/")
+        val cs = str.substring(0, index)
+        //获取图片验证码剩余过期市场
+        val expire = (str.substring(index + 1).toLong() - System.currentTimeMillis()) / 1000
+        if (expire <= 0) {
+            return CommonResult.fail("图形验证过期,请刷新后重试!")
+        }
+        if (cs != code.trim()) {
+            return CommonResult.fail("验证码错误!")
+        }
         val key = this.redisKey(email)
         val resp = RedisUtil.redisAPI().ttl(key).await()
         if (resp.toInteger() > 0) {
             return CommonResult.fail("请勿频繁发送验证码!")
-        }
-        val str = GraService.create(vertx).decode(uuid)
-        if (str != code.trim()) {
-            return CommonResult.fail("验证码错误!")
         }
         val sql = "SELECT * FROM fp_user WHERE email=#{email}"
         val optional = DBUtil.findOne(FPUserRowMapper.INSTANCE, sql, mapOf(Pair(EMAIL, email))).await()
@@ -70,12 +76,13 @@ UserServiceImpl(private val vertx: Vertx) : UserService {
         }
         val VCode = 1000 + (Math.random() * 10000).toInt()
         val message = MailMessage()
-        message.from = ""
-        message.to = arrayListOf(email)
+        message.subject = "新用户注册"
+        message.cc = arrayListOf(email)
+        message.from = emc.getString(USERNAME)
         message.text = "你正在申请注册Fishpond,你的验证码:$VCode,若非本人操作,请忽略本信息!"
 
         mailClient.sendMail(message).await()
-        RedisUtil.redisAPI().setex(key, "120", VCode.toString()).await()
+        RedisUtil.redisAPI().setex(key, (expire + 3).toString(), VCode.toString()).await()
 
         return CommonResult.success("发送成功!")
     }

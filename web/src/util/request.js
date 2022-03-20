@@ -34,7 +34,7 @@ service.interceptors.response.use(
             return;
         }
         if (code !== 200) {
-            Message({
+            ElMessage({
                 message: res.message,
                 type: 'error',
                 duration: 3 * 1000
