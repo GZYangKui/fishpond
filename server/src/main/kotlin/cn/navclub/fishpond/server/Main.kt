@@ -8,6 +8,8 @@ import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.kotlin.coroutines.await
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.lang.management.ManagementFactory
 import java.math.RoundingMode
 import kotlin.system.exitProcess
@@ -46,6 +48,7 @@ private fun calTime(t: Long, t1: Long): String {
     return "$span seconds (JVM running for $startTime)"
 }
 
+private val logger: Logger = LoggerFactory.getLogger("c.n.f.server.Main")
 suspend fun main(args: Array<String>) {
     try {
 
@@ -70,9 +73,9 @@ suspend fun main(args: Array<String>) {
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.WebVerticle", options).await()
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.SessionVerticle", options).await()
 
-        print("Started Fishpond in ${calTime(t, System.currentTimeMillis())}")
+        logger.info("Started Fishpond in ${calTime(t, System.currentTimeMillis())}")
     } catch (it: Exception) {
-        println("Application exception exit!")
+        logger.error("Application exception exit!")
         it.printStackTrace()
         exitProcess(1)
     }

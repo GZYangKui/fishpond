@@ -11,6 +11,10 @@ public class Main extends Application {
 
     public static final Vertx vertx = Vertx.vertx();
 
+    public static void main(String[] args) {
+        Main.launch(Main.class, args);
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         new LoginController().showAndFront();
