@@ -3,6 +3,7 @@ module cn.navclub.fishpond.server {
     requires kotlin.stdlib;
     requires io.vertx.web;
     requires java.desktop;
+    requires java.management;
     requires io.vertx.client.sql;
     requires io.vertx.client.mail;
     requires io.vertx.client.redis;

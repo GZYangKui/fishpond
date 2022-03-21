@@ -2,6 +2,20 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.6.10'
 }
 
+mainClassName = "cn.navclub.fishpond.server.MainKt"
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect {
+            zipTree(it)
+        }
+    }
+    archivesBaseName = "fp-server"
+    manifest {
+        attributes 'Main-class': mainClassName
+    }
+}
+
 
 dependencies {
     // Add core module

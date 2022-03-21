@@ -1,16 +1,15 @@
 package cn.navclub.fishpond.server
 
 import cn.navclub.fishpond.core.config.Constant.*
+import cn.navclub.fishpond.core.util.NumUtil
+import cn.navclub.fishpond.server.util.CoroutineUtil
 import cn.navclub.fishpond.server.util.DBUtil
-import cn.navclub.fishpond.server.util.KaptUtil
 import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
-import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.await
-import io.vertx.mysqlclient.MySQLConnectOptions
-import io.vertx.sqlclient.PoolOptions
-
+import java.lang.management.ManagementFactory
+import java.math.RoundingMode
 import kotlin.system.exitProcess
 
 /**
@@ -22,21 +21,39 @@ private fun getProfile(args: Array<String>): String {
         if (arg.startsWith(PROFILE)) {
             val index = arg.indexOf("=")
             if (index != -1 && index != arg.length - 1) {
-                profile = "-" + arg.substring(index + 1)
+                profile = arg.substring(index + 1)
                 break
             }
         }
     }
-    return String.format("application%s.json", profile)
+    return profile
 }
 
-suspend fun main(args: Array<String>) {
-    try {
+private fun calTime(t: Long, t1: Long): String {
+    val bean = ManagementFactory.getRuntimeMXBean()
+    val span = NumUtil.lDiv(
+        t1 - t,
+        1000,
+        3,
+        RoundingMode.UP
+    )
+    val startTime = NumUtil.lDiv(
+        t - bean.startTime,
+        1000,
+        3,
+        RoundingMode.UP
+    )
+    return "$span seconds (JVM running for $startTime)"
+}
+
+fun main(args: Array<String>) {
+    CoroutineUtil.launch({
+        val t = System.currentTimeMillis()
 
         val vertx = Vertx.vertx()
         val profile = getProfile(args)
         val fileSystem = vertx.fileSystem()
-        val config = fileSystem.readFile("config/$profile").await().toJsonObject()
+        val config = fileSystem.readFile("config/application-${profile}.json").await().toJsonObject()
 
         //初始化redis
         RedisUtil.createRedisClient(vertx, config.getJsonObject(REDIS))
@@ -52,10 +69,12 @@ suspend fun main(args: Array<String>) {
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.WebVerticle", options).await()
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.SessionVerticle", options).await()
 
-    } catch (e: java.lang.Exception) {
-        e.printStackTrace()
-        println("verticle deploy fail:${e.message}")
+        print("Started Fishpond  $profile model in ${calTime(t, System.currentTimeMillis())}")
+    }) {
+        println("Application exception exit!")
+        it.printStackTrace()
         exitProcess(1)
     }
-    print("Fishpond startup success!")
+    Thread.sleep(500)
+
 }
