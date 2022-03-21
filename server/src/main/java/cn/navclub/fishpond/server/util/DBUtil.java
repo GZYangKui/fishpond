@@ -10,6 +10,7 @@ import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.PoolOptions;
 import io.vertx.sqlclient.SqlClient;
+import io.vertx.sqlclient.SqlConnection;
 import io.vertx.sqlclient.Tuple;
 import io.vertx.sqlclient.impl.SqlClientInternal;
 import io.vertx.sqlclient.templates.RowMapper;
@@ -99,5 +100,9 @@ public class DBUtil {
 
     public static SqlClient getClient() {
         return client;
+    }
+
+    public static Future<SqlConnection> getConnect() {
+        return client.getConnection();
     }
 }

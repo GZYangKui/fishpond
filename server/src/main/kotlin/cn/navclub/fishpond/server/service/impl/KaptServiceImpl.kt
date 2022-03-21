@@ -10,7 +10,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.await
 
 
-class GraServiceImpl(private val vertx: Vertx) : GraService {
+class KaptServiceImpl(private val vertx: Vertx) : GraService {
     private val key: String = "abcdefghikj@@@@#abcdefghikj@@@@#"
 
     override suspend fun code(): CommonResult<JsonObject> {

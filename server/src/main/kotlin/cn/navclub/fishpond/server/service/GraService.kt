@@ -1,7 +1,7 @@
 package cn.navclub.fishpond.server.service
 
 import cn.navclub.fishpond.protocol.api.CommonResult
-import cn.navclub.fishpond.server.service.impl.GraServiceImpl
+import cn.navclub.fishpond.server.service.impl.KaptServiceImpl
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 
@@ -20,7 +20,7 @@ interface GraService {
     companion object {
 
         fun create(vertx: Vertx): GraService {
-            return GraServiceImpl(vertx)
+            return KaptServiceImpl(vertx)
         }
     }
 }

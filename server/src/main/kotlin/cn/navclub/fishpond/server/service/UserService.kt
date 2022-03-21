@@ -7,10 +7,15 @@ interface UserService {
     /**
      * 用户登录
      */
-    suspend fun login(username:Int,password:String): CommonResult<JsonObject>
+    suspend fun login(username: Int, password: String): CommonResult<JsonObject>
 
     /**
      * 通过邮箱发送注册验证码
      */
-    suspend fun VCode(uuid:String,code:String,email:String):CommonResult<String>
+    suspend fun VCode(uuid: String, code: String, email: String): CommonResult<String>
+
+    /**
+     * 用户注册
+     */
+    suspend fun register(email: String, code: String, pw: String): CommonResult<String>
 }

@@ -40,5 +40,19 @@ class UserRouter(vertx: Vertx) : HRouter(vertx) {
             }
             CoroutineUtil.restCoroutine(it) { service.VCode(uuid, code, email) }
         }
+        
+        //用户注册
+        router.post("/register").handler {
+            val json = it.bodyAsJson
+            val code = json.getString(CODE)
+            val email = json.getString(EMAIL)
+            val pw = json.getString(PASSWORD)
+
+            if (StrUtil.isEmpty(code) || StrUtil.isEmpty(email) || StrUtil.validMD5(pw)) {
+                paramValidFail("CODE/EMAIL不能为空!", it)
+                return@handler
+            }
+            CoroutineUtil.restCoroutine(it) { service.register(email, code, pw) }
+        }
     }
 }

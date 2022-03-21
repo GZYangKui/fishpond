@@ -34,6 +34,9 @@ public class Constant {
     public static String NICKNAME = "nickname";
     public static String PASSWORD = "password";
     public static String SESSION_ID = "sessionId";
+
+    public static String CREATE_TIME = "createTime";
+
     public static String DB_POOL_NAME = "dbPoolName";
     public static String SERVICE_CODE = "serviceCode";
     public static String DATA_SOURCE = "dataSource";

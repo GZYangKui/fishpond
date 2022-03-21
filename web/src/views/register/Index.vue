@@ -11,6 +11,9 @@
           </template>
         </el-input>
       </el-form-item>
+      <el-form-item label="登录密码:" prop="pw">
+        <el-input type="password" v-model="registerInfo.pw"/>
+      </el-form-item>
       <el-form-item>
         <el-row justify="end" style="width: 100%">
           <el-button @click="submit">立即注册</el-button>
@@ -36,11 +39,13 @@
 </template>
 
 <script>
+import md5 from 'js-md5';
 import {code} from "../../api/Kapt";
 import {VCode, register} from "../../api/User";
 import {checkEmailFormat} from "../../util/validator";
 
 const defaultRegisterInfo = {
+  pw: null,
   email: null,
   code: null
 };
@@ -75,6 +80,11 @@ export default {
         "code": [
           {
             required: true, trigger: 'blur', message: "验证码不能为空!"
+          }
+        ],
+        "pw": [
+          {
+            required: true, trigger: 'blur', message: "密码不能为空"
           }
         ]
       }
@@ -128,11 +138,17 @@ export default {
         if (!valid) {
           return;
         }
+        let info = Object.assign({}, defaultRegisterInfo)
+        info.code = this.registerInfo.code;
+        info.email = this.registerInfo.email;
+        //md5加密
+        info.pw = md5(this.registerInfo.pw).toUpperCase();
+
         //用户注册
-        register(this.registerInfo).then(resp => {
+        register(info).then(resp => {
           this.$message.success("注册成功!");
           this.registerInfo = Object.assign({}, defaultRegisterInfo);
-        })
+        });
       })
     }
   }

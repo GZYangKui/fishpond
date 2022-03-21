@@ -1,6 +1,7 @@
 package cn.navclub.fishpond.server.service.impl
 
 import cn.navclub.fishpond.core.config.Constant.*
+import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.mapper.entity.FPUser
 import cn.navclub.fishpond.mapper.entity.FPUserRowMapper
 import cn.navclub.fishpond.protocol.api.CommonResult
@@ -8,21 +9,24 @@ import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.node.SessionVerticle
 import cn.navclub.fishpond.server.service.GraService
+import cn.navclub.fishpond.server.service.SimpleVXRepository
 import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.util.DBUtil
 import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
-import io.vertx.core.net.JdkSSLEngineOptions
-import io.vertx.core.net.OpenSSLEngineOptions
+
 import io.vertx.ext.mail.MailClient
 import io.vertx.ext.mail.MailConfig
 import io.vertx.ext.mail.MailMessage
 import io.vertx.kotlin.coroutines.await
-import java.util.Random
+import io.vertx.mysqlclient.MySQLClient
+
+import io.vertx.sqlclient.templates.SqlTemplate
+import java.time.LocalDate
 
 class
-UserServiceImpl(private val vertx: Vertx) : UserService {
+UserServiceImpl(private val vertx: Vertx) : UserService, SimpleVXRepository() {
     private val mailClient: MailClient
     private val emc: JsonObject = vertx.orCreateContext.config().getJsonObject(EMAIL)
 
@@ -85,6 +89,53 @@ UserServiceImpl(private val vertx: Vertx) : UserService {
         RedisUtil.redisAPI().setex(key, (expire + 3).toString(), VCode.toString()).await()
 
         return CommonResult.success("发送成功!")
+    }
+
+    override suspend fun register(email: String, code: String, pw: String): CommonResult<String> {
+        val key = this.redisKey(email)
+        val resp = RedisUtil.redisAPI().get(key).await() ?: return CommonResult.fail("验证码过期!")
+        if (resp.toString() != code) {
+            return CommonResult.fail("验证码不正确!")
+        }
+
+        return this.transaction<CommonResult<String>> { con, ctx ->
+            var sql = "SELECT * FROM fp_user WHERE email=#{email}"
+            val rs = SqlTemplate.forQuery(con, sql).execute(mapOf(Pair(EMAIL, email))).await()
+            if (rs.size() > 0) {
+                return@transaction CommonResult.fail("该邮箱已注册过!")
+            }
+            sql =
+                "INSERT INTO fp_user(nickname,password,create_time,email) VALUES(#{nickname},#{password},#{createTime},#{email})"
+            val param: MutableMap<String, Any> = HashMap()
+
+            param[EMAIL] = email
+            param[PASSWORD] = pw
+            param[CREATE_TIME] = LocalDate.now()
+            param[NICKNAME] = StrUtil.rdStr(6)
+
+            //插入数据
+            var row = SqlTemplate.forUpdate(con, sql).execute(param).await()
+
+            sql = "UPDATE fp_user SET username=#{username} WHERE id=#{id}"
+
+            //更新用户帐号
+            if (row.rowCount() > 0) {
+                val id = row.property(MySQLClient.LAST_INSERTED_ID)
+
+                param[ID] = id
+                param[USERNAME] = (1000 + id)
+
+                row = SqlTemplate.forUpdate(con, sql).execute(param).await()
+            }
+
+            if (row.rowCount() <= 0) {
+                //回滚事物
+                ctx.rollback().await()
+                return@transaction CommonResult.fail("注册失败,请重试!")
+            }
+
+            return@transaction CommonResult.success("注册成功")
+        }
     }
 
     private fun redisKey(email: String): String {

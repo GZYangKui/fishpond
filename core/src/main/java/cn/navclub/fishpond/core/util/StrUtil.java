@@ -65,4 +65,20 @@ StrUtil {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 生成随机字符串
+     */
+    public static String rdStr(int len) {
+        var arr = new byte[len];
+        for (int i = 0; i < len; i++) {
+            var j = 97 + (byte) (Math.random() * 26);
+            arr[i] = (byte) j;
+        }
+        return new String(arr);
+    }
+
+    public static boolean validMD5(String str) {
+        return !isEmpty(str) && str.matches("[a-fA-F\\d]{32}");
+    }
 }
