@@ -48,8 +48,8 @@ class UserRouter(vertx: Vertx) : HRouter(vertx) {
             val email = json.getString(EMAIL)
             val pw = json.getString(PASSWORD)
 
-            if (StrUtil.isEmpty(code) || StrUtil.isEmpty(email) || StrUtil.validMD5(pw)) {
-                paramValidFail("CODE/EMAIL不能为空!", it)
+            if (StrUtil.isEmpty(code) || StrUtil.isEmpty(email) || !StrUtil.validMD5(pw)) {
+                paramValidFail("CODE/EMAIL/PASSWORD不能为空!", it)
                 return@handler
             }
             CoroutineUtil.restCoroutine(it) { service.register(email, code, pw) }

@@ -2,7 +2,7 @@ package cn.navclub.fishpond.server.node
 
 import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.server.AbstractFDVerticle
-import cn.navclub.fishpond.server.router.GraRouter
+import cn.navclub.fishpond.server.router.KaptRouter
 import cn.navclub.fishpond.server.router.UserRouter
 import cn.navclub.fishpond.server.security.FPSHandler
 import io.vertx.core.json.JsonObject
@@ -23,7 +23,7 @@ class WebVerticle : AbstractFDVerticle<JsonObject>() {
         //用户路由
         router.route("/api/user/*").subRouter(UserRouter(vertx).router)
         //图形相关借口
-        router.route("/api/kapt/*").subRouter(GraRouter(vertx).router)
+        router.route("/api/kapt/*").subRouter(KaptRouter(vertx).router)
 
         vertx
             .createHttpServer()

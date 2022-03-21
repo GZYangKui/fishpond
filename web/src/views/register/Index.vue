@@ -12,7 +12,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="登录密码:" prop="pw">
-        <el-input type="password" v-model="registerInfo.pw"/>
+        <el-input type="password" v-model="registerInfo.password"/>
       </el-form-item>
       <el-form-item>
         <el-row justify="end" style="width: 100%">
@@ -45,9 +45,9 @@ import {VCode, register} from "../../api/User";
 import {checkEmailFormat} from "../../util/validator";
 
 const defaultRegisterInfo = {
-  pw: null,
   email: null,
-  code: null
+  code: null,
+  password: null
 };
 const defaultVCode = {
   uuid: null,
@@ -82,7 +82,7 @@ export default {
             required: true, trigger: 'blur', message: "验证码不能为空!"
           }
         ],
-        "pw": [
+        "password": [
           {
             required: true, trigger: 'blur', message: "密码不能为空"
           }
@@ -142,7 +142,7 @@ export default {
         info.code = this.registerInfo.code;
         info.email = this.registerInfo.email;
         //md5加密
-        info.pw = md5(this.registerInfo.pw).toUpperCase();
+        info.password = md5(this.registerInfo.password).toUpperCase();
 
         //用户注册
         register(info).then(resp => {
