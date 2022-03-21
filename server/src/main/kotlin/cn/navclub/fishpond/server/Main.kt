@@ -46,8 +46,9 @@ private fun calTime(t: Long, t1: Long): String {
     return "$span seconds (JVM running for $startTime)"
 }
 
-fun main(args: Array<String>) {
-    CoroutineUtil.launch({
+suspend fun main(args: Array<String>) {
+    try {
+
         val t = System.currentTimeMillis()
 
         val vertx = Vertx.vertx()
@@ -70,11 +71,11 @@ fun main(args: Array<String>) {
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.SessionVerticle", options).await()
 
         print("Started Fishpond in ${calTime(t, System.currentTimeMillis())}")
-    }) {
+    } catch (it: Exception) {
         println("Application exception exit!")
         it.printStackTrace()
         exitProcess(1)
     }
-    Thread.sleep(500)
+
 
 }
