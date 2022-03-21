@@ -11,6 +11,7 @@ jar {
         }
     }
     archivesBaseName = "fp-server"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes 'Main-class': mainClassName
     }

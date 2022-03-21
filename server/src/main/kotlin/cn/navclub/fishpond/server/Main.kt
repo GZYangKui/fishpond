@@ -21,7 +21,7 @@ private fun getProfile(args: Array<String>): String {
         if (arg.startsWith(PROFILE)) {
             val index = arg.indexOf("=")
             if (index != -1 && index != arg.length - 1) {
-                profile = arg.substring(index + 1)
+                profile = "-" + arg.substring(index + 1)
                 break
             }
         }
@@ -53,7 +53,7 @@ fun main(args: Array<String>) {
         val vertx = Vertx.vertx()
         val profile = getProfile(args)
         val fileSystem = vertx.fileSystem()
-        val config = fileSystem.readFile("config/application-${profile}.json").await().toJsonObject()
+        val config = fileSystem.readFile("config/application${profile}.json").await().toJsonObject()
 
         //初始化redis
         RedisUtil.createRedisClient(vertx, config.getJsonObject(REDIS))
@@ -69,7 +69,7 @@ fun main(args: Array<String>) {
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.WebVerticle", options).await()
         vertx.deployVerticle("kt:cn.navclub.fishpond.server.node.SessionVerticle", options).await()
 
-        print("Started Fishpond  $profile model in ${calTime(t, System.currentTimeMillis())}")
+        print("Started Fishpond in ${calTime(t, System.currentTimeMillis())}")
     }) {
         println("Application exception exit!")
         it.printStackTrace()
