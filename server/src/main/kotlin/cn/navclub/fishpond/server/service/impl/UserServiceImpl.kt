@@ -8,8 +8,8 @@ import cn.navclub.fishpond.protocol.api.CommonResult
 import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.node.SessionVerticle
-import cn.navclub.fishpond.server.service.GraService
-import cn.navclub.fishpond.server.service.SimpleVXRepository
+import cn.navclub.fishpond.server.service.BaseService
+import cn.navclub.fishpond.server.service.KaptService
 import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.util.DBUtil
 import cn.navclub.fishpond.server.util.RedisUtil
@@ -26,12 +26,13 @@ import io.vertx.sqlclient.templates.SqlTemplate
 import java.time.LocalDate
 
 class
-UserServiceImpl(private val vertx: Vertx) : UserService, SimpleVXRepository() {
+UserServiceImpl(private val vertx: Vertx) : UserService, BaseService(vertx) {
+    private val emc: JsonObject
     private val mailClient: MailClient
-    private val emc: JsonObject = vertx.orCreateContext.config().getJsonObject(EMAIL)
 
     init {
         val config = MailConfig()
+        this.emc = this.config(EMAIL)
 
         config.isSsl = true
         config.isKeepAlive = true
@@ -57,7 +58,7 @@ UserServiceImpl(private val vertx: Vertx) : UserService, SimpleVXRepository() {
     }
 
     override suspend fun VCode(uuid: String, code: String, email: String): CommonResult<String> {
-        val str = GraService.create(vertx).decode(uuid)
+        val str = KaptService.create(vertx).decode(uuid)
         val index = str.indexOf("/")
         val cs = str.substring(0, index)
         //获取图片验证码剩余过期市场

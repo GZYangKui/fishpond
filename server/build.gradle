@@ -25,6 +25,8 @@ dependencies {
     implementation project(":protocol")
     implementation project(":mapper")
 
+    implementation 'io.minio:minio:8.3.3'
+
     implementation 'io.vertx:vertx-web:' + vertx_version
     implementation "io.vertx:vertx-codegen:" + vertx_version
     implementation 'io.vertx:vertx-mail-client:' + vertx_version

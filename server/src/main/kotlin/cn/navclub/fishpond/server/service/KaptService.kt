@@ -5,7 +5,7 @@ import cn.navclub.fishpond.server.service.impl.KaptServiceImpl
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 
-interface GraService {
+interface KaptService {
     /**
      * 生成验证码
      */
@@ -19,7 +19,7 @@ interface GraService {
 
     companion object {
 
-        fun create(vertx: Vertx): GraService {
+        fun create(vertx: Vertx): KaptService {
             return KaptServiceImpl(vertx)
         }
     }

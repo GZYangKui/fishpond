@@ -3,14 +3,14 @@ package cn.navclub.fishpond.server.service.impl
 import cn.navclub.fishpond.core.config.Constant
 import cn.navclub.fishpond.core.util.ASEUtil
 import cn.navclub.fishpond.protocol.api.CommonResult
-import cn.navclub.fishpond.server.service.GraService
+import cn.navclub.fishpond.server.service.KaptService
 import cn.navclub.fishpond.server.util.KaptUtil
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.await
 
 
-class KaptServiceImpl(private val vertx: Vertx) : GraService {
+class KaptServiceImpl(private val vertx: Vertx) : KaptService {
     private val key: String = "abcdefghikj@@@@#abcdefghikj@@@@#"
 
     override suspend fun code(): CommonResult<JsonObject> {
