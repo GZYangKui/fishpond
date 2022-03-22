@@ -18,20 +18,24 @@ class WebVerticle : AbstractFDVerticle<JsonObject>() {
         val router = Router.router(vertx)
 
         //Post请求体数据转换
-        router.route().handler(BodyHandler.create())
+        router.route().handler(BodyHandler.create().setUploadsDirectory(json.getString("uploadDir")))
         //会话检查
         router.route().handler(FPSHandler.create(vertx, json))
         //用户路由
-        router.route("/api/user/*").subRouter(UserRouter(vertx).router)
+        router.route("/api/user/*").subRouter(UserRouter(vertx, config).router)
         //图形相关借口
-        router.route("/api/kapt/*").subRouter(KaptRouter(vertx).router)
+        router.route("/api/kapt/*").subRouter(KaptRouter(vertx, config).router)
         //文件相关接口
-        router.route("/api/file/*").subRouter(FileRouter(vertx).router)
+        router.route("/api/file/*").subRouter(FileRouter(vertx, config).router)
+
+        val port = json.getInteger(PORT)
 
         vertx
             .createHttpServer()
             .requestHandler(router)
-            .listen(json.getInteger(PORT))
+            .listen(port)
             .await()
+
+        logger.info("Web server success listen in {} port.", port)
     }
 }

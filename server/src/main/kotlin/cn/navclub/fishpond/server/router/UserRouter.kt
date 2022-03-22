@@ -10,12 +10,12 @@ import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 
-class UserRouter(vertx: Vertx) : HRouter(vertx) {
+class UserRouter(vertx: Vertx, config: JsonObject) : HRouter(vertx, config) {
 
     private lateinit var service: UserService
 
     override fun create(router: Router) {
-        this.service = UserServiceImpl(vertx)
+        this.service = UserServiceImpl(vertx, config)
         //用户登录
         router.post("/login").handler {
             val json = it.bodyAsJson
@@ -40,7 +40,7 @@ class UserRouter(vertx: Vertx) : HRouter(vertx) {
             }
             CoroutineUtil.restCoroutine(it) { service.VCode(uuid, code, email) }
         }
-        
+
         //用户注册
         router.post("/register").handler {
             val json = it.bodyAsJson

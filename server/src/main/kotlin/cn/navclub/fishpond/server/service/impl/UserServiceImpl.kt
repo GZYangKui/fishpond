@@ -12,6 +12,7 @@ import cn.navclub.fishpond.server.service.BaseService
 import cn.navclub.fishpond.server.service.KaptService
 import cn.navclub.fishpond.server.service.UserService
 import cn.navclub.fishpond.server.util.DBUtil
+import cn.navclub.fishpond.server.util.JsonUtil
 import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
@@ -26,22 +27,20 @@ import io.vertx.sqlclient.templates.SqlTemplate
 import java.time.LocalDate
 
 class
-UserServiceImpl(private val vertx: Vertx) : UserService, BaseService(vertx) {
-    private val emc: JsonObject
+UserServiceImpl(vertx: Vertx, config: JsonObject) : UserService, BaseService(vertx, config) {
     private val mailClient: MailClient
 
     init {
-        val config = MailConfig()
-        this.emc = this.config(EMAIL)
+        val mailConfig = MailConfig()
 
-        config.isSsl = true
-        config.isKeepAlive = true
-        config.port = emc.getInteger(PORT)
-        config.hostname = emc.getString(HOST)
-        config.username = emc.getString(USERNAME)
-        config.password = emc.getString(PASSWORD)
+        mailConfig.isSsl = true
+        mailConfig.isKeepAlive = true
+        mailConfig.port = this.getJsonFile(EMAIL, PORT)
+        mailConfig.hostname = this.getJsonFile(EMAIL, HOST)
+        mailConfig.username = this.getJsonFile(EMAIL, USERNAME)
+        mailConfig.password = this.getJsonFile(EMAIL, PASSWORD)
 
-        this.mailClient = MailClient.create(vertx, config)
+        this.mailClient = MailClient.create(vertx, mailConfig)
     }
 
     override suspend fun login(username: Int, password: String): CommonResult<JsonObject> {
@@ -83,7 +82,7 @@ UserServiceImpl(private val vertx: Vertx) : UserService, BaseService(vertx) {
         val message = MailMessage()
         message.subject = "新用户注册"
         message.cc = arrayListOf(email)
-        message.from = emc.getString(USERNAME)
+        message.from = this.getJsonFile(EMAIL, USERNAME)
         message.text = "你正在申请注册Fishpond,你的验证码:$VCode,若非本人操作,请忽略本信息!"
 
         mailClient.sendMail(message).await()

@@ -1,11 +1,12 @@
 {
   "tcp": {
-    "port": 9000,
+    "port": 9001,
     "idle": 10,
     "maxSize": 1048576
   },
   "http": {
     "port": 10000,
+    "uploadDir": "upload/",
     "session": {
       "expire": 180
     },
@@ -15,6 +16,12 @@
       "/api/kapt/code",
       "/api/kapt/VCode"
     ]
+  },
+  "minio": {
+    "bucket": "fishpond",
+    "endpoint": "http://127.0.0.1:9000",
+    "accessKey": "IC0TBJYYDSN4BMD2L3QJ",
+    "accessSecret": "nG9DpTFBX+8uo7xKWrlpQDNphZ4xO6ueVCqX5Na9"
   },
   "email": {
     "hostname": "xxxxxxxxxxxx",

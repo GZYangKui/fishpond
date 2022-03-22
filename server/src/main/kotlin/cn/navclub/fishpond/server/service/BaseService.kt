@@ -1,24 +1,24 @@
 package cn.navclub.fishpond.server.service
 
 import cn.navclub.fishpond.server.util.DBUtil
+import cn.navclub.fishpond.server.util.JsonUtil
 import io.vertx.core.Vertx
+import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.await
 import io.vertx.sqlclient.SqlConnection
 import io.vertx.sqlclient.Transaction
 
-abstract class BaseService(private val vertx: Vertx) {
-    /**
-     *
-     * 获取配置信息
-     *
-     */
-    protected fun <T> config(field: String? = null): T {
-        val config = vertx.orCreateContext.config()
-        return if (field != null) {
-            config.getValue(field) as T
-        } else {
-            config as T
-        }
+open class BaseService(vertx: Vertx, config: JsonObject) {
+    protected val vertx: Vertx
+    private val config: JsonObject
+
+    init {
+        this.vertx = vertx
+        this.config = config
+    }
+
+    protected fun <T> getJsonFile(vararg paths: String): T {
+        return JsonUtil.jsonValue(this.config, *paths)
     }
 
     /**
@@ -41,4 +41,6 @@ abstract class BaseService(private val vertx: Vertx) {
             con.close()
         }
     }
+
+
 }

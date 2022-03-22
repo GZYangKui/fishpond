@@ -19,7 +19,9 @@ public class Constant {
     public static String REDIS = "redis";
     public static String SHARE = "share";
     public static String SKIP = "skip";
-    public static String EMAIL="email";
+    public static String EMAIL = "email";
+    public static String BUCKET = "bucket";
+    public static String ENDPOINT = "endpoint";
     public static String SESSION = "session";
     public static String MAX_SIZE = "maxSize";
     public static String CHARSET = "charset";
@@ -37,7 +39,9 @@ public class Constant {
 
     public static String CREATE_TIME = "createTime";
 
-    public static String DB_POOL_NAME = "dbPoolName";
     public static String SERVICE_CODE = "serviceCode";
     public static String DATA_SOURCE = "dataSource";
+    public static String ACCESS_KEY = "accessKey";
+    public static String MINIO = "minio";
+    public static String ACCESS_SECRET = "accessSecret";
 }

@@ -54,7 +54,11 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
 
             socket.write(TProUtil.hello().toMessage())
         }
-        netServer.listen(json.getInteger(PORT)).await()
+        val port = json.getInteger(PORT)
+
+        netServer.listen(port).await()
+
+        logger.info("TCP server success listen in {} port.", port)
     }
 
     private suspend fun handleTPro(tPro: TProMessage, socket: NetSocket) {
