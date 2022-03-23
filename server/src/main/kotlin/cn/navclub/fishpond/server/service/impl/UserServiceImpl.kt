@@ -35,10 +35,10 @@ UserServiceImpl(vertx: Vertx, config: JsonObject) : UserService, BaseService(ver
 
         mailConfig.isSsl = true
         mailConfig.isKeepAlive = true
-        mailConfig.port = this.getJsonFile(EMAIL, PORT)
-        mailConfig.hostname = this.getJsonFile(EMAIL, HOST)
-        mailConfig.username = this.getJsonFile(EMAIL, USERNAME)
-        mailConfig.password = this.getJsonFile(EMAIL, PASSWORD)
+        mailConfig.port = this.getConfig(EMAIL, PORT)
+        mailConfig.hostname = this.getConfig(EMAIL, HOST)
+        mailConfig.username = this.getConfig(EMAIL, USERNAME)
+        mailConfig.password = this.getConfig(EMAIL, PASSWORD)
 
         this.mailClient = MailClient.create(vertx, mailConfig)
     }
@@ -82,7 +82,7 @@ UserServiceImpl(vertx: Vertx, config: JsonObject) : UserService, BaseService(ver
         val message = MailMessage()
         message.subject = "新用户注册"
         message.cc = arrayListOf(email)
-        message.from = this.getJsonFile(EMAIL, USERNAME)
+        message.from = this.getConfig(EMAIL, USERNAME)
         message.text = "你正在申请注册Fishpond,你的验证码:$VCode,若非本人操作,请忽略本信息!"
 
         mailClient.sendMail(message).await()

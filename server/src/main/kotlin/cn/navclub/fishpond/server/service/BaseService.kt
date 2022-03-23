@@ -17,7 +17,7 @@ open class BaseService(vertx: Vertx, config: JsonObject) {
         this.config = config
     }
 
-    protected fun <T> getJsonFile(vararg paths: String): T {
+    protected fun <T> getConfig(vararg paths: String): T {
         return JsonUtil.jsonValue(this.config, *paths)
     }
 

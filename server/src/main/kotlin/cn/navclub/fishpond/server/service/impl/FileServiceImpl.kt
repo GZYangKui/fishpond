@@ -22,18 +22,14 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class FileServiceImpl(vertx: Vertx, config: JsonObject) : FileService, BaseService(vertx, config) {
-    private val client: MinioClient
-
-    init {
-        this.client = MinioClient
-            .builder()
-            .endpoint(this.getJsonFile<String>(Constant.MINIO, Constant.ENDPOINT))
-            .credentials(
-                this.getJsonFile(Constant.MINIO, Constant.ACCESS_KEY),
-                this.getJsonFile(Constant.MINIO, Constant.ACCESS_SECRET)
-            )
-            .build()
-    }
+    private val client: MinioClient = MinioClient
+        .builder()
+        .endpoint(this.getConfig<String>(Constant.MINIO, Constant.ENDPOINT))
+        .credentials(
+            this.getConfig(Constant.MINIO, Constant.ACCESS_KEY),
+            this.getConfig(Constant.MINIO, Constant.ACCESS_SECRET)
+        )
+        .build()
 
     override suspend fun upload(ctx: RoutingContext): CommonResult<List<String>> {
         val files = ctx.fileUploads()
@@ -50,7 +46,7 @@ class FileServiceImpl(vertx: Vertx, config: JsonObject) : FileService, BaseServi
                 val args = UploadObjectArgs
                     .builder()
                     .`object`(filename)
-                    .bucket(this.getJsonFile(Constant.MINIO, Constant.BUCKET))
+                    .bucket(this.getConfig(Constant.MINIO, Constant.BUCKET))
                     .contentType(file.contentType())
                     .filename(file.uploadedFileName())
                     .build()
@@ -68,8 +64,8 @@ class FileServiceImpl(vertx: Vertx, config: JsonObject) : FileService, BaseServi
     }
 
     private fun getReqURI(filename: String): String {
-        val bucket: String = this.getJsonFile(Constant.MINIO, Constant.BUCKET)
-        val endpoint: String = this.getJsonFile(Constant.MINIO, Constant.ENDPOINT)
+        val bucket: String = this.getConfig(Constant.MINIO, Constant.BUCKET)
+        val endpoint: String = this.getConfig(Constant.MINIO, Constant.ENDPOINT)
         return "$endpoint/$bucket/$filename"
     }
 
