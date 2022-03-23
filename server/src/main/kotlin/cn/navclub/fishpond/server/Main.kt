@@ -24,6 +24,7 @@ private fun getProfile(args: Array<String>): String {
             val index = arg.indexOf("=")
             if (index != -1 && index != arg.length - 1) {
                 profile = "-" + arg.substring(index + 1)
+                logger.info("The following profiles are active: ${arg.substring(index + 1)}")
                 break
             }
         }
