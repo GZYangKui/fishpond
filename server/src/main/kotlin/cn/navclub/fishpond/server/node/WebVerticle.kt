@@ -17,10 +17,10 @@ class WebVerticle : AbstractFDVerticle<JsonObject>() {
 
         val router = Router.router(vertx)
 
-        //Post请求体数据转换
-        router.route().handler(BodyHandler.create().setUploadsDirectory(json.getString("uploadDir")))
         //会话检查
         router.route().handler(FPSHandler.create(vertx, json))
+        //Post请求体数据转换
+        router.route().handler(BodyHandler.create().setUploadsDirectory(json.getString("uploadDir")))
         //用户路由
         router.route("/api/user/*").subRouter(UserRouter(vertx, config).router)
         //图形相关借口
