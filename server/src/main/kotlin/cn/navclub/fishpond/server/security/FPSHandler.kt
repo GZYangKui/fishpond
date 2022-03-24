@@ -24,6 +24,8 @@ class FPSHandler private constructor(private val vertx: Vertx, private val confi
     private val list: List<String> = config.getJsonArray(SKIP).map((Any::toString))
 
     override fun handle(event: RoutingContext) {
+        //Pause request
+        event.request().pause()
         CoroutineUtil.launch({ checkSession(event) }) {
             event.json(CommonResult.fail<Any>(APIECode.SERVER_ERROR))
             it.printStackTrace()
@@ -59,7 +61,8 @@ class FPSHandler private constructor(private val vertx: Vertx, private val confi
                 event.setUser(FPUser(result.data))
             }
         }
-
+        //Resume request
+        event.request().resume()
         if (!pass) {
             event.json(CommonResult.fail<Any>(APIECode.FORBIDDEN))
         } else {
