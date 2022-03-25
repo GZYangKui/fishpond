@@ -62,11 +62,12 @@ class FPSHandler private constructor(private val vertx: Vertx, private val confi
             }
         }
         //Resume request
-        event.request().resume()
         if (!pass) {
             event.json(CommonResult.fail<Any>(APIECode.FORBIDDEN))
+            return
         } else {
             event.next()
+            event.request().resume()
         }
     }
 
