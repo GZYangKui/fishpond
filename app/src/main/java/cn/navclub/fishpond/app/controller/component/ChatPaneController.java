@@ -6,6 +6,8 @@ import cn.navclub.fishpond.app.controller.FPController;
 import cn.navclub.fishpond.app.controls.TProWrapper;
 import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.app.socket.SocketHook;
+import cn.navclub.fishpond.app.task.UDPoolExecutor;
+import cn.navclub.fishpond.app.task.impl.UploadTask;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
 import cn.navclub.fishpond.core.util.StrUtil;
@@ -13,6 +15,7 @@ import cn.navclub.fishpond.protocol.enums.ContentType;
 import cn.navclub.fishpond.protocol.enums.MessageT;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
+import io.vertx.core.impl.launcher.commands.FileSelector;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
@@ -25,6 +28,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
 import static cn.navclub.fishpond.core.config.Constant.MESSAGE;
 
@@ -100,6 +104,17 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
                 .getInstance()
                 .write(tPro)
                 .onSuccess(ar -> Platform.runLater(() -> this.textArea.clear()));
+    }
+
+    @FXML
+    public void selectFile() {
+        var selector = new FileChooser();
+        var file = selector.showOpenDialog(FPController.getController().getStage());
+        if (file == null) {
+            return;
+        }
+        //执行上传任务
+        UDPoolExecutor.getInstance().execute(new UploadTask(file));
     }
 
     public static ChatPaneController create(Integer account) {

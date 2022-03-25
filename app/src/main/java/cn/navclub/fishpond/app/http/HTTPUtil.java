@@ -23,7 +23,9 @@ import java.util.Optional;
 import static cn.navclub.fishpond.core.config.Constant.*;
 
 public class HTTPUtil {
+    @Getter
     private static final String HOST = "127.0.0.1";
+    @Getter
     private static final int PORT = 10000;
 
     @Getter

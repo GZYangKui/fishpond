@@ -2,6 +2,7 @@ package cn.navclub.fishpond.app.http;
 
 
 public enum API {
+    UPLOAD_FILE("/api/file/upload", "文件上传"),
     REQ_LOGIN("/api/user/login", "请求登录");
 
     private final String url;

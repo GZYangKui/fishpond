@@ -82,7 +82,6 @@ public class SocketHolder {
         var decoder = DefaultDecoder
                 .create()
                 .handler(tPro -> {
-                    log.info("收到TCP消息:\n{}", tPro.toString());
                     //心跳次数置零
                     this.plusNum.set(0);
                     if (TProUtil.getFBCode(tPro) == ServiceCode.TCP_REGISTER) {

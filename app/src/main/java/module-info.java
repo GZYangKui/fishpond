@@ -3,6 +3,7 @@ module cn.navclub.fishpond.app {
     requires javafx.fxml;
     requires org.slf4j;
     requires static lombok;
+    requires java.net.http;
     requires javafx.controls;
     requires ch.qos.logback.core;
     requires ch.qos.logback.classic;
