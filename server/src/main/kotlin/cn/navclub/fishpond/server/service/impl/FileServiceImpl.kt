@@ -42,7 +42,9 @@ class FileServiceImpl(vertx: Vertx, config: JsonObject) : FileService, BaseServi
             val list: MutableList<String> = arrayListOf()
             val dateStr = SimpleDateFormat("yyyy-MM-dd").format(Date())
             for (file in files) {
-                val filename = "$dateStr${File.separator}${file.fileName()}"
+                //fix:文件名中存在空格
+                val str = file.fileName().replace(" ", "")
+                val filename = "$dateStr${File.separator}${str}"
                 val args = UploadObjectArgs
                     .builder()
                     .`object`(filename)
