@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import java.net.URL?>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" styleClass="task-item">
+    <stylesheets>
+        <URL value="@../css/TaskUItemStyle.css"/>
+    </stylesheets>
+    <HBox>
+        <Button styleClass="task-icon">
+            <graphic>
+                <ImageView>
+                    <Image url="@../icon/file.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </HBox>
+    <VBox HBox.hgrow="ALWAYS" styleClass="task-item-context">
+        <HBox alignment="CENTER">
+            <HBox HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                <Label fx:id="label"/>
+            </HBox>
+            <Button text="暂停" fx:id="btn"/>
+        </HBox>
+        <VBox>
+            <HBox>
+                <HBox HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                    <Label fx:id="" text="1M/500M"/>
+                </HBox>
+                <HBox HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                    <Label text="00:00:05"/>
+                </HBox>
+            </HBox>
+            <ProgressBar fx:id="progress" HBox.hgrow="ALWAYS"/>
+        </VBox>
+    </VBox>
+
+</HBox>

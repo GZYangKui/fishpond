@@ -1,0 +1,17 @@
+.nav-tab-pane .tab-header-area {
+    -fx-padding: .5em 0;
+}
+
+.nav-tab-pane .tab-header-background {
+    -fx-padding: 0;
+    -fx-background-color: #2e2e2e;
+}
+
+.nav-tab-pane .tab {
+    -fx-padding: 0;
+    -fx-pref-height: 3.5em;
+    -fx-background-color: #2e2e2e;
+    -fx-background-insets: 0;
+    -fx-border-width: .2em 0 0 0;
+    -fx-border-color: #2e2e2e;
+}

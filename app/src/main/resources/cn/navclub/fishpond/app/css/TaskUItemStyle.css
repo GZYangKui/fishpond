@@ -1,0 +1,13 @@
+.task-item {
+    -fx-padding: .5em;
+    -fx-spacing: .1em;
+}
+
+.task-item-context {
+    -fx-spacing: .3em;
+}
+
+.task-icon {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}

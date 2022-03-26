@@ -2,6 +2,7 @@ package cn.navclub.fishpond.app.task.impl;
 
 import cn.navclub.fishpond.app.http.API;
 import cn.navclub.fishpond.app.http.HTTPUtil;
+import cn.navclub.fishpond.app.task.UDPoolExecutor;
 import cn.navclub.fishpond.app.task.UDTask;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.util.StrUtil;
@@ -9,7 +10,6 @@ import cn.navclub.fishpond.protocol.api.APIECode;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -20,16 +20,26 @@ import java.net.URI;
  */
 public class UploadTask extends UDTask<String> {
     private final File file;
+    private final String url;
 
     public UploadTask(final File file) {
+        this(file, null);
+    }
+
+    public UploadTask(final File file, String url) {
         super(Task.UPLOAD);
+        this.url = url;
         this.file = file;
     }
 
     @Override
     protected String run0() throws Exception {
-
-        var str = String.format("http://%s:%d%s", HTTPUtil.getHOST(), HTTPUtil.getPORT(), API.UPLOAD_FILE.getUrl());
+        final String str;
+        if (StrUtil.isEmpty(this.url)) {
+            str = String.format("http://%s:%d%s", HTTPUtil.getHOST(), HTTPUtil.getPORT(), API.UPLOAD_FILE.getUrl());
+        } else {
+            str = this.url;
+        }
         var url = URI.create(str).toURL();
         var formBoundary = this.getFormBoundary();
         var connect = (HttpURLConnection) url.openConnection();

@@ -1,12 +1,14 @@
 package cn.navclub.fishpond.app;
 
 import cn.navclub.fishpond.app.controller.LoginController;
+import cn.navclub.fishpond.app.controller.TaskController;
 import cn.navclub.fishpond.app.task.UDPoolExecutor;
 import io.vertx.core.Vertx;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -21,7 +23,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        new LoginController().showAndFront();
+//        new LoginController().showAndFront();
+        TaskController.getInstance().showAndFront();
+        TaskController.getInstance().addULItem(new File("./build.gradle"));
     }
 
     @Override

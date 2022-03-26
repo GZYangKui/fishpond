@@ -67,6 +67,7 @@ public abstract class UDTask<T> implements Runnable {
                 logger.error("OnError task happen error:{}", e.getMessage());
             }
         }
+        this.subscribes.clear();
     }
 
     protected final void onProgress(long delta, long total) {
