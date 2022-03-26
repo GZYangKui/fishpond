@@ -17,7 +17,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
 
 
-class FPSHandler private constructor(private val vertx: Vertx, private val config: JsonObject) :
+class FPSHandler private constructor(private val vertx: Vertx, config: JsonObject) :
     Handler<RoutingContext> {
 
     private val pathMatter: PathMatter = PathMatter()
@@ -64,7 +64,6 @@ class FPSHandler private constructor(private val vertx: Vertx, private val confi
         //Resume request
         if (!pass) {
             event.json(CommonResult.fail<Any>(APIECode.FORBIDDEN))
-            return
         } else {
             event.next()
             event.request().resume()

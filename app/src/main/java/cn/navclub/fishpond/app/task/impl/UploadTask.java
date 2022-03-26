@@ -18,8 +18,7 @@ import java.net.URI;
 /**
  * 上传任务
  */
-@Slf4j
-public class UploadTask extends UDTask {
+public class UploadTask extends UDTask<String> {
     private final File file;
 
     public UploadTask(final File file) {
@@ -28,7 +27,7 @@ public class UploadTask extends UDTask {
     }
 
     @Override
-    protected void run0() throws Exception {
+    protected String run0() throws Exception {
 
         var str = String.format("http://%s:%d%s", HTTPUtil.getHOST(), HTTPUtil.getPORT(), API.UPLOAD_FILE.getUrl());
         var url = URI.create(str).toURL();
@@ -75,11 +74,11 @@ public class UploadTask extends UDTask {
         var json = (JsonObject) Json.decodeValue(Buffer.buffer(respStream.readAllBytes()));
         var code = json.getInteger(Constant.CODE);
         if (code == APIECode.OK.getCode()) {
-            var reqStr = json.getString(Constant.DATA);
-        } else {
-            log.info("[{}] file upload failed,server response content:{}", file.getName(), json.toString());
+            return json.getString(Constant.DATA);
         }
-
+        logger.info("文件上传失败:{}", json);
+        //文件上传失败,抛出异常信息
+        throw new RuntimeException(json.getString(Constant.MESSAGE));
     }
 
     private String getFormBoundary() {

@@ -79,7 +79,7 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
 
     public void requestTCPConnect() {
         var holder = SocketHolder.getInstance();
-        holder.setPort(9000);
+        holder.setPort(9001);
         holder.setHost("127.0.0.1");
         holder.connect().onFailure(t -> Platform.runLater(() -> {
             DialogUtil.showEXDialog(t, "TCP连接错误");
