@@ -14,6 +14,7 @@ public class UDPoolExecutor extends ThreadPoolExecutor {
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
+        ((UDTask<?>) r).setStatus(UDTask.TKStatus.RUNNING);
     }
 
     @Override

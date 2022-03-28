@@ -11,10 +11,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class TaskController extends FXMLWinController<BorderPane> {
@@ -24,6 +27,8 @@ public class TaskController extends FXMLWinController<BorderPane> {
     private ListView<HBox> UDLView;
     @FXML
     private ListView<HBox> DNLView;
+
+    private final Timer timer;
 
     private final ChangeListener<Number> selectedListener;
 
@@ -51,9 +56,28 @@ public class TaskController extends FXMLWinController<BorderPane> {
             this.tabPane.getTabs().get(i).setGraphic(label);
         }
 
+        this.timer = taskTimer();
         this.getStage().setResizable(false);
 
         this.tabPane.getSelectionModel().selectedIndexProperty().addListener(this.selectedListener);
+    }
+
+    private Timer taskTimer() {
+        var timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                var items = new ArrayList<HBox>();
+
+                items.addAll(UDLView.getItems());
+                items.addAll(DNLView.getItems());
+
+                for (HBox item : items) {
+                    ((TaskUItemController<?>) item.getUserData()).updateTime(1);
+                }
+            }
+        }, 0, 1000);
+        return timer;
     }
 
     private ChangeListener<Number> selectedListener() {
@@ -72,9 +96,7 @@ public class TaskController extends FXMLWinController<BorderPane> {
 
     public void addULItem(File file) {
         var task = new UploadTask(file, "https://baidu.com");
-        var item = new TaskUItemController<String>(task, "下载文件");
-//        UDPoolExecutor.getInstance().execute(task);
-
+        var item = new TaskUItemController<>(task, "下载文件");
         this.UDLView.getItems().add(item.getParent());
     }
 
@@ -99,14 +121,6 @@ public class TaskController extends FXMLWinController<BorderPane> {
         }
     }
 
-    @Override
-    protected void onRequestClosed(WindowEvent event) {
-        super.onRequestClosed(event);
-        this.tabPane
-                .getSelectionModel()
-                .selectedIndexProperty()
-                .removeListener(this.selectedListener);
-    }
 
     private static TaskController controller;
 

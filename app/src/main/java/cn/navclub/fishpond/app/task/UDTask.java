@@ -7,18 +7,21 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
 public abstract class UDTask<T> implements Runnable {
 
     private final Task task;
-    private final List<TSubscribe<T>> subscribes;
-
     protected final Logger logger;
+    private final List<TSubscribe<T>> subscribes;
+    private final AtomicReference<TKStatus> tkStatus;
+
 
     public UDTask(Task task) {
         this.task = task;
         this.subscribes = new ArrayList<>();
+        this.tkStatus = new AtomicReference<>(TKStatus.RUNNING);
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -67,6 +70,7 @@ public abstract class UDTask<T> implements Runnable {
                 logger.error("OnError task happen error:{}", e.getMessage());
             }
         }
+        //移出所有订阅订阅者
         this.subscribes.clear();
     }
 
@@ -83,14 +87,75 @@ public abstract class UDTask<T> implements Runnable {
 
     @Override
     public void run() {
+        T item = null;
+        Throwable t = null;
         try {
-            this.onComplete(this.run0());
+            item = this.run0();
         } catch (Exception e) {
-            this.onError(e);
+            t = e;
+            logger.info("Task execute happen error!", e);
+        }
+
+        if (t != null) {
+            this.onError(t);
+            this.setStatus(TKStatus.STOP);
+        } else {
+            this.onComplete(item);
+            this.setStatus(TKStatus.EXIT);
         }
     }
 
+    protected void setStatus(TKStatus newStatus) {
+        var oldStatus = this.tkStatus.getAndSet(newStatus);
+        for (TSubscribe<T> subscribe : this.subscribes) {
+            try {
+                subscribe.statusChange(oldStatus, newStatus);
+            } catch (Exception ignore) {
+            }
+        }
+    }
+
+    /**
+     *
+     * 返回当前任务状态
+     *
+     */
+    public TKStatus getTkStatus() {
+        return this.tkStatus.get();
+    }
+
+
     protected abstract T run0() throws Exception;
+
+    /**
+     * 任务状态
+     */
+    public enum TKStatus {
+        /**
+         * 等待执行
+         */
+        WAIT,
+        /**
+         * 运行中
+         */
+        RUNNING,
+        /**
+         * 任务暂停
+         */
+        PAUSE,
+        /**
+         * 任务取消
+         */
+        CANCEL,
+        /**
+         * 任务终止(错误造成)
+         */
+        STOP,
+        /**
+         * 任务停止(正常终止)
+         */
+        EXIT
+    }
 
     public enum Task {
         /**

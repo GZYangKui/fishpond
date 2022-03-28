@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -30,16 +27,16 @@
             </HBox>
             <Button text="暂停" fx:id="btn"/>
         </HBox>
-        <VBox>
+        <VBox fx:id="infoBox">
             <HBox>
                 <HBox HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
                     <Label fx:id="" text="1M/500M"/>
                 </HBox>
                 <HBox HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
-                    <Label text="00:00:05"/>
+                    <Label text="00:00:00" fx:id="timeLabel"/>
                 </HBox>
             </HBox>
-            <ProgressBar fx:id="progress" HBox.hgrow="ALWAYS"/>
+            <ProgressBar fx:id="progress" HBox.hgrow="ALWAYS" prefWidth="${infoBox.width}"/>
         </VBox>
     </VBox>
 

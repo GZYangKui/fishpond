@@ -31,4 +31,11 @@ public interface TSubscribe<T> {
      * @param item 任务执行结果
      */
     void complete(T item);
+
+    /**
+     *
+     * 任务状态改变
+     *
+     */
+    void statusChange(UDTask.TKStatus oldStatus,UDTask.TKStatus newStatus);
 }
