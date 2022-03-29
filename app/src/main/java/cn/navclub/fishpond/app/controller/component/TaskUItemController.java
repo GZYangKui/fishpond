@@ -44,7 +44,6 @@ public class TaskUItemController<T> extends AbstractController<HBox> {
     }
 
     private void updateTText() {
-        ;
         var counter = this.counter.get();
         //得到秒数
         var second = counter % 60;

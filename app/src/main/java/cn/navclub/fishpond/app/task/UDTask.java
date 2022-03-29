@@ -41,45 +41,53 @@ public abstract class UDTask<T> implements Runnable {
      * 取消任务订阅
      */
     public final void unsubscribe(TSubscribe<T> subscribe) {
-        this.subscribes.remove(subscribe);
+        synchronized (this) {
+            this.subscribes.remove(subscribe);
+        }
     }
 
     /**
      * 发布任务完成
      */
     private void onComplete(T item) {
-        for (TSubscribe<T> subscribe : this.subscribes) {
-            try {
-                subscribe.complete(item);
-            } catch (Exception e) {
-                logger.error("Complete task happen error:{}", e.getMessage());
+        synchronized (this) {
+            for (TSubscribe<T> subscribe : this.subscribes) {
+                try {
+                    subscribe.complete(item);
+                } catch (Exception e) {
+                    logger.error("Complete task happen error:{}", e.getMessage());
+                }
             }
+            //移出所有订阅订阅者
+            this.subscribes.clear();
         }
-        //移出所有订阅订阅者
-        this.subscribes.clear();
     }
 
     /**
      * 发布错误
      */
     private void onError(Throwable t) {
-        for (TSubscribe<T> subscribe : this.subscribes) {
-            try {
-                subscribe.onError(t);
-            } catch (Exception e) {
-                logger.error("OnError task happen error:{}", e.getMessage());
+        synchronized (this) {
+            for (TSubscribe<T> subscribe : this.subscribes) {
+                try {
+                    subscribe.onError(t);
+                } catch (Exception e) {
+                    logger.error("OnError task happen error:{}", e.getMessage());
+                }
             }
+            //移出所有订阅订阅者
+            this.subscribes.clear();
         }
-        //移出所有订阅订阅者
-        this.subscribes.clear();
     }
 
     protected final void onProgress(long delta, long total) {
-        for (TSubscribe<T> subscribe : this.subscribes) {
-            try {
-                subscribe.progress(delta, total);
-            } catch (Exception e) {
-                logger.error("OnProgress task happen error:{}", e.getMessage());
+        synchronized (this) {
+            for (TSubscribe<T> subscribe : this.subscribes) {
+                try {
+                    subscribe.progress(delta, total);
+                } catch (Exception e) {
+                    logger.error("OnProgress task happen error:{}", e.getMessage());
+                }
             }
         }
     }
@@ -106,19 +114,19 @@ public abstract class UDTask<T> implements Runnable {
     }
 
     protected void setStatus(TKStatus newStatus) {
-        var oldStatus = this.tkStatus.getAndSet(newStatus);
-        for (TSubscribe<T> subscribe : this.subscribes) {
-            try {
-                subscribe.statusChange(oldStatus, newStatus);
-            } catch (Exception ignore) {
+        synchronized (this) {
+            var oldStatus = this.tkStatus.getAndSet(newStatus);
+            for (TSubscribe<T> subscribe : this.subscribes) {
+                try {
+                    subscribe.statusChange(oldStatus, newStatus);
+                } catch (Exception ignore) {
+                }
             }
         }
     }
 
     /**
-     *
      * 返回当前任务状态
-     *
      */
     public TKStatus getTkStatus() {
         return this.tkStatus.get();
