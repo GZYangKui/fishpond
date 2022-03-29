@@ -23,9 +23,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        new LoginController().showAndFront();
-        TaskController.getInstance().showAndFront();
-        TaskController.getInstance().addULItem(new File("./build.gradle"));
+        new LoginController().showAndFront();
     }
 
     @Override

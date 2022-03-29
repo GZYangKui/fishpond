@@ -6,8 +6,10 @@ import cn.navclub.fishpond.app.controller.FPController;
 import cn.navclub.fishpond.app.controls.TProWrapper;
 import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.app.socket.SocketHook;
+import cn.navclub.fishpond.app.task.TSubscribe;
 import cn.navclub.fishpond.app.task.UDPoolExecutor;
 import cn.navclub.fishpond.app.task.impl.UploadTask;
+import cn.navclub.fishpond.app.util.TProUtil;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
 import cn.navclub.fishpond.core.util.StrUtil;
@@ -29,6 +31,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+
+import java.util.List;
 
 import static cn.navclub.fishpond.core.config.Constant.MESSAGE;
 
@@ -85,25 +89,8 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
         if (StrUtil.isEmpty(text)) {
             return;
         }
-        var tPro = new TProMessage();
-        tPro.setTo(this.account);
-        tPro.setUuid(StrUtil.uuid());
-        tPro.setType(MessageT.JSON);
-        tPro.setFrom(SysProperty.SYS_ID);
-        tPro.setServiceCode(ServiceCode.GROUP_MESSAGE);
-        var data = new JsonObject();
-        data.put(Constant.TIMESTAMP, System.currentTimeMillis());
-        data.put(Constant.ITEMS, new JsonArray()
-                .add(new JsonObject()
-                        .put(Constant.TYPE, ContentType.PLAIN_TEXT.getValue())
-                        .put(MESSAGE, this.textArea.getText()))
-        );
-        tPro.setData(data.toBuffer());
-        //写入消息
-        SocketHolder
-                .getInstance()
-                .write(tPro)
-                .onSuccess(ar -> Platform.runLater(() -> this.textArea.clear()));
+        TProUtil.sendPlainText(this.account, text)
+                .onSuccess(v -> Platform.runLater(this.textArea::clear));
     }
 
     @FXML
@@ -113,8 +100,15 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
         if (file == null) {
             return;
         }
+        var task = new UploadTask(file);
+        task.subscribe(new TSubscribe<>() {
+            @Override
+            public void complete(String item) {
+                TProUtil.sendFile(account, List.of(item));
+            }
+        });
         //执行上传任务
-        UDPoolExecutor.getInstance().execute(new UploadTask(file));
+        UDPoolExecutor.getInstance().execute(task);
     }
 
     public static ChatPaneController create(Integer account) {

@@ -13,16 +13,21 @@ public interface TSubscribe<T> {
      * @param t 异常信息
      *
      */
-    void onError(Throwable t);
+    default void onError(Throwable t){
+
+    }
 
     /**
      *
      * 任务进度发生改变时回调该函数
      *
      * @param delta 进度改变值
+     * @param send 已发送数量
      * @param total 总进度
      */
-    void progress(long delta,long total);
+    default void progress(long delta,long send,long total){
+
+    }
 
     /**
      *
@@ -30,12 +35,16 @@ public interface TSubscribe<T> {
      *
      * @param item 任务执行结果
      */
-    void complete(T item);
+    default void complete(T item){
+
+    }
 
     /**
      *
      * 任务状态改变
      *
      */
-    void statusChange(UDTask.TKStatus oldStatus,UDTask.TKStatus newStatus);
+    default void statusChange(UDTask.TKStatus oldStatus,UDTask.TKStatus newStatus){
+
+    }
 }

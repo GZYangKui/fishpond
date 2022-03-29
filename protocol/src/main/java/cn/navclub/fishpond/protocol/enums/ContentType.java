@@ -9,7 +9,8 @@ import lombok.Getter;
 public enum ContentType {
     UN_SUPPORT("未支持消息内容", -1),
     PLAIN_TEXT("文本", 0),
-    IMG("图片", 1);
+    IMG("图片", 1),
+    FILE("文件", 2);
 
     private final int value;
     private final String text;

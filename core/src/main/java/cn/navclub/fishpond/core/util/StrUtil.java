@@ -6,12 +6,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * 字符串处理工具类
  */
-public class
-StrUtil {
+public class StrUtil {
     public static boolean isEmpty(String str) {
         if (str == null) {
             return true;
@@ -76,6 +76,13 @@ StrUtil {
             arr[i] = (byte) j;
         }
         return new String(arr);
+    }
+
+    /**
+     * 判断url或者文件名是否图片文件
+     */
+    public static boolean isPicture(String url) {
+        return url.matches(".+((\\.JPEG|\\.jpeg|\\.JPG|\\.jpg|\\.png|\\.PNG)(\\?)?(.)*)$");
     }
 
     public static boolean validMD5(String str) {

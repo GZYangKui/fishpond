@@ -1,21 +1,13 @@
 package cn.navclub.fishpond.app.controls;
 
-import cn.navclub.fishpond.app.AssetsHelper;
 import cn.navclub.fishpond.app.http.HTTPUtil;
-import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Circle;
-
 
 public class TProWrapper extends HBox {
     private static final String USER_BOX_CLASS = "fp-user-box";
@@ -58,13 +50,14 @@ public class TProWrapper extends HBox {
             if (from != 0) {
                 nickname = from.toString();
             }
-            vBox.getChildren().add(0, new Label(nickname));
+            var label = new Label(nickname);
+            vBox.getChildren().add(0,label);
         }
         this.getChildren().add(avatar.getShape());
 
         if (current) {
-            vBox.setAlignment(Pos.CENTER_RIGHT);
             this.getChildren().add(0, vBox);
+            vBox.setAlignment(Pos.CENTER_RIGHT);
         } else {
             vBox.setAlignment(Pos.CENTER_LEFT);
             this.getChildren().add(vBox);

@@ -80,11 +80,11 @@ public abstract class UDTask<T> implements Runnable {
         }
     }
 
-    protected final void onProgress(long delta, long total) {
+    protected final void onProgress(long delta,long send, long total) {
         synchronized (this) {
             for (TSubscribe<T> subscribe : this.subscribes) {
                 try {
-                    subscribe.progress(delta, total);
+                    subscribe.progress(delta,send, total);
                 } catch (Exception e) {
                     logger.error("OnProgress task happen error:{}", e.getMessage());
                 }

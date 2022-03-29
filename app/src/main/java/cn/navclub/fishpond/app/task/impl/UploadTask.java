@@ -2,7 +2,6 @@ package cn.navclub.fishpond.app.task.impl;
 
 import cn.navclub.fishpond.app.http.API;
 import cn.navclub.fishpond.app.http.HTTPUtil;
-import cn.navclub.fishpond.app.task.UDPoolExecutor;
 import cn.navclub.fishpond.app.task.UDTask;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.util.StrUtil;
@@ -61,16 +60,18 @@ public class UploadTask extends UDTask<String> {
         sb.append("Content-Disposition: form-data; name=\"file\";");
         sb.append("filename=\"").append(file.getName()).append("\"");
         sb.append("\r\n\r\n");
-        sb.append("Content-Type:application/octet-stream\r\n\r\n");
 
         output.write(sb.toString().getBytes());
 
         //写入文件数据
         try (var input = new FileInputStream(this.file)) {
-            var buffer = new byte[1024 * 16];
             var len = 0;
+            var send = 0;
+            var total = input.available();
+            var buffer = new byte[1024 * 16];
             while ((len = input.read(buffer)) != -1) {
                 output.write(buffer, 0, len);
+                this.onProgress(len, (send += len), total);
             }
         }
 
@@ -84,7 +85,7 @@ public class UploadTask extends UDTask<String> {
         var json = (JsonObject) Json.decodeValue(Buffer.buffer(respStream.readAllBytes()));
         var code = json.getInteger(Constant.CODE);
         if (code == APIECode.OK.getCode()) {
-            return json.getString(Constant.DATA);
+            return json.getJsonArray(Constant.DATA).getString(0);
         }
         logger.info("文件上传失败:{}", json);
         //文件上传失败,抛出异常信息
