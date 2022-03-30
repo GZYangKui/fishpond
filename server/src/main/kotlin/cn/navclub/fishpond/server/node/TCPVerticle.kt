@@ -51,8 +51,6 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
             socket.exceptionHandler { socket.close() }
             //连接关闭->移出连接
             socket.closeHandler { this.idSocketMap.inverse().remove(socket) }
-
-            socket.write(TProUtil.hello().toMessage())
         }
         val port = json.getInteger(PORT)
 
