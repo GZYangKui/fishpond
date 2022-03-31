@@ -105,7 +105,7 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
                 if (preview) {
                     imgInfo.setWidth(this.width);
                     imgInfo.setHeight(this.height);
-                }else {
+                } else {
                     //todo 获取指定图片大小
                 }
             }
@@ -155,7 +155,13 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
         if (!Files.exists(file.toPath())) {
             Files.createDirectory(file.toPath());
         }
-        return new File(String.format("%s%s", folder, StrUtil.uuid()));
+        var suffix = "";
+        var filename = this.file.getName();
+        var index = filename.lastIndexOf(".");
+        if (index != -1) {
+            suffix = filename.substring(index);
+        }
+        return new File(String.format("%s%s%s", folder, StrUtil.uuid(), suffix));
     }
 }
 

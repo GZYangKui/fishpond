@@ -44,7 +44,7 @@ class FileServiceImpl(vertx: Vertx, config: JsonObject) : FileService, BaseServi
             val dateStr = SimpleDateFormat("yyyy-MM-dd").format(Date())
             for (file in files) {
                 //生成随机文件名称
-                val filename = this.genRFileName(file.fileName())
+                val filename = "$dateStr${File.separator}${this.genRFileName(file.fileName())}"
                 val args = UploadObjectArgs
                     .builder()
                     .`object`(filename)
