@@ -88,17 +88,6 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
     }
 
     @Override
-    public void onTCNStatusChange(TCNStatus oldValue, TCNStatus newValue) {
-        Platform.runLater(() -> {
-            var text = String.format("TCP连接状态发生改变(%s->%s)", oldValue.getText(), newValue.getText());
-            Notifications.create()
-                    .position(Pos.TOP_RIGHT)
-                    .text(text)
-                    .showInformation();
-        });
-    }
-
-    @Override
     public void feedback(ServiceCode serviceCode, APIECode code, JsonObject content, TProMessage message) {
         //TCP注册不成功
         if (serviceCode == ServiceCode.TCP_REGISTER && code != APIECode.OK) {
@@ -109,7 +98,6 @@ public class FPController extends FXMLWinController<TabPane> implements SocketHo
         }
     }
 
-    //00C268 A4a4a4
     @Getter
     private enum TabItem {
         MESSAGE(

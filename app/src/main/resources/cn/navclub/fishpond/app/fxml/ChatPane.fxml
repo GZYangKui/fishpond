@@ -39,6 +39,16 @@
                         </ImageView>
                     </graphic>
                 </Button>
+                <Button onAction="#selectPicture">
+                    <tooltip>
+                        <Tooltip text="图片"/>
+                    </tooltip>
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../icon/tool_bar/picture.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button onAction="#selectFile">
                     <tooltip>
                         <Tooltip text="文件"/>

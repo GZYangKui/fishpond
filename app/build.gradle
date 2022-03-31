@@ -20,4 +20,6 @@ dependencies {
     implementation "io.vertx:vertx-web-client:${vertx_version}"
     // https://mvnrepository.com/artifact/org.controlsfx/controlsfx
     implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.1'
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.17'
 }

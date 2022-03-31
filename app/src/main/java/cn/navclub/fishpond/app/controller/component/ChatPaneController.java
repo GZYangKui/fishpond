@@ -4,25 +4,18 @@ import cn.navclub.fishpond.app.AbstractController;
 import cn.navclub.fishpond.app.AssetsHelper;
 import cn.navclub.fishpond.app.controller.FPController;
 import cn.navclub.fishpond.app.controls.TProWrapper;
+import cn.navclub.fishpond.app.model.UPFileInfo;
 import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.app.socket.SocketHook;
 import cn.navclub.fishpond.app.task.TSubscribe;
 import cn.navclub.fishpond.app.task.UDPoolExecutor;
 import cn.navclub.fishpond.app.task.impl.UploadTask;
 import cn.navclub.fishpond.app.util.TProUtil;
-import cn.navclub.fishpond.core.config.Constant;
-import cn.navclub.fishpond.core.config.SysProperty;
 import cn.navclub.fishpond.core.util.StrUtil;
-import cn.navclub.fishpond.protocol.enums.ContentType;
-import cn.navclub.fishpond.protocol.enums.MessageT;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.model.TProMessage;
-import io.vertx.core.impl.launcher.commands.FileSelector;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -33,8 +26,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.util.List;
-
-import static cn.navclub.fishpond.core.config.Constant.MESSAGE;
 
 
 public class ChatPaneController extends AbstractController<BorderPane> implements SocketHook {
@@ -95,19 +86,40 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
 
     @FXML
     public void selectFile() {
-        var selector = new FileChooser();
-        var file = selector.showOpenDialog(FPController.getController().getStage());
+        var file = FPController.getController().openFChooser("请选择文件");
         if (file == null) {
             return;
         }
         var task = new UploadTask(file);
         task.subscribe(new TSubscribe<>() {
             @Override
-            public void complete(String item) {
-                TProUtil.sendFile(account, List.of(item));
+            public void complete(List<UPFileInfo> items) {
+                System.out.println(items);
             }
         });
         //执行上传任务
+        UDPoolExecutor.getInstance().execute(task);
+    }
+
+    @FXML
+    private void selectPicture() {
+        var filter = new FileChooser.ExtensionFilter(
+                "JPG/PNG",
+                "*.jpg",
+                "*.png",
+                "*.jpeg"
+        );
+        var file = FPController.getController().openFChooser("请选择图片", filter);
+        if (file == null) {
+            return;
+        }
+        var task = new UploadTask(file, true, 100, 100);
+        task.subscribe(new TSubscribe<List<UPFileInfo>>() {
+            @Override
+            public void complete(List<UPFileInfo> item) {
+                System.out.println(item);
+            }
+        });
         UDPoolExecutor.getInstance().execute(task);
     }
 

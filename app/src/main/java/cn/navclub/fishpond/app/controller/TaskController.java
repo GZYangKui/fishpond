@@ -93,9 +93,7 @@ public class TaskController extends FXMLWinController<BorderPane> {
     }
 
     public void addULItem(File file) {
-        var task = new UploadTask(file, "https://baidu.com");
-        var item = new TaskUItemController<>(task, "下载文件");
-        this.UDLView.getItems().add(item.getParent());
+
     }
 
     private enum TabItem {

@@ -1,6 +1,7 @@
 package cn.navclub.fishpond.server.service.impl
 
 import cn.navclub.fishpond.core.config.Constant
+import cn.navclub.fishpond.core.util.StrUtil
 import cn.navclub.fishpond.protocol.api.CommonResult
 import cn.navclub.fishpond.server.service.BaseService
 import cn.navclub.fishpond.server.service.FileService
@@ -42,9 +43,8 @@ class FileServiceImpl(vertx: Vertx, config: JsonObject) : FileService, BaseServi
             val list: MutableList<String> = arrayListOf()
             val dateStr = SimpleDateFormat("yyyy-MM-dd").format(Date())
             for (file in files) {
-                //fix:文件名中存在空格
-                val str = file.fileName().replace(" ", "")
-                val filename = "$dateStr${File.separator}${str}"
+                //生成随机文件名称
+                val filename = this.genRFileName(file.fileName())
                 val args = UploadObjectArgs
                     .builder()
                     .`object`(filename)
@@ -63,6 +63,19 @@ class FileServiceImpl(vertx: Vertx, config: JsonObject) : FileService, BaseServi
             files.forEach { Files.delete(File(it.uploadedFileName()).toPath()) }
         }
 
+    }
+
+    /**
+     * 生成随机文件名称
+     */
+    private fun genRFileName(uploadFName: String): String {
+        var suffix = ""
+        val filename = StrUtil.uuid();
+        val index = uploadFName.lastIndexOf(".")
+        if (index != -1) {
+            suffix = uploadFName.substring(index)
+        }
+        return "$filename$suffix"
     }
 
     private fun getReqURI(filename: String): String {

@@ -2,8 +2,12 @@ package cn.navclub.fishpond.app;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import java.io.File;
+import java.nio.file.Path;
 
 /**
  * FXML Window controller
@@ -67,5 +71,24 @@ public class FXMLWinController<T extends Parent> extends AbstractController<T> {
         controller.showAndFront();
         //关闭当前窗口
         this.getStage().close();
+    }
+
+    /**
+     *
+     * 基于当前窗口打开文件选择器
+     *
+     */
+    public File openFChooser(String title, Path path, FileChooser.ExtensionFilter... filters) {
+        var chooser = new FileChooser();
+        chooser.setTitle(title);
+        if (path != null) {
+            chooser.setInitialDirectory(path.toFile());
+        }
+        chooser.getExtensionFilters().addAll(filters);
+        return chooser.showOpenDialog(this.getStage());
+    }
+
+    public File openFChooser(String title, FileChooser.ExtensionFilter... filters) {
+        return this.openFChooser(title, null, filters);
     }
 }

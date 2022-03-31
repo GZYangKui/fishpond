@@ -9,6 +9,7 @@ module cn.navclub.fishpond.app {
     requires ch.qos.logback.classic;
     requires org.controlsfx.controls;
     requires io.vertx.web.client;
+    requires thumbnailator;
     requires cn.navclub.fishpond.core;
 
     requires cn.navclub.fishpond.protocol;
