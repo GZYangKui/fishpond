@@ -44,4 +44,12 @@ public class Constant {
     public static String ACCESS_KEY = "accessKey";
     public static String MINIO = "minio";
     public static String ACCESS_SECRET = "accessSecret";
+
+    public static String URL = "url";
+    public static String IMAGE = "image";
+    public static String WIDTH = "width";
+    public static String HEIGHT = "height";
+    public static String FILENAME = "filename";
+    public static String FILESIZE = "fileSize";
+    public static String THUMBNAIL = "thumbnail";
 }

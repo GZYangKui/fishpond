@@ -113,11 +113,11 @@ public class ChatPaneController extends AbstractController<BorderPane> implement
         if (file == null) {
             return;
         }
-        var task = new UploadTask(file, true, 100, 100);
-        task.subscribe(new TSubscribe<List<UPFileInfo>>() {
+        var task = new UploadTask(file, true, 200, 180);
+        task.subscribe(new TSubscribe<>() {
             @Override
             public void complete(List<UPFileInfo> item) {
-                System.out.println(item);
+                TProUtil.sendImage(account, item);
             }
         });
         UDPoolExecutor.getInstance().execute(task);

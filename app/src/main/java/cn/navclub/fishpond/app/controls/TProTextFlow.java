@@ -37,15 +37,7 @@ public class TProTextFlow extends VBox {
                 textFlow.getChildren().add(text);
             }
             if (type == ContentType.IMG) {
-                var img = new ImageView(new Image(
-                        json.getString("message"),
-                        250,
-                        250,
-                        false,
-                        true,
-                        true)
-                );
-                textFlow.getChildren().add(img);
+                textFlow.getChildren().add(MPicture.create(json).getControl());
             }
         }
 

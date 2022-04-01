@@ -10,8 +10,13 @@ import cn.navclub.fishpond.protocol.api.APIECode;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import net.coobird.thumbnailator.Thumbnailator;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Position;
 
+import javax.imageio.ImageIO;
+
+import javax.imageio.stream.FileImageInputStream;
+import java.awt.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -52,11 +57,10 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
     protected List<UPFileInfo> run0() throws Exception {
         var files = new ArrayList<File>();
         if (this.picture) {
-            var outFile = this.getThumbnail();
-            Thumbnailator.createThumbnail(file, outFile, this.width, this.height);
-            files.add(0, outFile);
+            files.add(this.getThumbnail());
         }
         files.add(this.file);
+
         var str = String.format("http://%s:%d%s", HTTPUtil.getHOST(), HTTPUtil.getPORT(), API.UPLOAD_FILE.getUrl());
 
         var url = URI.create(str).toURL();
@@ -71,10 +75,6 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
 
         var output = connect.getOutputStream();
 
-        var formStart = String.format("------%s\r\n", formBoundary);
-
-        //写入表单开始部分
-        output.write(formStart.getBytes());
         //记录当前已发送数据量
         var send = 0;
         //计算文件总总大小
@@ -86,6 +86,7 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
 
             var sb = new StringBuilder();
 
+            sb.append("------").append(formBoundary).append("\r\n");
             sb.append("Content-Disposition: form-data; name=\"file\";");
             sb.append("filename=\"").append(file.getName()).append("\"");
             sb.append("\r\n\r\n");
@@ -98,20 +99,20 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
 
             list.add(info);
 
+            //如果是图片->初始化图片信息
             if (this.picture) {
+                var dimension = this.getImageDim(file);
                 var imgInfo = new UPFileInfo.IImage();
-                var preview = i == 0;
-                imgInfo.setPreview(preview);
-                if (preview) {
-                    imgInfo.setWidth(this.width);
-                    imgInfo.setHeight(this.height);
-                } else {
-                    //todo 获取指定图片大小
-                }
+
+                imgInfo.setPreview(i == 0);
+                imgInfo.setWidth(dimension.width);
+                imgInfo.setHeight(dimension.height);
+
+                info.setImageInfo(imgInfo);
             }
 
             //写入文件数据
-            try (var input = new FileInputStream(this.file)) {
+            try (var input = new FileInputStream(file)) {
                 var len = 0;
                 var buffer = new byte[1024 * 16];
                 while ((len = input.read(buffer)) != -1) {
@@ -119,9 +120,10 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
                     this.onProgress(len, (send += len), total);
                 }
             }
+            output.write(new byte[]{'\r', '\n'});
         }
 
-        var formETag = String.format("\r\n------%s--\r\n\r\n", formBoundary);
+        var formETag = String.format("------%s--\r\n\r\n", formBoundary);
 
         //写入表单结束标示
         output.write(formETag.getBytes());
@@ -133,10 +135,10 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
         if (code == APIECode.OK.getCode()) {
             var arr = json.getJsonArray(Constant.DATA);
             for (int i = 0; i < arr.size(); i++) {
-                if (i >= list.size()) {
-                    break;
-                }
-                list.get(i).setUrl(arr.getString(i));
+                var fileInfo = list.get(i);
+                fileInfo.setUrl(arr.getString(i));
+                if (fileInfo.thumbnail())
+                    Files.delete(files.get(i).toPath());
             }
             return list;
         }
@@ -149,6 +151,9 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
         return "FishPondFormBoundary" + StrUtil.uuid();
     }
 
+    /**
+     * 生成缩略图
+     */
     private File getThumbnail() throws IOException {
         var folder = ".cache/";
         var file = new File(folder);
@@ -161,7 +166,41 @@ public class UploadTask extends UDTask<List<UPFileInfo>> {
         if (index != -1) {
             suffix = filename.substring(index);
         }
-        return new File(String.format("%s%s%s", folder, StrUtil.uuid(), suffix));
+        var outFile = new File(String.format("%s%s%s", folder, StrUtil.uuid(), suffix));
+
+        //按照指定大小缩放
+        Thumbnails
+                .of(this.file)
+                .width(this.width)
+                .height(this.height)
+                .toFile(outFile);
+
+        return outFile;
+    }
+
+    private Dimension getImageDim(File file) {
+        var suffix = "";
+        var filename = file.getName();
+        var index = filename.lastIndexOf(".");
+        if (index != -1) {
+            suffix = filename.substring(index + 1);
+        }
+        var iter = ImageIO.getImageReadersBySuffix(suffix);
+        if (!iter.hasNext()) {
+            throw new RuntimeException("暂不支持:" + suffix + "格式图片!");
+        }
+        var reader = iter.next();
+        try {
+            var stream = new FileImageInputStream(file);
+            reader.setInput(stream);
+            var width = reader.getWidth(reader.getMinIndex());
+            var height = reader.getHeight(reader.getMinIndex());
+            return new Dimension(width, height);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            reader.dispose();
+        }
     }
 }
 

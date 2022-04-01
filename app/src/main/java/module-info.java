@@ -5,6 +5,7 @@ module cn.navclub.fishpond.app {
     requires static lombok;
     requires java.net.http;
     requires javafx.controls;
+    requires java.desktop;
     requires ch.qos.logback.core;
     requires ch.qos.logback.classic;
     requires org.controlsfx.controls;

@@ -27,6 +27,13 @@ public class UPFileInfo {
 
 
     /**
+     * 判断当前图片是否缩略图
+     */
+    public boolean thumbnail() {
+        return this.imageInfo != null && this.imageInfo.preview;
+    }
+
+    /**
      * 对于上传图片封装
      */
     @Data

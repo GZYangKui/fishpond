@@ -1,5 +1,6 @@
 package cn.navclub.fishpond.app.util;
 
+import cn.navclub.fishpond.app.model.UPFileInfo;
 import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
@@ -16,6 +17,7 @@ import io.vertx.core.json.JsonObject;
 import java.util.List;
 
 import static cn.navclub.fishpond.core.config.Constant.*;
+import static cn.navclub.fishpond.protocol.enums.MessageT.JSON;
 
 public class TProUtil {
     /**
@@ -40,9 +42,7 @@ public class TProUtil {
     }
 
     /**
-     *
      * 发送文件
-     *
      */
     public static Future<Void> sendFile(Integer account, List<String> files) {
         var tPro = create(account);
@@ -69,12 +69,40 @@ public class TProUtil {
         return SocketHolder.getInstance().write(tPro);
     }
 
+    public static Future<Void> sendImage(Integer to, List<UPFileInfo> pictures) {
+        var json = new JsonObject();
+        var tPro = create(to);
+        var message = new JsonObject();
+
+        json.put(ITEMS, new JsonArray().add(message));
+        json.put(Constant.TYPE, MessageT.JSON.getVal());
+        json.put(Constant.TIMESTAMP, System.currentTimeMillis());
+
+        message.put(Constant.TYPE, ContentType.IMG.getValue());
+        for (UPFileInfo picture : pictures) {
+            var data = new JsonObject();
+
+            data.put(URL, picture.getUrl());
+            data.put(FILENAME, picture.getFilename());
+            data.put(FILESIZE, picture.getFileSize());
+            data.put(WIDTH, picture.getImageInfo().getWidth());
+            data.put(HEIGHT, picture.getImageInfo().getHeight());
+
+            message.put(picture.thumbnail() ? THUMBNAIL : IMAGE, data);
+        }
+
+
+        tPro.setData(json.toBuffer());
+
+        return SocketHolder.getInstance().write(tPro);
+    }
+
     private static TProMessage create(Integer to) {
         var tPro = new TProMessage();
 
         tPro.setTo(to);
         tPro.setUuid(StrUtil.uuid());
-        tPro.setType(MessageT.JSON);
+        tPro.setType(JSON);
         tPro.setFrom(SysProperty.SYS_ID);
         //0代表系统群发,否则属于点对点通信
         tPro.setServiceCode(to == 0 ? ServiceCode.GROUP_MESSAGE : ServiceCode.P2P_MESSAGE);
