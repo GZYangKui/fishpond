@@ -5,6 +5,7 @@ import cn.navclub.fishpond.app.socket.SocketHolder;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
 import cn.navclub.fishpond.core.util.StrUtil;
+import cn.navclub.fishpond.core.worker.SnowFlakeWorker;
 import cn.navclub.fishpond.protocol.enums.ContentType;
 import cn.navclub.fishpond.protocol.enums.MessageT;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
@@ -26,7 +27,7 @@ public class TProUtil {
      * @param account 接受消息帐号
      * @param text    待发送普通文本
      */
-    public static Future<Void> sendPlainText(Integer account, String text) {
+    public static Future<Long> sendPlainText(Integer account, String text) {
         var tPro = create(account);
         var data = new JsonObject();
         data.put(Constant.TIMESTAMP, System.currentTimeMillis());
@@ -44,7 +45,7 @@ public class TProUtil {
     /**
      * 发送文件
      */
-    public static Future<Void> sendFile(Integer account, List<String> files) {
+    public static Future<Long> sendFile(Integer account, List<String> files) {
         var tPro = create(account);
         var json = new JsonObject();
         json.put(Constant.TIMESTAMP, System.currentTimeMillis());
@@ -69,7 +70,7 @@ public class TProUtil {
         return SocketHolder.getInstance().write(tPro);
     }
 
-    public static Future<Void> sendImage(Integer to, List<UPFileInfo> pictures) {
+    public static Future<Long> sendImage(Integer to, List<UPFileInfo> pictures) {
         var json = new JsonObject();
         var tPro = create(to);
         var message = new JsonObject();
@@ -101,7 +102,6 @@ public class TProUtil {
         var tPro = new TProMessage();
 
         tPro.setTo(to);
-        tPro.setUuid(StrUtil.uuid());
         tPro.setType(JSON);
         tPro.setFrom(SysProperty.SYS_ID);
         //0代表系统群发,否则属于点对点通信

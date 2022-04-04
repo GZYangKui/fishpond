@@ -25,7 +25,7 @@ public class TProMessage extends Protocol {
     /**
      * 消息记录id
      */
-    private String uuid;
+    private Long msgId;
     /**
      * 数据
      */
@@ -45,10 +45,6 @@ public class TProMessage extends Protocol {
 
     @Override
     public Buffer toMessage() {
-        //如果用户未设置消息ID,使用系统UUID
-        if (StrUtil.isEmpty(this.getUuid())) {
-            this.setUuid(StrUtil.uuid());
-        }
         var buffer = Buffer.buffer(DefaultDecoder.FLAGS);
         //消息类型
         buffer.appendBytes(BitUtil.int2Byte4(type.getVal()), 2, 2);
@@ -59,7 +55,7 @@ public class TProMessage extends Protocol {
         //接收消息用户账号
         buffer.appendBytes(BitUtil.int2Byte4(this.getTo()));
         //消息记录id
-        buffer.appendBytes(uuid.getBytes(), 0, 32);
+        buffer.appendBytes(BitUtil.long2Byte(this.getMsgId()));
         //计算当前数据长度
         var length = this.getData() == null ? 0 : this.getData().length();
         //数据长度
@@ -84,10 +80,10 @@ public class TProMessage extends Protocol {
         msg.from = BitUtil.byte2Int(bytes);
         System.arraycopy(arr, offset + 11, bytes, 0, 4);
         msg.to = BitUtil.byte2Int(bytes);
-        bytes = new byte[32];
+        bytes = new byte[8];
         //消息记录id
-        System.arraycopy(arr, offset + 15, bytes, 0, 32);
-        msg.uuid = new String(bytes);
+        System.arraycopy(arr, offset + 15, bytes, 0, bytes.length);
+        msg.msgId = BitUtil.byte2Long(bytes);
         //数据长度
         bytes = new byte[dataLen];
         System.arraycopy(arr, offset + DefaultDecoder.MES_HEADER_LEN, bytes, 0, dataLen);
@@ -101,7 +97,7 @@ public class TProMessage extends Protocol {
         var sb = new StringBuilder();
         sb.append("\n=======================================================\n");
         sb.append("消息类型:").append(this.getType().getText()).append("\n");
-        sb.append("消息标识:").append(this.getUuid()).append("\n");
+        sb.append("消息标识:").append(this.getMsgId()).append("\n");
         sb.append("业务代码:").append(this.getServiceCode().getText()).append("\n");
         sb.append("FROM:").append(this.getFrom()).append("\n");
         sb.append("TO:").append(this.getTo()).append("\n");

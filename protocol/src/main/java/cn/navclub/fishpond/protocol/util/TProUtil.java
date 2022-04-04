@@ -18,15 +18,19 @@ public class TProUtil {
     public static Future<Void> feedback(NetSocket socket, TProMessage tPro, JsonObject content) {
         var feedback = new TProMessage();
 
+        //如果消息id字段为空则以0填充
+        if (feedback.getMsgId() == null) {
+            feedback.setMsgId(0L);
+        }
+
         feedback.setTo(tPro.getFrom());
         feedback.setType(MessageT.JSON);
-        feedback.setUuid(StrUtil.uuid());
         feedback.setFrom(SysProperty.SYS_ID);
         feedback.setServiceCode(ServiceCode.OPERATE_FEEDBACK);
 
         var data = new JsonObject();
 
-        data.put(Constant.UUID, tPro.getUuid());
+        data.put(Constant.UUID, tPro.getMsgId());
         data.put(Constant.SERVICE_CODE, tPro.getServiceCode().getValue());
 
         if (content != null) {

@@ -4,12 +4,14 @@ import cn.navclub.fishpond.app.Main;
 import cn.navclub.fishpond.app.http.HTTPUtil;
 import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.config.SysProperty;
-import cn.navclub.fishpond.core.util.StrUtil;
+
+import cn.navclub.fishpond.core.worker.SnowFlakeWorker;
 import cn.navclub.fishpond.protocol.api.APIECode;
 import cn.navclub.fishpond.protocol.enums.MessageT;
 import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.impl.DefaultDecoder;
 import cn.navclub.fishpond.protocol.model.TProMessage;
+
 import cn.navclub.fishpond.protocol.util.TProUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -41,6 +43,8 @@ public class SocketHolder {
     private final AtomicInteger plusNum;
     //Record current tcp connect is register
     private final AtomicBoolean register;
+    //雪花id生成器
+    private final SnowFlakeWorker snowFlakeWorker;
     //Record current tcp connect status
     private final AtomicReference<TCNStatus> tcnStatus;
 
@@ -52,6 +56,7 @@ public class SocketHolder {
         this.plusTId = new AtomicLong(-1);
         this.plusNum = new AtomicInteger(0);
         this.register = new AtomicBoolean(false);
+        this.snowFlakeWorker = new SnowFlakeWorker(0);
         this.tcnStatus = new AtomicReference<>(TCNStatus.TO_BE_CONNECTED);
     }
 
@@ -130,7 +135,6 @@ public class SocketHolder {
         var tPro = new TProMessage();
 
         tPro.setType(MessageT.JSON);
-        tPro.setUuid(StrUtil.uuid());
         tPro.setTo(SysProperty.SYS_ID);
         tPro.setFrom(SysProperty.SYS_ID);
         tPro.setServiceCode(ServiceCode.TCP_REGISTER);
@@ -219,8 +223,20 @@ public class SocketHolder {
         }));
     }
 
-    public Future<Void> write(TProMessage message) {
-        return this.socket.write(message.toMessage());
+    public Future<Long> write(TProMessage message) {
+        message.setMsgId(this.snowflakeId());
+        var promise = Promise.<Long>promise();
+        var future = this.socket.write(message.toMessage());
+        future.onComplete(ar -> {
+            if (ar.failed()) {
+                message.setMsgId(0L);
+                promise.fail(ar.cause());
+                log.info("消息发送失败!", ar.cause());
+            } else {
+                promise.complete(message.getMsgId());
+            }
+        });
+        return promise.future();
     }
 
     public void addHook(SocketHook hook) {
@@ -241,5 +257,9 @@ public class SocketHolder {
             socketHolder = new SocketHolder("0.0.0.0", 0);
         }
         return socketHolder;
+    }
+
+    private long snowflakeId() {
+        return this.snowFlakeWorker.generateId();
     }
 }

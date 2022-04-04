@@ -80,6 +80,9 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         //响应客户端发送心跳包
         if (tPro.serviceCode == ServiceCode.HEART_BEAT) {
             TProUtil.feedback(socket, tPro, null)
+        } else {
+            //输出客户端非心跳数据包
+            logger.info("收到客户端数据:\r\n{}", tPro.toString())
         }
     }
 
