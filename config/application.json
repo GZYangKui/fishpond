@@ -1,4 +1,5 @@
 {
+  "robotId": 0,
   "tcp": {
     "port": 9001,
     "idle": 10,

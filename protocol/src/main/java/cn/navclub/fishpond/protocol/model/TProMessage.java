@@ -1,5 +1,6 @@
 package cn.navclub.fishpond.protocol.model;
 
+import cn.navclub.fishpond.core.config.Constant;
 import cn.navclub.fishpond.core.util.StrUtil;
 import cn.navclub.fishpond.protocol.Protocol;
 import cn.navclub.fishpond.protocol.enums.MessageT;
@@ -7,6 +8,7 @@ import cn.navclub.fishpond.protocol.enums.ServiceCode;
 import cn.navclub.fishpond.protocol.impl.DefaultDecoder;
 import cn.navclub.fishpond.protocol.util.BitUtil;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.Data;
@@ -111,7 +113,11 @@ public class TProMessage extends Protocol {
         if (this.data == null) {
             return "";
         }
-        return this.data.toString(StandardCharsets.UTF_8);
+        return switch (type) {
+            case JSON -> this.toJson().toString();
+            case JSON_ARR -> this.toJsonArray().toString();
+            case UNKNOWN, TEXT -> this.data.toString(StandardCharsets.UTF_8);
+        };
     }
 
     @Override

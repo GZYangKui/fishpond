@@ -2,7 +2,7 @@ package cn.navclub.fishpond.server
 
 import cn.navclub.fishpond.core.config.Constant.*
 import cn.navclub.fishpond.core.util.NumUtil
-import cn.navclub.fishpond.server.util.CoroutineUtil
+import cn.navclub.fishpond.server.config.GlobalIDGen
 import cn.navclub.fishpond.server.util.DBUtil
 import cn.navclub.fishpond.server.util.RedisUtil
 import io.vertx.core.DeploymentOptions
@@ -59,6 +59,9 @@ suspend fun main(args: Array<String>) {
         val profile = getProfile(args)
         val fileSystem = vertx.fileSystem()
         val config = fileSystem.readFile("config/application${profile}.json").await().toJsonObject()
+
+        //初始化雪花id生成器
+        GlobalIDGen.createGen(config.getLong(ROBOT_ID))
 
         //初始化redis
         RedisUtil.createRedisClient(vertx, config.getJsonObject(REDIS))

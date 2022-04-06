@@ -1,5 +1,6 @@
 package cn.navclub.fishpond.server.service
 
+import cn.navclub.fishpond.server.config.GlobalIDGen
 import cn.navclub.fishpond.server.util.DBUtil
 import cn.navclub.fishpond.server.util.JsonUtil
 import io.vertx.core.Vertx
@@ -40,6 +41,10 @@ open class BaseService(vertx: Vertx, config: JsonObject) {
         } finally {
             con.close()
         }
+    }
+
+    protected fun autoIncrementId(): Long {
+        return GlobalIDGen.getInstance().globalId()
     }
 
 

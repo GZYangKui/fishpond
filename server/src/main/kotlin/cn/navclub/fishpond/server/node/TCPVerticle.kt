@@ -15,6 +15,8 @@ import cn.navclub.fishpond.server.internal.ITCode
 import cn.navclub.fishpond.server.internal.ITModel
 import cn.navclub.fishpond.server.internal.ITResult
 import cn.navclub.fishpond.server.model.FPSession
+import cn.navclub.fishpond.server.service.MessageService
+import cn.navclub.fishpond.server.service.impl.MessageServiceImpl
 import cn.navclub.fishpond.server.util.CoroutineUtil.Companion.requestEB
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
@@ -27,10 +29,16 @@ import kotlinx.coroutines.launch
 
 class TCPVerticle : AbstractFDVerticle<JsonObject>() {
 
+    private lateinit var service: MessageService
+
     private val idSocketMap: BiMap<String, NetSocket> = HashBiMap.create()
 
+
     override suspend fun start() {
+
         this.consumerEB()
+        this.service = MessageServiceImpl(vertx, config)
+
         val json = config.getJsonObject(TCP)
         val netServer = vertx.createNetServer(
             NetServerOptions()
@@ -81,8 +89,7 @@ class TCPVerticle : AbstractFDVerticle<JsonObject>() {
         if (tPro.serviceCode == ServiceCode.HEART_BEAT) {
             TProUtil.feedback(socket, tPro, null)
         } else {
-            //输出客户端非心跳数据包
-            logger.info("收到客户端数据:\r\n{}", tPro.toString())
+            this.service.save(tPro)
         }
     }
 

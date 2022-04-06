@@ -2,6 +2,7 @@ package cn.navclub.fishpond.core.config;
 
 public class Constant {
     public static String ID = "id";
+    public static String TO = "to";
     public static String IMG = "img";
     public static String SEX = "sex";
     public static String TCP = "tcp";
@@ -12,6 +13,7 @@ public class Constant {
     public static String UUID = "uuid";
     public static String DATA = "data";
     public static String TYPE = "type";
+    public static String FROM = "from";
     public static String NAME = "name";
     public static String PORT = "port";
     public static String ITEMS = "items";
@@ -30,6 +32,8 @@ public class Constant {
     public static String EXPIRE = "expire";
     public static String AVATAR = "avatar";
     public static String MESSAGE = "message";
+    public static String RECEIVER = "receiver";
+    public static String SENDER = "sender";
     public static String DATABASE = "database";
     public static String TIMESTAMP = "timestamp";
     public static String USERNAME = "username";
@@ -43,6 +47,7 @@ public class Constant {
     public static String DATA_SOURCE = "dataSource";
     public static String ACCESS_KEY = "accessKey";
     public static String MINIO = "minio";
+    public static String ROBOT_ID = "robotId";
     public static String ACCESS_SECRET = "accessSecret";
 
     public static String URL = "url";
